@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Metodologia da Pesquisa em Medicina</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Metodologia da Pesquisa em Medicina</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual das seguintes opções descreve melhor uma variável quantitativa?",
+          options: ["Categoria de doença (por exemplo, diabetes, hipertensão).", "Nível de satisfação do paciente (por exemplo, alto, médio, baixo).", "Pressão arterial sistólica (medida em mmHg).", "Presença ou ausência de sintomas (sim/não)."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "O método PICO é utilizado para:",
+          options: ["Avaliar a qualidade de um artigo científico.", "Formular uma pergunta de pesquisa clínica.", "Realizar uma análise estatística.", "Selecionar uma amostra representativa."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "Qual dos seguintes objetivos é mais adequado para um artigo científico?",
+          options: ["Explorar o impacto da medicina alternativa na saúde.", "Avaliar a eficácia de um novo medicamento na redução da dor lombar crônica em adultos.", "Discutir as tendências atuais na pesquisa médica.", "Descrever a experiência pessoal do autor com uma determinada doença."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "A seção de metodologia de um artigo científico deve incluir:",
+          options: ["Uma revisão abrangente da literatura existente.", "Uma descrição detalhada do desenho do estudo, da população e dos métodos de coleta de dados.", "Uma discussão sobre as implicações clínicas dos resultados.", "Uma análise crítica dos estudos anteriores sobre o tema."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "O checklist PRISMA é utilizado para avaliar a qualidade de:",
+          options: ["Ensaios clínicos randomizados.", "Estudos observacionais.", "Revisões sistemáticas e meta-análises.", "Estudos qualitativos."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Qual dos seguintes métodos de amostragem é mais adequado para garantir a representatividade da amostra?",
+          options: ["Amostragem por conveniência.", "Amostragem aleatória simples.", "Amostragem por bola de neve.", "Amostragem intencional."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "O PubMed é um banco de dados que indexa principalmente:",
+          options: ["Literatura científica em todas as áreas do conhecimento.", "Literatura biomédica e de ciências da saúde.", "Patentes e documentos técnicos.", "Literatura de ciências sociais e humanas."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "Qual das seguintes opções descreve melhor uma revisão sistemática?",
+          options: ["Uma revisão abrangente da literatura sobre um determinado tema.", "Uma revisão narrativa da literatura com base na experiência pessoal do autor.", "Uma revisão com metodologia rigorosa, busca abrangente e avaliação da qualidade dos estudos.", "Uma revisão de artigos de opinião sobre um determinado tema."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "O checklist CONSORT é utilizado para avaliar a qualidade de:",
+          options: ["Ensaios clínicos randomizados.", "Estudos observacionais.", "Revisões sistemáticas e meta-análises.", "Estudos qualitativos."],
+          answer: 0, // Índice da resposta "a)"
+        },
+        {
+          question: "Qual das seguintes opções descreve melhor uma variável qualitativa?",
+          options: ["Peso (medido em kg).", "Nível de glicose no sangue (medido em mg/dL).", "Grupo sanguíneo (A, B, AB, O).", "Número de consultas médicas por ano."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Em um estudo sobre a eficácia de um novo tratamento para ansiedade, qual das seguintes variáveis seria considerada qualitativa?",
+          options: ["Nível de ansiedade medido em uma escala de 1 a 10.", "Frequência cardíaca dos participantes.", "Gênero dos participantes (masculino/feminino).", "Tempo de resposta ao tratamento em minutos."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Qual método é mais adequado para formular uma pergunta de pesquisa sobre a segurança de um novo dispositivo médico em um período de tempo específico?",
+          options: ["PICO", "PECO", "PICOT", "SWOT"],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Qual dos seguintes objetivos de pesquisa é mais específico e mensurável?",
+          options: ["Investigar o impacto da dieta na saúde geral.", "Avaliar a eficácia da fisioterapia na melhora da mobilidade em pacientes pós-AVC.", "Explorar os fatores que influenciam a adesão ao tratamento em pacientes com diabetes.", "Compreender a experiência dos pacientes com doenças crônicas."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "A seção de metodologia de um artigo científico deve fornecer informações suficientes para que outros pesquisadores possam:",
+          options: ["Interpretar os resultados de forma subjetiva.", "Criticar o estudo sem realizar uma análise detalhada.", "Replicar o estudo e verificar a validade dos resultados.", "Ignorar as limitações do estudo."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "O checklist STROBE é utilizado para avaliar a qualidade de:",
+          options: ["Ensaios clínicos randomizados.", "Estudos observacionais.", "Revisões sistemáticas e meta-análises.", "Estudos qualitativos."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "Qual método de amostragem é mais adequado para garantir que todos os subgrupos da população estejam representados na amostra?",
+          options: ["Amostragem por conveniência.", "Amostragem aleatória simples.", "Amostragem estratificada.", "Amostragem por bola de neve."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "O Web of Science é um banco de dados que indexa principalmente:",
+          options: ["Literatura biomédica e de ciências da saúde.", "Literatura científica em todas as áreas do conhecimento, com foco em citações.", "Patentes e documentos técnicos.", "Literatura de ciências sociais e humanas."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "Qual das seguintes opções descreve melhor uma revisão de literatura narrativa?",
+          options: ["Uma revisão com metodologia rigorosa e análise estatística dos estudos.", "Uma revisão abrangente da literatura com foco na avaliação da qualidade dos estudos.", "Uma revisão descritiva da literatura com base na experiência do autor.", "Uma revisão sistemática com meta-análise dos resultados."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "O checklist CASP é utilizado para avaliar a qualidade de:",
+          options: ["Ensaios clínicos randomizados.", "Estudos observacionais.", "Revisões sistemáticas e meta-análises.", "Estudos qualitativos."],
+          answer: 3, // Índice da resposta "d)"
+        },
+        {
+          question: "Em um estudo sobre a eficácia de um novo medicamento para dor, qual das seguintes variáveis seria considerada quantitativa?",
+          options: ["Nível de dor medido em uma escala de 0 a 10.", "Presença ou ausência de efeitos colaterais.", "Satisfação do paciente com o tratamento (alta, média, baixa).", "Tipo de dor (aguda, crônica)."],
+          answer: 0, // Índice da resposta "a)"
+        },
+        {
+          question: "Qual das seguintes opções descreve melhor uma variável ordinal?",
+          options: ["Cor dos olhos (azul, verde, castanho).", "Nível de escolaridade (fundamental, médio, superior).", "Peso (em kg).", "Pressão arterial (em mmHg)."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "O método PECO é especialmente útil em estudos que avaliam:",
+          options: ["A eficácia de uma intervenção terapêutica.", "A prevalência de uma doença em uma população.", "A associação entre uma exposição e um desfecho.", "A experiência subjetiva dos pacientes com uma doença."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Qual dos seguintes objetivos de pesquisa é mais adequado para um estudo exploratório?",
+          options: ["Determinar a eficácia de um novo medicamento.", "Descrever a prevalência de uma doença em uma população específica.", "Identificar os fatores associados a um determinado desfecho.", "Explorar as experiências e percepções dos pacientes com uma doença rara."],
+          answer: 3, // Índice da resposta "d)"
+        },
+        {
+          question: "A validade interna de um estudo se refere à:",
+          options: ["Capacidade de generalizar os resultados para outras populações.", "Precisão com que os resultados refletem a realidade na amostra estudada.", "Relevância clínica dos resultados.", "Facilidade de replicar o estudo em outros contextos."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "O checklist para estudos qualitativos é o:",
+          options: ["CONSORT.", "STROBE.", "PRISMA.", "CASP."],
+          answer: 3, // Índice da resposta "d)"
+        },
+        {
+          question: "Qual método de amostragem é mais propenso a introduzir viés de seleção?",
+          options: ["Amostragem aleatória simples.", "Amostragem estratificada.", "Amostragem por conveniência.", "Amostragem por conglomerados."],
+          answer: 2, // Índice da resposta "c)"
+        },
+        {
+          question: "Qual banco de dados é mais adequado para realizar uma revisão sistemática abrangente?",
+          options: ["PubMed.", "Google Scholar.", "Web of Science.", "Cochrane Library."],
+          answer: 3, // Índice da resposta "d)"
+        },
+        {
+          question: "Uma revisão sistemática se diferencia de uma revisão narrativa principalmente pela:",
+          options: ["Presença de uma pergunta de pesquisa clara e objetiva.", "Inclusão de estudos qualitativos.", "Análise estatística dos resultados.", "Avaliação da qualidade metodológica dos estudos incluídos."],
+          answer: 3, // Índice da resposta "d)"
+        },
+        {
+          question: "O checklist para estudos observacionais é o:",
+          options: ["CONSORT.", "STROBE.", "PRISMA.", "CASP."],
+          answer: 1, // Índice da resposta "b)"
+        },
+        {
+          question: "Em um estudo sobre a qualidade de vida de pacientes com câncer, qual das seguintes variáveis seria considerada qualitativa nominal?",
+          options: ["Nível de dor (em uma escala de 0 a 10).", "Estágio do câncer (I, II, III, IV).", "Presença ou ausência de depressão (sim/não).", "Nível de atividade física (em minutos por semana)."],
+          answer: 2, // Índice da resposta "c)"
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswer = parseInt(
+            quizContainer.querySelector(
+              `.option[data-question="${questionIndex}"].selected`
+            )?.dataset?.option
+          );
+          const correctAnswer = question.answer;
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
