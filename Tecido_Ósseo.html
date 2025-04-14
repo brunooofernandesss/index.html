@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Tecido Ósseo</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Tecido Ósseo</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question:
+            "Marque a alternativa que indica corretamente o nome da célula responsável pela produção de matriz óssea.",
+          options: ["Periósteo.", "Osteoclasto.", "Osteoblasto.", "Osteócito.", "Endósteo."],
+          answer: 2,
+        },
+        {
+          question: "A função do osteoclasto é:",
+          options: [
+            "Produção de novas células ósseas.",
+            "Manutenção da matriz óssea.",
+            "Produção de matriz óssea.",
+            "Diminuir a desmineralização do osso.",
+            "Reabsorção do tecido ósseo.",
+          ],
+          answer: 4,
+        },
+        {
+          question:
+            "O processo de ossificação em que o tecido conjuntivo embrionário e a cartilagem hialina é substituída por tecido ósseo, é chamado respectivamente de:",
+          options: [
+            "Ossificação endocondral e ossificação intramembranosa.",
+            "Ossificação intramembranosa e ossificação endocondral.",
+            "Ossificação exocondral e ossificação intramembranosa.",
+            "Ossificação intramembranosa e ossificação exocondral.",
+            "Ossificação intercondral e ossificação cartilaginosa.",
+          ],
+          answer: 1,
+        },
+        {
+          question: "Sobre a organização do tecido ósseo lamelar é correto afirmar:",
+          options: [
+            "Apresentam fibras colágenas dispostas em lamelas concêntricas em torno de canais com vasos.",
+            "Os canais de Volkman apresentam lamelas ósseas concêntricas à sua volta.",
+            "Os canais de Havers permitem a comunicação da cavidade medular com a superfície externa de osso.",
+            "As lamelas de tecido ósseo contêm os osteoblastos que se comunicam uns com os outros através de prolongamentos chamados canalículos.",
+            "A técnica histológica de desmineralização é a melhor utilizada para o estudo do osso lamelar.",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "O tecido ósseo é o constituinte principal do esqueleto e exerce a função de:\nI. Suporte para as partes moles.\nII. Reserva energética.\nIII. Proteção de órgãos vitais.\nMarque a alternativa correta:",
+          options: [
+            "Apenas I está certo.",
+            "Apenas II está certo.",
+            "Apenas III está certo.",
+            "I e II estão certos.",
+            "I e III estão certos",
+          ],
+          answer: 4,
+        },
+        {
+          question: "Sobre a função do tecido ósseo, marque a alternativa errada:",
+          options: [
+            "Os ossos funcionam como depósito de cálcio, fosfato e outros íons.",
+            "Constitui um sistema de alavancas.",
+            "Funciona como isolante térmico.",
+            "Aloja e protege a medula óssea.",
+            "Proporciona apoio aos músculos estriados esqueléticos.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "A camada de tecido conjuntivo denso e células osteogênicas, que revestem as superfícies internas e externas dos ossos são chamadas, respectivamente de:",
+          options: [
+            "Endósteo e periósteo.",
+            "Periósteo e endósteo.",
+            "Osteoblastos e osteoclastos.",
+            "Osteoclastos e osteoblastos.",
+            "Osteócito e osteósteo.",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "A respeito do tecido ósseo, marque a alternativa que contém a ordem correta de associação:\nI. (  ) O osso primário aparece primeiro no processo de consolidação de fratura.\nII. (  ) A técnica histológica de desgaste consiste em colocar um fragmento de osso no ácido nítrico para a retirada do cálcio e fosfato da matriz óssea.\nIII. (  ) A placa epifisária é responsável pelo crescimento do osso em extensão.\nIV. (  ) Os osteoblastos são os macrófagos do tecido ósseo.\nV. (   ) Nos casos de osteoporose o osso se encontra  pouco mineralizado, devido a redução do estrogênio pós menopausa.\nVI. (    ) No processo de ossificação endocondral embrionário toda a cartilagem hialina é substituída por tecido ósseo, exceto a superfície articular e a placa epifisária.",
+          options: [
+            "V, F, V, F, V, V.",
+            "V, F, V, F, F, F.",
+            "V, F, V, F, V, F.",
+            "F, V, V, F, V, F",
+            "V, F, V, V, V, F.",
+          ],
+          answer: 0,
+        },
+        {
+          question: "Em relação aos tipos de tecido ósseo, marque a alternativa errada.",
+          options: [
+            "Osso compacto não possui cavidades visíveis.",
+            "O osso compacto e o osso esponjoso não possuem a mesma estrutura histológica básica.",
+            "Nos ossos longos, as extremidades ou epífises são formadas por osso esponjoso com uma delgada camada superficial compacta.",
+            "A diáfise é quase totalmente compacta, com pequena quantidade de osso esponjoso na sua parte profunda, delimitando o canaI medular.",
+            "Histologicamente, existem dois tipos de tecido ósseo: o imaturo ou primário; e o maduro, secundário ou lamelar.",
+          ],
+          answer: 1,
+        },
+        {
+          question:
+            "No disco epifisário, começando ao lado da epífise, distinguem-se as cinco zonas, são elas, na ordem correta:",
+          options: [
+            "Zona de repouso, zona de cartilagem seriada ou de proliferação, zona de cartilagem calcificada, zona de cartilagem hipertrófica e zona de ossificação.",
+            "Zona de ossificação, zona de cartilagem calcificada, zona de cartilagem hipertrófica, zona de cartilagem seriada ou de proliferação e zona de repouso.",
+            "Zona de cartilagem seriada ou de proliferação, zona de repouso, zona de cartilagem hipertrófica, zona de ossificação e zona de cartilagem calcificada.",
+            "Zona de repouso, zona de cartilagem calcificada, zona de cartilagem seriada ou de proliferação, zona de cartilagem hipertrófica e zona de ossificação.",
+            "Zona de repouso, zona de cartilagem seriada ou de proliferação, zona de cartilagem hipertrófica, zona de cartilagem calcificada e zona de ossificação.",
+          ],
+          answer: 4,
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+            currentQuestion.question
+          }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            if (option.classList.contains("selected")) {
+              if (optionIndex === question.answer) {
+                option.classList.add("correct");
+              } else {
+                option.classList.add("incorrect");
+              }
+            }
+            if (optionIndex === question.answer) {
+              option.classList.add("correct");
+            }
+          });
+        });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>

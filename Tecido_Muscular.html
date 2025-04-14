@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Tecido Muscular</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Tecido Muscular</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual o nome das proteínas relacionadas à contração muscular?",
+          options: [
+            "Actina e melanina.",
+            "Quitina e prolactina.",
+            "Actina e miosina.",
+            "Quitina e miosina.",
+            "Actina e quitina.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "Julgue se as afirmativas são verdadeiras ou falsas e marque a alternativa correta.\nI. ( ) O músculo estriado cardíaco também é conhecido como miocárdio.\nII. ( ) O músculo estriado esquelético é formado por feixes de células cilíndricas muito longas e multinucleadas, que apresentam estriações transversais.\nIII. ( ) O músculo liso é formado por aglomerados de células fusiformes que não possuem estrias transversais.\nIV. ( ) Nos casos de infarto do miocárdio as fibras musculares cardíacas que permanecem viáveis entram em mitose e reparam o tecido.",
+          options: ["F, V, F, F", "V, V, F, V", "V, F, V, F", "F, F, F, V", "V, V, V, F"],
+          answer: 4,
+        },
+        {
+          question: "A respeito dos discos intercalares, assinale a alternativa errada:",
+          options: [
+            "São estruturas encontradas exclusivamente no músculo estriado cardíaco.",
+            "São estruturas encontradas nos músculos estriados esquelético e cardíaco.",
+            "São complexos juncionais encontrados na célula muscular estriada cardíaca, que atuam tanto na adesão quanto na comunicação dessas células.",
+            "São linhas transversais fortemente coráveis que aparecem em intervalos irregulares ao longo da célula muscular cardíaca.",
+            "NDA.",
+          ],
+          answer: 1,
+        },
+        {
+          question:
+            "Relacione o tipo de músculo com a atividade que ele exerce.\n1. Músculo Liso\n2. Músculo Estriado Esquelético\n3. Músculo Estriado Cardíaco.\n( ) Contração forte, rápida descontínua e voluntária.\n( ) Contração fraca, lenta e involuntária.\n( ) Contração forte, rápida, continua e involuntária.\nA ordem correta é:",
+          options: ["1, 2, 3", "2, 3, 1", "2, 1, 3", "3, 2, 1", "3, 1, 2"],
+          answer: 2,
+        },
+        {
+          question:
+            "As fibras musculares estão organizadas em grupos de feixes, sendo o conjunto de feixes envolvidos por tecido conjuntivo denso. De dentro para fora observamos as respectivas camadas de tecido conjuntivo no tecido muscular:",
+          options: [
+            "Perimísio, endomísio, epimísio",
+            "Endomísio, epimísio, perimísio",
+            "Epimísio, perimísio, endomísio",
+            "Epimísio, endomísio, perimísio",
+            "Endomísio, perimísio, epimísio",
+          ],
+          answer: 4,
+        },
+        {
+          question:
+            "Ao microscópio de polarização, a faixa escura é anisotrópica e, por isso, recebeu o nome de ______, enquanto a faixa clara, ou ______, é isotrópica. No centro de cada ______ nota-se uma linha transversal escura, a ______.\nA alternativa que preenche corretamente é:",
+          options: [
+            "Banda A, banda I, banda A, linha Z.",
+            "Banda I, banda A, banda I, linha Z.",
+            "Linha Z, banda A, banda A, banda I.",
+            "Linha Z, banda I, banda I, banda A.",
+            "Banda A, banda I, banda I, Linha Z.",
+          ],
+          answer: 0,
+        },
+        {
+          question: "As miofibrilas do músculo estriado contêm quatro proteínas principais:",
+          options: [
+            "Actina, miosina, tropomiosina e troponina.",
+            "Actina, miosina, queratina e troponina.",
+            "Actina, miosina, tropomiosina e queratina.",
+            "Actina, miosina, queratina e albimina.",
+            "Actina, miosina, queratina e colágeno.",
+          ],
+          answer: 0,
+        },
+        {
+          question: "Em relação ao sistema de túbulos transversais, marque a alternativa errada.",
+          options: [
+            "É responsável pela contração uniforme de cada fibra muscular esquelética.",
+            "Este sistema é constituído por uma rede de invaginações tubulares da membrana plasmática da fibra muscular, cujos ramos vão envolver as junções das bandas A e I de cada sarcômero.",
+            "O complexo formado de um túbulo T e duas expansões do retículo sarcoplasmático é conhecido como tríade.",
+            "A despolarização dos túbulos T, derivados do sarcolema, é transmitida ao retículo sarcoplasmático.",
+            "NDA.",
+          ],
+          answer: 4,
+        },
+        {
+          question: "Em relação ao músculo liso, marque a alternativa errada.",
+          options: [
+            "É formado pela associação de células longas, mais espessas no centro e afilando-se nas extremidades, com núcleo único e central.",
+            "O tamanho da célula muscular lisa pode variar de 20µm na parede dos pequenos vasos sanguíneos até 500µm no útero grávido.",
+            "Durante a gravidez, as fibras musculares lisas do útero apresentam apenas hiperplasia (aumento do número de células), sem sofrer a hipertrofia.",
+            "As células musculares lisas são revestidas por lâmina basal e mantidas juntas por uma rede muito delicada de fibras reticulares.",
+            "O músculo liso é controlado pelo sistema nervoso simpático e parassimpático.",
+          ],
+          answer: 2,
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+            currentQuestion.question
+          }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            if (option.classList.contains("selected")) {
+              if (optionIndex === question.answer) {
+                option.classList.add("correct");
+              } else {
+                option.classList.add("incorrect");
+              }
+            }
+            if (optionIndex === question.answer) {
+              option.classList.add("correct");
+            }
+          });
+        });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>

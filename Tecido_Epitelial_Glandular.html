@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Tecidos Glandulares</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Tecidos Glandulares</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "As glândulas originam-se de grupos celulares que proliferam a partir do tecido:",
+          options: ["Epitelial", "Conjuntivo", "Cartilaginoso", "Ósseo", "Nervoso"],
+          answer: 0,
+        },
+        {
+          question: "Sobre a glândula tireóide marque a alternativa correta:",
+          options: [
+            "É uma glândula endócrina cordonal",
+            "É uma glândula endócrina folicular",
+            "É uma glândula exócrina merócrina",
+            "Apresentam ductos e uma porção secretora",
+            "São constituídas de epitélio cúbico estratificado",
+          ],
+          answer: 1,
+        },
+        {
+          question: "Sobre as glândulas endócrinas marque a alternativa errada:",
+          options: [
+            "Podem ser cordonais ou foliculares.",
+            "A secreção é liberada na corrente sanguínea.",
+            "Secretam hormônios.",
+            "São glândulas dotadas de canais que auxiliam na eliminação da secreção.",
+            "Perderam a conexão com o epitélio de origem no período embrionário.",
+          ],
+          answer: 3,
+        },
+        {
+          question: "Sobre as glândulas exócrinas marque a alternativa errada:",
+          options: [
+            "Mantém conexão com o epitélio de origem através de ductos.",
+            "Secreta direto na corrente sanguínea.",
+            "Apresentam uma porção secretora e um ducto de excreção.",
+            "Podem ser simples ou compostas.",
+            "Sua porção secretora é denominada ácinos.",
+          ],
+          answer: 1,
+        },
+        {
+          question: "Marque a alternativa que apresenta apenas características de uma glândula exócrina:",
+          options: [
+            "Secreta hormônio, apresenta ducto e porção secretora, apresentam ácinos serosos e mucosos.",
+            "Apresenta ducto e porção secretora, glândula cordonal, secreção apócrina.",
+            "Secreção de muco, mantêm a conexão com o epitélio de origem, secreção merócrina",
+            "Ácinos serosos e mucosos, mantêm a conexão com o epitélio de origem, glândula folicular.",
+            "Glândula tubulosa enovelada, presença de folículos, perdeu a conexão com o epitélio de origem.",
+          ],
+          answer: 2,
+        },
+        {
+          question: "Todas as alternativas abaixo estão corretas, exceto:",
+          options: [
+            "O pâncreas apresenta secreção exócrina e endócrina, sendo considerada uma glândula mista.",
+            "A secreção endócrina é lançada diretamente no sangue.",
+            "As glândulas salivares são glândulas exócrinas.",
+            "A secreção exócrina é lançada em cavidades ou superfície do corpo.",
+            "Todas as glândulas endócrinas são do tipo cordonal.",
+          ],
+          answer: 4,
+        },
+        {
+          question:
+            "De acordo com o modo pelo qual os produtos de secreção deixam a célula, marque a alternativa correta:",
+          options: [
+            "A glândula sudorípara é uma glândula túbulos enovelada de secreção merócrina.",
+            "Na secreção apócrina o produto de secreção é eliminado juntamente com toda a célula, que se torna parte do produto de secreção.",
+            "O sebo, produto de secreção das glândulas sebáceas é liberado por um mecanismo de secreção merócrino.",
+            "Na secreção holócrina é liberada apenas o produto de secreção.",
+            "A glândula mamária é um exemplo de glândula exócrina holócrina.",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "As glândulas multicelulares são normalmente envolvidas por uma cápsula de tecido conjuntivo. Prolongamentos da cápsula chamados _______ dividem a glândula em porções menores chamadas _______. A alternativa que completa corretamente a frase acima, respectivamente, é:",
+          options: ["Septos e ductos.", "Lóbulos e septos.", "Ductos e septos.", "Septos e lóbulos.", "NDA."],
+          answer: 3,
+        },
+        {
+          question: "Sobre a célula caliciforme, não podemos afirmar que:",
+          options: [
+            "Encontra-se entre as células epiteliais do intestino delgado e da traquéia.",
+            "Sintetizam e secretam muco.",
+            "Não se coram com a coloração de rotina.",
+            "Apresentam o núcleo na região basal.",
+            "Realizam a fagocitose dos microorganismos.",
+          ],
+          answer: 4,
+        },
+        {
+          question: "Quando a natureza de secreção, marque a alternativa correta:",
+          options: [
+            "As glândulas serosas são aquelas que secretam um fluido espesso e viscoso, glicoproteico, denominado muco.",
+            "Os ácinos serosos apresentam células de formato piramidal, núcleos centrais arredondados e polaridade definida.",
+            "Os ácinos serosos não se coram com a coloração de rotina enquanto os ácinos mucosos se coram intensamente.",
+            "A glândula salivar parótida é constituída de ácinos mucosos.",
+            "Os ácinos serosos secretam muco e os ácinos mucosos secretam proteína.",
+          ],
+          answer: 1,
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+            currentQuestion.question
+          }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            if (option.classList.contains("selected")) {
+              if (optionIndex === question.answer) {
+                option.classList.add("correct");
+              } else {
+                option.classList.add("incorrect");
+              }
+            }
+            if (optionIndex === question.answer) {
+              option.classList.add("correct");
+            }
+          });
+        });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>

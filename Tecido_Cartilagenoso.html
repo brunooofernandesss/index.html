@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Tecido Cartilaginoso</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Tecido Cartilaginoso</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "O tecido cartilaginoso é um tipo especial de que tecido?",
+          options: ["Muscular", "Conjuntivo", "Ósseo", "Nervoso", "Epitelial"],
+          answer: 1,
+        },
+        {
+          question:
+            "Sabemos que a cartilagem pode ser classificada em três tipos principais: hialina, elástica e fibrosa. A respeito desses três tipos, marque a alternativa incorreta:",
+          options: [
+            "A cartilagem elástica está presente na orelha e caracteriza-se por sua flexibilidade.",
+            "A cartilagem fibrosa está associada ao tecido conjuntivo denso.",
+            "A cartilagem fibrosa é resistente à tração e apresenta grande quantidade de fibras colágenas e pouca substância fundamental.",
+            "A cartilagem hialina é encontrada na traquéia e nos grandes brônquios.",
+            "A cartilagem hialina é muito vascularizada.",
+          ],
+          answer: 4,
+        },
+        {
+          question:
+            "Qual a célula responsável por produzir a matriz cartilaginosa (fibras e a substância fundamental)?",
+          options: ["Condroblasto", "Fibroblasto", "Osteócito", "Osteoblasto", "Condrócito"],
+          answer: 0,
+        },
+        {
+          question: "São funções do tecido cartilaginoso, exceto:",
+          options: [
+            "Sustentação de tecidos moles.",
+            "Reveste as superfícies articulares.",
+            "Revestimento dos vasos sanguíneos.",
+            "Absorção de choques.",
+            "Primeiro esqueleto do embrião.",
+          ],
+          answer: 2,
+        },
+        {
+          question: "Sobre o disco intervertebral, marque a alternativa correta:",
+          options: [
+            "O disco intervertebral localizado entre as vértebras da coluna é constituído de um núcleo pulposo localizado internamente e de um anel fibroso localizado externamente.",
+            "O disco intervertebral é constituído de colágeno do tipo II e fibras elásticas, conferindo elasticidade ao disco.",
+            "Sua nutrição é feita pelo pericôndrio que envolve o disco intervertebral externamente.",
+            "Apresenta abundante matriz extracelular rica em substância fundamental.",
+            "É uma estrutura pouco rígida, e muito gelatinosa para amortecer o impacto do corpo.",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "O pericôndrio é uma camada de tecido conjuntivo denso normalmente encontrada revestindo as cartilagens externamente, sobre essa estrutura, não podemos afirmar que:",
+          options: [
+            "É observada em todos os tipos de cartilagens.",
+            "É rica em fibras colágenas tipo I.",
+            "É responsável pelo crescimento aposicional da cartilagem.",
+            "Tem a função de nutrição da cartilagem.",
+            "Fornece novos condroblastos para a cartilagem.",
+          ],
+          answer: 0,
+        },
+        {
+          question: "Sobre a cartilagem hialina, assinale a alternativa errada:",
+          options: [
+            "É a cartilagem mais abundante no organismo.",
+            "Apresenta grande quantidade de matriz extracelular.",
+            "Tem uma matriz constituída por fibrilas colágenas (colágeno do tipo I), glicosaminoglicanos, proteoglicanas e glicoproteínas de adesão.",
+            "Permite o crescimento do indivíduo em extensão.",
+            "Na periferia da cartilagem hialina observam-se os condroblastos que apresentam a forma alongada e mais profundamente os condrócitos que são arredondados e ficam dentro das lacunas.",
+          ],
+          answer: 2,
+        },
+        {
+          question: "Sobre a histogênese da cartilagem não podemos afirmar que:",
+          options: [
+            "O crescimento aposicional ocorre a partir das células do pericôndrio que fornece novos condroblastos para o tecido cartilaginoso.",
+            "Tem a sua origem a partir do mesênquima embrionário.",
+            "O crescimento intersticial ocorre no interior da cartilagem pela divisão dos condrócitos existentes.",
+            "O crescimento aposicional é mais importante do que o intersticial, porque, à medida que a matriz torna-se mais rígida, o crescimento intersticial não é viável e a cartilagem cresce apenas por aposição.",
+            "O crescimento da cartilagem ocorre do “centro para a periferia”, através do crescimento aposicional.",
+          ],
+          answer: 4,
+        },
+        {
+          question: "Onde é encontrada a cartilagem hialina?",
+          options: [
+            "Na tuba auditiva, epiglote e traquéia.",
+            "Traqueia, brônquios e superfície articular.",
+            "Epiglote, disco intervertebral e brônquios.",
+            "Tendões, esqueleto do embrião e orelha.",
+            "Epiglote, orelha e placa epifisária.",
+          ],
+          answer: 1,
+        },
+        {
+          question: "Em relação ao tecido cartilaginoso, marque a afirmativa incorreta.",
+          options: [
+            "Não possui vasos sanguíneos e linfáticos.",
+            "A matriz extracelular não é mineralizada.",
+            "Possui pouca matriz extracelular",
+            "Suas células estão localizadas nas lacunas no interior da matriz extracelular.",
+            "Sua matriz é constituída de colágeno e substância fundamental.",
+          ],
+          answer: 2,
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+            currentQuestion.question
+          }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            if (option.classList.contains("selected")) {
+              if (optionIndex === question.answer) {
+                option.classList.add("correct");
+              } else {
+                option.classList.add("incorrect");
+              }
+            }
+            if (optionIndex === question.answer) {
+              option.classList.add("correct");
+            }
+          });
+        });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>

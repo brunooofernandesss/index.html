@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Tecido Epitelial</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: blue;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz de Tecido Epitelial</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question:
+            "Entre as características básicas de um tecido epitelial de revestimento marque a alternativa incorreta:",
+          options: [
+            "Os epitélios de revestimento não apresentam vasos sanguíneos.",
+            "As células epiteliais estão mergulhadas numa grande quantidade de matriz extracelular.",
+            "As células epiteliais estão unidas entre si por junções celulares.",
+            "As células epiteliais podem se apresentar com formato, achatado, cúbico e cilíndrico.",
+            "Os epitélios apresentam duas regiões distintas: a superfície apical e a basal.",
+          ],
+          answer: 1,
+        },
+        {
+          question:
+            "O tecido epitelial da traquéia é do tipo________, pois apresenta_______",
+          options: [
+            "Estratificado, várias camadas de células cilíndricas, com o núcleo localizado na região basal da célula.",
+            "Pseudoestratificado, várias camadas de células pavimentosas, com o núcleo oval.",
+            "Simples, uma única camada de células cúbicas, todas encostam na membrana basal.",
+            "Pseudoestratificado, uma única camada de células cilindricas, com o núcleo em diferentes regiões dentro da célula.",
+            "Estratificado, várias camadas de células cilíndricas, todas encostam na membrana basal.",
+          ],
+          answer: 3,
+        },
+        {
+          question:
+            "Sobre o tecido epitelial de revestimento da traquéia,  marque a alternativa incorreta:",
+          options: [
+            "Os cílios presentes no epitélio da traquéia, tem função de “varrer” particulas estranhas, do sistema respiratório.",
+            "As células de revestimento da traquéia apresentam o formato cilíndrico com a presença de cílios na sua superfície apical.",
+            "O tecido epitelial de revestimento é altamente especializado, tanto o muco quanto as microvilosidades retém e absorvem respectivamente as partículas sólidas provenientes da respiração.",
+            "Abaixo do tecido epitelial de revestimento observamos um tecido conjuntivo altamente vascularizado, com abundante matriz extracelular.",
+            "Entre as células epiteliais de revestimento observamos células secretora de muco, com a função reter partículas provenientes da respiração.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "Existem 5 camadas distintas na epiderme da pele grossa. A sequência das camadas da superfície do corte histológico para baixo é:",
+          options: [
+            "Camada granulosa, lúcida, córnea, espinhosa e basal.",
+            "Camada basal, espinhosa, lúcida, granulosa e córnea.",
+            "Camada córnea, lúcida, granulosa, espinhosa e basal.",
+            "Camada córnea, granulosa, espinhosa, lúcida e basal.",
+            "Camada córnea, granulosa, lúcida, espinhosa e basal.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "Sobre o corte histológico de pele, marque a alternativa correta:",
+          options: [
+            "A derme da pele grossa  apresenta as glândulas sebáceas, folículo piloso e glândulas sudoríparas.",
+            "A pele grossa está localizada apenas nas palmas das mãos e nas solas dos pés.",
+            "A derme da pele grossa apresenta muito mais colágeno que a da pele fina.",
+            "A pele grossa apresenta uma derme mais espessa que a pele fina.",
+            "A pele fina apresenta o epitélio pavimentoso estratificado não queratinizado",
+          ],
+          answer: 1,
+        },
+        {
+          question:
+            "O tecido de revestimento dos vasos sanguíneos, esôfago, bexiga e intestino delgado, respectivamente, é:",
+          options: [
+            "Tecido epitelial simples pavimentoso, pavimentoso estratificado, de transição e cilíndrico simples.",
+            "Tecido epitelial simples pavimentoso, pavimentoso estratificado, de transição e cúbico simples.",
+            "Tecido epitelial cúbico simples, pavimentoso estratificado queratinizado, de transição e cilíndrico simples.",
+            "Tecido epitelial cúbico simples, de transição, cilíndrico simples e simples pavimentoso.",
+            "Tecido epitelial pavimentoso estratificado, pavimentoso estratificado queratinizado, cilíndrico simples e pseudoestratificado cilíndrico ciliado.",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "Assinale a alternativa que apresentam somente órgãos com o mesmo epitélio de revestimento:",
+          options: [
+            "Esôfago, pele, lábio, bexiga.",
+            "Intestino delgado, intestino grosso, vesícula biliar, tireóide.",
+            "Pulmão, artéria, veia, pleura.",
+            "Bexiga, ureter, uretra, vagina.",
+            "Traquéia, pulmão, fossas nasais, brônquios.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "No epitélio de revestimento do intestino delgado observam-se células absortivas. Essas células são:",
+          options: [
+            "Células pavimentosas com presença de microvilosidades no ápice.",
+            "Células cúbicas com a presença da “borda em escova”, que representa o conjunto de microvilosidades mais o glicocálix da células.",
+            "Células ovaladas com núcleo na porção apical e presença de grânulos contendo mucina na porção apical da célula.",
+            "Células colunares altas com núcleos colunares e presença de microvilosidades no ápice da célula.",
+            "Células cilíndricas com presença de estereocílios na superfície apical.",
+          ],
+          answer: 3,
+        },
+        {
+          question:
+            "Sobre as especializações da superfície do tecido epitelial marque a alternativa incorreta:",
+          options: [
+            "As microvilosidades são encontradas em células que exercem intensa absorção como as do epitélio de revestimento do intestino delgado e dos túbulos proximais dos rins.",
+            "O conjunto glicocálix e microvilosidades das células é visto facilmente ao microscópio de luz, sendo chamado de “borda estriada” ou “borda em escova”.",
+            "Os estereocílios são prolongamentos móveis responsáveis por impedir que partículas entrem dentro do órgão.",
+            "A queratina é uma proteína que confere proteção ao epitélio de revestimento do órgão onde se encontra.",
+            "Os cílios tem a função de impulsionar as partículas sólidas adiante, sendo encontrados nas células cilíndricas da traquéia e das tubas uterinas.",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "Em uma aula prática foram observadas as seguintes lâminas:\n\nLâmina 1: Tecido com uma única camada de células justapostas, tendo a altura menor que a largura (células achatadas) sem material extracelular entre elas.\n\nLâmina 2: Tecido com várias camadas de células justapostas, constituídas por células globosas, mas na superfície as células apresentavam um formato achatado.\n\nLâmina 3: Pôde-se observar 2 tipos celulares: células com formato prismático, dispostas em uma única camada, com a presença de um halo hipercorado na superfície apical das células e células de coloração pálida, com o núcleo basal, secretoras de muco.\n\nAs lâminas descritas são respectivamente:",
+          options: [
+            "Tecido epitelial de revestimento simples pavimentoso, tecido epitelial estratificado cúbico e tecido epitelial e epitélio cilíndrico simples com células caliciformes.",
+            "Tecido epitelial de revestimento simples pavimentoso, epitélio pavimentoso estratificado e epitélio cilíndrico simples com células caliciformes.",
+            "Tecido epitelial de revestimento simples pavimentoso, tecido epitelial de revestimento estratificado achatado e epitélio cúbico simples com células caliciformes.",
+            "Tecido epitelial de revestimento simples achatado, tecido epitelial de transição e tecido epitelial  prismático com estéreocílios e células caliciformes.",
+            "Tecido epitelial de revestimento achatado estratificado, tecido epitelial de transição e tecido epitelial  prismático com “borda em escova” e células caliciformes.",
+          ],
+          answer: 1,
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+            currentQuestion.question
+          }</div>
+              <div class="options">${options}</div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            if (option.classList.contains("selected")) {
+              if (optionIndex === question.answer) {
+                option.classList.add("correct");
+              } else {
+                option.classList.add("incorrect");
+              }
+            }
+            if (optionIndex === question.answer) {
+              option.classList.add("correct");
+            }
+          });
+        });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
