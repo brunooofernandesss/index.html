@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Questionário de Histologia do Sistema Nervoso 01</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column; /* Organizar o conteúdo em coluna */
+            align-items: center; /* Centralizar horizontalmente */
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .options {
+            margin-bottom: 10px;
+        }
+        .option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .option.selected {
+            border-color: blue;
+        }
+        .option.correct {
+            background-color: #c6f6d5;
+            color: green;
+            font-weight: bold;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            color: red;
+        }
+        .button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #results {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center; /* Centralizar o texto de resultados */
+        }
+        .observation {
+            font-style: italic;
+            color: #777;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Questionário de Histologia: SNC e Medula Óssea</h1>
+        <div id="quiz"></div>
+        <button id="submit" class="button">Verificar Respostas</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: 'A seta indica um tipo morfológico de neurônio. Com uma exceção, neurônios como este (embora não necessariamente tão grandes) são encontrados em TODAS as áreas do sistema nervoso. Nomeie esta exceção.',
+                image: "https://histology.medicine.umich.edu/sites/default/files/CNShistoImage1.jpg",
+                options: [
+                    "A. Córtex Cerebelar",
+                    "B. Córtex Cerebral",
+                    "C. Gânglios da Raiz Dorsal",
+                    "D. Substância Cinzenta da Medula Espinhal",
+                    "E. Gânglios Autonômicos Periféricos"
+                ],
+                answer: 2, // Índice da resposta "C"
+                observation: "Gabarito: C. Neurônios como o mostrado (multipolar) são encontrados em todo o sistema nervoso, exceto nos gânglios da raiz dorsal/sensorial, que contêm exclusivamente neurônios com um arranjo pseudounipolar."
+            },
+            {
+                question: 'Nomeie a parte do sistema nervoso central que é exibida nesta seção de tecido.',
+                image: "https://histology.medicine.umich.edu/sites/default/files/Q2CNS.jpg",
+                options: [
+                    "A. Cerebelo",
+                    "B. Giro Dentado",
+                    "C. Medula Espinhal Dorsal",
+                    "D. Hipocampo",
+                    "E. Medula Espinhal Ventral"
+                ],
+                answer: 4, // Índice da resposta "E"
+                observation: "Gabarito: E. A organização e a morfologia das células mostradas são encontradas APENAS na medula espinhal ventral."
+            },
+            {
+                question: 'Qual dos seguintes tipos de células contribui para a manutenção da barreira hematoencefálica?',
+                options: [
+                    "A. Astrócitos",
+                    "B. Células Ependimárias do Plexo Coroide",
+                    "C. Micróglia",
+                    "D. Neurônios",
+                    "E. Oligodendrócitos",
+                    "F. NENHUM dos acima"
+                ],
+                answer: 0, // Índice da resposta "A"
+                observation: "Gabarito: A. Tecnicamente, as junções entre as células endoteliais constituem a \"barreira\" real. No entanto, as células endoteliais mantêm essas junções em resposta a sinais (via processos podais) dos astrócitos."
+            },
+            {
+                question: 'Nomeie a função da célula marcada pela seta preta.',
+                imageLow: "https://histology.medicine.umich.edu/sites/default/files/cns_pq_4_low.jpg",
+                imageHigh: "https://histology.medicine.umich.edu/sites/default/files/cns_pq_4_high.jpg",
+                options: [
+                    "A. Fornece saída motora visceral pré-ganglionar para gânglios simpáticos.",
+                    "B. Fornece saída motora somática para músculos esqueléticos.",
+                    "C. Relata entrada sensorial para o córtex cerebelar.",
+                    "D. Relata entrada sensorial para o córtex cerebral.",
+                    "E. Relata entrada sensorial para outros neurônios na medula espinhal."
+                ],
+                answer: 0, // Índice da resposta "A"
+                observation: "Gabarito: A. Este neurônio fornece saída motora visceral pré-ganglionar para gânglios simpáticos. Mesmo que a medula esteja orientada \"de lado\", você ainda deve ser capaz de identificar esta célula como estando na coluna celular intermediolateral na extensão lateral do corno ventral, onde os neurônios motores viscerais simpáticos pré-ganglionares são encontrados."
+            }
+        ];
+
+        const quizContainer = document.getElementById("quiz");
+        const submitButton = document.getElementById("submit");
+        const resultsContainer = document.getElementById("results");
+
+        function buildQuiz() {
+            const output = [];
+
+            questions.forEach((currentQuestion, questionNumber) => {
+                const options = currentQuestion.options
+                    .map(
+                        (option, optionNumber) =>
+                            `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                                ${option}
+                            </div>`
+                    )
+                    .join("");
+
+                let imageHtml = '';
+                if (currentQuestion.image) {
+                    imageHtml = `<img src="${currentQuestion.image}" alt="Imagem da Questão ${questionNumber + 1}" class="question-image">`;
+                } else if (currentQuestion.imageLow && currentQuestion.imageHigh) {
+                    imageHtml = `<p>Baixa Ampliação:</p><img src="${currentQuestion.imageLow}" alt="Imagem da Questão ${questionNumber + 1} - Baixa Ampliação" class="question-image">
+                                 <p>Alta Ampliação:</p><img src="${currentQuestion.imageHigh}" alt="Imagem da Questão ${questionNumber + 1} - Alta Ampliação" class="question-image">`;
+                }
+
+                output.push(`
+                    <div class="card">
+                        <div class="question">${questionNumber + 1}. ${currentQuestion.question}</div>
+                        ${imageHtml}
+                        <div class="options">${options}</div>
+                        <div class="observation" id="observation-${questionNumber}"></div>
+                    </div>
+                `);
+            });
+
+            quizContainer.innerHTML = output.join("");
+        }
+
+        function showResults() {
+            let correctAnswers = 0;
+
+            questions.forEach((question, questionIndex) => {
+                const options = quizContainer.querySelectorAll(
+                    `.option[data-question="${questionIndex}"]`
+                );
+                const userAnswer = parseInt(
+                    quizContainer.querySelector(
+                        `.option[data-question="${questionIndex}"].selected`
+                    )?.dataset?.option
+                );
+                const correctAnswer = question.answer;
+                const observationContainer = document.getElementById(`observation-${questionIndex}`);
+
+                options.forEach((option) => {
+                    const optionIndex = parseInt(option.dataset.option);
+                    option.classList.remove("correct", "incorrect");
+                    if (optionIndex === correctAnswer) {
+                        option.classList.add("correct");
+                    }
+                    if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                        option.classList.add("incorrect");
+                    }
+                });
+
+                if (userAnswer === correctAnswer) {
+                    correctAnswers++;
+                    observationContainer.textContent = `Resposta correta: ${question.observation}`;
+                } else if (userAnswer !== undefined) {
+                    observationContainer.textContent = `Resposta correta: ${question.options[correctAnswer]}. ${question.observation}`;
+                } else {
+                    observationContainer.textContent = "Por favor, selecione uma resposta.";
+                }
+            });
+
+            resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        }
+
+        quizContainer.addEventListener("click", function (event) {
+            if (event.target.classList.contains("option")) {
+                const questionNumber = event.target.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question="${questionNumber}"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                event.target.classList.add("selected");
+            }
+        });
+
+        submitButton.addEventListener("click", showResults);
+
+        buildQuiz();
+    </script>
+</body>
+</html>
