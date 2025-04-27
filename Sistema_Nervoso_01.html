@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Questionário de Histologia do Sistema Nervoso 01</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px; /* Aumentei a margem para espaço das observações */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options {
+            margin-bottom: 10px; /* Espaço entre as opções e a observação */
+        }
+        .option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .option.selected {
+            border-color: blue;
+        }
+        .option.correct {
+            background-color: #c6f6d5;
+            color: green;
+            font-weight: bold;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            color: red;
+        }
+        .button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #results {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .observation {
+            font-style: italic;
+            color: #777;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Questionário de Histologia: SNC e Medula Óssea</h1>
+        <div id="quiz"></div>
+        <button id="submit" class="button">Verificar Respostas</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "Qual das seguintes células gliais é responsável pela formação da bainha de mielina no sistema nervoso central?",
+                options: [
+                    "Astrócito",
+                    "Oligodendrócito",
+                    "Micróglia",
+                    "Célula ependimária"
+                ],
+                answer: 1, // Índice da resposta "b)"
+                observation: "No sistema nervoso central, os oligodendrócitos são as células responsáveis por envolver os axônios dos neurônios com múltiplas camadas de mielina, formando a bainha de mielina que isola eletricamente os axônios e acelera a condução dos impulsos nervosos."
+            },
+            {
+                question: "A barreira hematoencefálica é uma estrutura crucial para proteger o sistema nervoso central. Qual das seguintes células contribui significativamente para a formação dessa barreira?",
+                options: [
+                    "Neurônios",
+                    "Células de Schwann",
+                    "Astrócitos",
+                    "Micróglia"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Os astrócitos desempenham diversas funções de suporte no sistema nervoso central, e uma das mais importantes é a contribuição para a formação da barreira hematoencefálica. Seus prolongamentos pediculares envolvem os capilares sanguíneos, regulando a passagem de substâncias do sangue para o tecido nervoso."
+            },
+            {
+                question: "Os neurônios são as unidades funcionais do sistema nervoso. Qual das seguintes estruturas é responsável por receber os sinais de outros neurônios?",
+                options: [
+                    "Axônio",
+                    "Corpo celular (Soma)",
+                    "Dendrito",
+                    "Nódulo de Ranvier"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Os dendritos são prolongamentos ramificados do corpo celular do neurônio especializados em receber sinais químicos (neurotransmissores) de outros neurônios através das sinapses."
+            },
+            {
+                question: "Qual tipo de neurônio é caracterizado por possuir um único prolongamento que se divide em um ramo periférico e um ramo central?",
+                options: [
+                    "Neurônio multipolar",
+                    "Neurônio bipolar",
+                    "Neurônio unipolar (pseudounipolar)",
+                    "Interneurônio"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Esse tipo de neurônio possui um único prolongamento que emerge do corpo celular e se bifurca em dois ramos longos: um periférico, que geralmente atua como dendrito, e um central, que funciona como axônio. São característicos dos neurônios sensoriais dos gânglios espinais."
+            },
+            {
+                question: "A substância branca do sistema nervoso central é composta principalmente por:",
+                options: [
+                    "Corpos celulares de neurônios",
+                    "Axônios mielinizados",
+                    "Corpos celulares de células gliais",
+                    "Capilares sanguíneos"
+                ],
+                answer: 1, // Índice da resposta "b)"
+                observation: "A substância branca do sistema nervoso central recebe essa denominação devido à coloração clara da mielina, um lipídio que envolve os axônios dos neurônios. Essa região é rica em fibras nervosas mielinizadas que conectam diferentes áreas do sistema nervoso central."
+            },
+            {
+                question: "Qual das seguintes células gliais possui função fagocitária no sistema nervoso central, atuando na defesa imunológica e remoção de detritos?",
+                options: [
+                    "Astrócito",
+                    "Oligodendrócito",
+                    "Micróglia",
+                    "Célula ependimária"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "As células da micróglia são os macrófagos residentes do sistema nervoso central. Elas realizam fagocitose de restos celulares, neurônios danificados e patógenos, desempenhando um papel crucial na defesa imunológica e na manutenção da homeostase do tecido nervoso."
+            },
+            {
+                question: "As células ependimárias revestem os ventrículos cerebrais e o canal central da medula espinhal. Qual é a principal função dessas células?",
+                options: [
+                    "Produção de mielina",
+                    "Sustentação estrutural dos neurônios",
+                    "Produção e circulação do líquido cefalorraquidiano (LCR)",
+                    "Fagocitose de patógenos"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "As células ependimárias são células epiteliais colunares ciliadas que revestem os ventrículos cerebrais e o canal central da medula espinhal. Seus cílios auxiliam na circulação do líquido cefalorraquidiano, que é produzido pelos plexos corioides (estruturas especializadas revestidas por células ependimárias modificadas)."
+            },
+            {
+                question: "Na medula óssea, qual tipo de célula é responsável pela produção das células sanguíneas (hematopoiese)?",
+                options: [
+                    "Adipócito",
+                    "Osteócito",
+                    "Célula-tronco hematopoiética",
+                    "Fibroblasto"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "As células-tronco hematopoiéticas são células pluripotentes presentes na medula óssea vermelha, capazes de se diferenciar em todos os tipos de células sanguíneas: eritrócitos (glóbulos vermelhos), leucócitos (glóbulos brancos) e plaquetas."
+            },
+            {
+                question: "Qual dos seguintes componentes estruturais é predominante na medula óssea vermelha, indicando sua alta atividade hematopoiética?",
+                options: [
+                    "Tecido adiposo",
+                    "Trabéculas ósseas densas",
+                    "Cordões de células hematopoiéticas",
+                    "Seios vasculares com paredes espessas"
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "A medula óssea vermelha é caracterizada pela presença de cordões celulares densos, compostos por células hematopoiéticas em diferentes estágios de maturação, sustentados por um arcabouço de fibras reticulares e vasos sanguíneos sinusoides."
+            },
+            {
+                question: "A medula óssea amarela é rica em qual tipo de tecido?",
+                options: [
+                    "Tecido hematopoiético",
+                    "Tecido adiposo",
+                    "Tecido conjuntivo denso",
+                    "Tecido cartilaginoso"
+                ],
+                answer: 1, // Índice da resposta "b)"
+                observation: "A medula óssea amarela é predominantemente composta por adipócitos (células de gordura), o que lhe confere a coloração amarelada. Ela possui pouca ou nenhuma atividade hematopoiética em condições normais, mas pode se converter em medula óssea vermelha em situações de alta demanda por células sanguíneas."
+            }
+        ];
+        const quizContainer = document.getElementById("quiz");
+        const submitButton = document.getElementById("submit");
+        const resultsContainer = document.getElementById("results");
+
+        function buildQuiz() {
+            const output = [];
+
+            questions.forEach((currentQuestion, questionNumber) => {
+                const options = currentQuestion.options
+                    .map(
+                        (option, optionNumber) =>
+                            `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                                ${String.fromCharCode(97 + optionNumber)}) ${option}
+                            </div>`
+                    )
+                    .join("");
+
+                output.push(`
+                    <div class="card">
+                        <div class="question">${questionNumber + 1}. ${currentQuestion.question}</div>
+                        <div class="options">${options}</div>
+                        <div class="observation" id="observation-${questionNumber}"></div>
+                    </div>
+                `);
+            });
+
+            quizContainer.innerHTML = output.join("");
+        }
+
+        function showResults() {
+            let correctAnswers = 0;
+
+            questions.forEach((question, questionIndex) => {
+                const options = quizContainer.querySelectorAll(
+                    `.option[data-question="${questionIndex}"]`
+                );
+                const userAnswer = parseInt(
+                    quizContainer.querySelector(
+                        `.option[data-question="${questionIndex}"].selected`
+                    )?.dataset?.option
+                );
+                const correctAnswer = question.answer;
+                const observationContainer = document.getElementById(`observation-${questionIndex}`);
+
+                options.forEach((option) => {
+                    const optionIndex = parseInt(option.dataset.option);
+                    option.classList.remove("correct", "incorrect");
+                    if (optionIndex === correctAnswer) {
+                        option.classList.add("correct");
+                    }
+                    if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                        option.classList.add("incorrect");
+                    }
+                });
+
+                if (userAnswer === correctAnswer) {
+                    correctAnswers++;
+                    observationContainer.textContent = `Resposta correta: ${question.observation}`;
+                } else if (userAnswer !== undefined) {
+                    observationContainer.textContent = `Resposta correta: ${String.fromCharCode(97 + correctAnswer)}) ${question.options[correctAnswer]}. ${question.observation}`;
+                } else {
+                    observationContainer.textContent = "Por favor, selecione uma resposta.";
+                }
+            });
+
+            resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        }
+
+        quizContainer.addEventListener("click", function (event) {
+            if (event.target.classList.contains("option")) {
+                const questionNumber = event.target.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question="${questionNumber}"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                event.target.classList.add("selected");
+            }
+        });
+
+        submitButton.addEventListener("click", showResults);
+
+        buildQuiz();
+    </script>
+</body>
+</html>
