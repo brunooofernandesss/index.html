@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Questionário sobre Sistema Cardiovascular e Vasos Sanguíneos</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 800px;
+            width: 100%;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options {
+            margin-bottom: 10px;
+        }
+        .option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .option.selected {
+            border-color: blue;
+        }
+        .option.correct {
+            background-color: #c6f6d5;
+            color: green;
+            font-weight: bold;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            color: red;
+        }
+        .button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #results {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .observation {
+            font-style: italic;
+            color: #777;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Questionário sobre Sistema Cardiovascular e Vasos Sanguíneos</h1>
+        <div id="quiz"></div>
+        <button id="submit" class="button">Verificar Respostas</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: 'Qual das seguintes alternativas descreve corretamente a função da circulação sistêmica?',
+                options: [
+                    "a) Transportar sangue rico em oxigênio dos pulmões para o coração.",
+                    "b) Promover a troca de gases entre o sangue e os tecidos do corpo.",
+                    "c) Levar sangue pobre em oxigênio do coração para os pulmões.",
+                    "d) Filtrar resíduos metabólicos do sangue nos rins."
+                ],
+                answer: 1, // Índice da resposta "b)"
+                observation: "Gabarito: b) A circulação sistêmica tem como principal função levar sangue oxigenado do ventrículo esquerdo do coração para todos os tecidos do corpo, onde ocorre a troca de oxigênio e nutrientes por dióxido de carbono e resíduos. O sangue desoxigenado retorna então ao átrio direito do coração."
+            },
+            {
+                question: 'As paredes dos vasos sanguíneos são compostas por diferentes camadas de tecido. Qual das seguintes opções apresenta a ordem correta dessas camadas, da mais externa para a mais interna?',
+                options: [
+                    "a) Túnica íntima, túnica média, adventícia.",
+                    "b) Túnica média, adventícia, túnica íntima.",
+                    "c) Adventícia, túnica média, túnica íntima.",
+                    "d) Adventícia, túnica íntima, túnica média."
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Gabarito: c) A parede dos vasos sanguíneos é formada por três camadas principais: a adventícia (camada externa de tecido conjuntivo), a túnica média (camada intermediária de músculo liso) e a túnica íntima (camada interna de endotélio)."
+            },
+            {
+                question: 'Qual das seguintes características é típica das artérias, refletindo sua função de transportar sangue sob alta pressão?',
+                options: [
+                    "a) Paredes finas e presença de válvulas.",
+                    "b) Luz do vaso irregular e baixa elasticidade.",
+                    "c) Paredes espessas e alta elasticidade.",
+                    "d) Presença exclusiva de endotélio e lâmina basal."
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Gabarito: c) As artérias são projetadas para resistir e manter a alta pressão sanguínea gerada pelo bombeamento do coração. Suas paredes espessas, ricas em músculo liso e fibras elásticas, conferem essa capacidade."
+            },
+            {
+                question: 'As veias desempenham um papel crucial no retorno do sangue ao coração. Qual das seguintes estruturas auxilia as veias a superar a gravidade e evitar o refluxo sanguíneo, especialmente nos membros inferiores?',
+                options: [
+                    "a) Paredes musculares espessas.",
+                    "b) Alta pressão sanguínea.",
+                    "c) Válvulas unidirecionais.",
+                    "d) Endotélio fenestrado."
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Gabarito: c) As veias, especialmente aquelas que precisam transportar sangue contra a gravidade, possuem válvulas internas que impedem o fluxo retrógrado do sangue, garantindo que ele siga em direção ao coração."
+            },
+            {
+                question: 'Os capilares são os vasos sanguíneos onde ocorrem as trocas essenciais de substâncias entre o sangue e os tecidos. Qual das seguintes características estruturais dos capilares facilita essa troca?',
+                options: [
+                    "a) Paredes espessas com múltiplas camadas de músculo liso.",
+                    "b) Presença de válvulas para controlar o fluxo sanguíneo.",
+                    "c) Paredes finas, compostas apenas por endotélio e lâmina basal.",
+                    "d) Luz do vaso ampla e fluxo sanguíneo rápido."
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Gabarito: c) A estrutura simplificada dos capilares, com paredes muito finas formadas apenas pelo endotélio e pela lâmina basal, permite uma difusão eficiente de gases, nutrientes e resíduos entre o sangue e as células dos tecidos."
+            },
+            {
+                question: 'Qual dos seguintes tipos de capilares apresenta grandes fenestrações (poros) que permitem a passagem de proteínas e até mesmo células sanguíneas, sendo encontrados em órgãos como o fígado e a medula óssea?',
+                options: [
+                    "a) Capilares contínuos.",
+                    "b) Capilares fenestrados.",
+                    "c) Capilares sinusoides.",
+                    "d) Capilares linfáticos."
+                ],
+                answer: 2, // Índice da resposta "c)"
+                observation: "Gabarito: c) Os capilares sinusoides possuem a maior permeabilidade devido às suas grandes fenestrações e espaços intercelulares, facilitando a troca de grandes moléculas e células entre o sangue e o parênquima de órgãos específicos."
+            }
+        ];
+
+        const quizContainer = document.getElementById("quiz");
+        const submitButton = document.getElementById("submit");
+        const resultsContainer = document.getElementById("results");
+
+        function buildQuiz() {
+            const output = [];
+
+            questions.forEach((currentQuestion, questionNumber) => {
+                const options = currentQuestion.options
+                    .map(
+                        (option, optionNumber) =>
+                            `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                                ${option}
+                            </div>`
+                    )
+                    .join("");
+
+                output.push(`
+                    <div class="card">
+                        <div class="question">${questionNumber + 1}. ${currentQuestion.question}</div>
+                        <div class="options">${options}</div>
+                        <div class="observation" id="observation-${questionNumber}"></div>
+                    </div>
+                `);
+            });
+
+            quizContainer.innerHTML = output.join("");
+        }
+
+        function showResults() {
+            let correctAnswers = 0;
+
+            questions.forEach((question, questionIndex) => {
+                const options = quizContainer.querySelectorAll(
+                    `.option[data-question="${questionIndex}"]`
+                );
+                const userAnswer = parseInt(
+                    quizContainer.querySelector(
+                        `.option[data-question="${questionIndex}"].selected`
+                    )?.dataset?.option
+                );
+                const correctAnswer = question.answer;
+                const observationContainer = document.getElementById(`observation-${questionIndex}`);
+
+                options.forEach((option) => {
+                    const optionIndex = parseInt(option.dataset.option);
+                    option.classList.remove("correct", "incorrect");
+                    if (optionIndex === correctAnswer) {
+                        option.classList.add("correct");
+                    }
+                    if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                        option.classList.add("incorrect");
+                    }
+                });
+
+                if (userAnswer === correctAnswer) {
+                    correctAnswers++;
+                    observationContainer.textContent = `Resposta correta: ${question.observation}`;
+                } else if (userAnswer !== undefined) {
+                    observationContainer.textContent = `Resposta correta: ${question.options[correctAnswer]}. ${question.observation}`;
+                } else {
+                    observationContainer.textContent = "Por favor, selecione uma resposta.";
+                }
+            });
+
+            resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        }
+
+        quizContainer.addEventListener("click", function (event) {
+            if (event.target.classList.contains("option")) {
+                const questionNumber = event.target.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question="${questionNumber}"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                event.target.classList.add("selected");
+            }
+        });
+
+        submitButton.addEventListener("click", showResults);
+
+        buildQuiz();
+    </script>
+</body>
+</html>
