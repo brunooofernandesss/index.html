@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz: Diretrizes do trabalho na atenção básica e papel do médico</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz: Diretrizes do trabalho na atenção básica e papel do médico</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual é a base do trabalho das equipes na atenção básica, conforme as diretrizes apresentadas?",
+          options: ["A livre demanda espontânea dos usuários.", "A hospitalização dos casos mais graves.", "A territorialização e adscrição da clientela em uma área geográfica definida.", "A referência para especialistas em tempo integral."],
+          answer: 2, // Gabarito: c)
+          comment: "Os excertos indicam explicitamente que o trabalho na atenção básica tem como base a *territorialização e adscrição da clientela*, onde a área de atuação das equipes é territorialmente definida e elas são responsáveis pela atenção à saúde da população desse local [1].",
+        },
+        {
+          question: "De acordo com a Política Nacional de Atenção Básica e as recomendações citadas, quantas pessoas cada equipe de atenção básica (eSF ou eAB) é recomendada a ser responsável, em média?",
+          options: ["500 a 1.000 pessoas.", "1.000 a 2.000 pessoas.", "2.000 a 3.500 pessoas.", "Mais de 5.000 pessoas."],
+          answer: 2, // Gabarito: c)
+          comment: "A Política Nacional de Atenção Básica recomenda que cada equipe seja responsável por *2.000 a 3.500 pessoas* [1], o que corresponde a aproximadamente 750 a 1.000 famílias [1]. O número pode variar dependendo da vulnerabilidade [2].",
+        },
+        {
+          question: "Em municípios ou territórios com menos de 2.000 habitantes, qual a recomendação sobre a responsabilidade das equipes de Saúde da Família (eSF) ou Atenção Básica (eAB)?",
+          options: ["Duas equipes devem ser alocadas para garantir cobertura total.", "Uma única equipe pode ser responsável por toda a população.", "A população deve ser referenciada para centros maiores.", "A atenção básica não é prioritária nesses locais."],
+          answer: 1, // Gabarito: b)
+          comment: "Para municípios ou territórios com menos de 2.000 habitantes, a recomendação é que uma equipe de Saúde da Família (eSF) ou de Atenção Básica (eAB) seja *responsável por toda a população* [2].",
+        },
+        {
+          question: "Qual ferramenta de avaliação familiar tem a finalidade de obter uma visão geral da família e dados relevantes sobre os relacionamentos ao longo do tempo, permitindo uma avaliação estrutural interna da família?",
+          options: ["Ecomapa.", "Projeto Terapêutico Singular (PTS).", "Genograma.", "SOAP."],
+          answer: 2, // Gabarito: c)
+          comment: "O Genograma tem a finalidade de obter uma *visão geral da família com dados relevantes sobre os relacionamentos ao longo do tempo* e permite uma *avaliação estrutural interna* da família [2, 3].",
+        },
+        {
+          question: "Qual ferramenta de avaliação representa os relacionamentos dos integrantes da família com sistemas mais amplos, retratando os vínculos importantes entre a família e o mundo externo, e demonstrando o fluxo de recursos ou privações?",
+          options: ["Genograma.", "Projeto Terapêutico Singular (PTS).", "Ecomapa.", "SOAP."],
+          answer: 2, // Gabarito: c)
+          comment: "O Ecomapa da família contém dados do atual funcionamento familiar, representando os relacionamentos dos integrantes *com os sistemas mais amplos* e retratando os *vínculos importantes entre a família e o mundo* [3]. Ele permite uma avaliação estrutural externa [3].",
+        },
+        {
+          question: "Para que a população possa acessar a Atenção Primária à Saúde (APS) de forma adequada, quais estratégias são consideradas necessárias, conforme os excertos?",
+          options: ["Foco exclusivo no tratamento de doenças crônicas.", "Definição de estratégias específicas, como acolhimento, abordagem multidisciplinar e planejamento das ações.", "Centralização de todos os serviços em grandes hospitais.", "Limitação do acesso apenas a casos de urgência e emergência."],
+          answer: 1, // Gabarito: b)
+          comment: "Para um acesso adequado à APS, são necessárias a *definição de estratégias específicas, que podem incluir **acolhimento, abordagem multidisciplinar, planejamento das ações, organização do processo de trabalho*, entre outros [4].",
+        },
+        {
+          question: "A Atenção Domiciliar é apresentada nos excertos como uma ferramenta essencial para o cumprimento de diversos princípios na atenção à saúde. Quais princípios são mencionados?",
+          options: ["Apenas a redução de custos hospitalares.", "Ampliação do acesso, acolhimento, equidade, humanização, integralidade, longitudinalidade e continuidade do cuidado.", "Foco exclusivo em pacientes terminais.", "Substituição completa da atenção na unidade de saúde."],
+          answer: 1, // Gabarito: b)
+          comment: "A Atenção Domiciliar é apresentada como ferramenta essencial para o cumprimento de princípios como a *ampliação do acesso, o acolhimento, a equidade, a humanização e a integralidade do cuidado, assim como a **longitudinalidade e a continuidade do cuidado* [4].",
+        },
+        {
+          question: "No contexto do diagnóstico local da população, o que o termo 'território vivo' (SANTOS, 2003) sugere que a equipe deve conhecer?",
+          options: ["Apenas os limites geográficos da área.", "Os dados demográficos e estatísticos da população.", "A população, seus pontos de tensão e de convivência, e as pessoas que vivem na área.", "O histórico geológico e ambiental da região."],
+          answer: 2, // Gabarito: c)
+          comment: "O diagnóstico local envolve *conhecer sua população, os pontos de tensionamento e de convivência, e, de forma especial, as pessoas que vivem neste “território vivo”* [5].",
+        },
+        {
+          question: "Segundo a definição de Nancy Krieger (2001) citada nos excertos, o que são Determinantes Sociais da Saúde (DSS)?",
+          options: ["Apenas fatores genéticos que afetam a saúde.", "Mecanismos pelos quais as condições sociais afetam a saúde e que são potencialmente modificáveis por ações baseadas em conhecimento.", "As condições climáticas e ambientais de uma região.", "A incidência e prevalência de doenças infecciosas."],
+          answer: 1, // Gabarito: b)
+          comment: "Determinantes Sociais da Saúde (DSS) são definidos como os *mecanismos por meio dos quais as condições sociais afetam a saúde e que são potencialmente modificáveis por ações baseadas em conhecimento* [6].",
+        },
+        {
+          question: "O Projeto Terapêutico Singular (PTS) é definido como um conjunto de propostas de condutas terapêuticas articuladas. Quem participa da elaboração do PTS?",
+          options: ["Apenas o médico da equipe.", "Apenas a equipe multiprofissional.", "A equipe interdisciplinar, em conjunto com o paciente e sua família/cuidadores.", "Órgãos gestores de saúde, sem a participação direta do paciente."],
+          answer: 2, // Gabarito: c)
+          comment: "O PTS é resultado da *discussão coletiva de uma equipe interdisciplinar, elaborado em **conjunto com o paciente e sua família/cuidadores* [7].",
+        },
+        {
+          question: "Qual é um dos objetivos centrais na construção de um Projeto Terapêutico Singular (PTS) a partir da relação entre usuário e profissional de saúde?",
+          options: ["Impor um tratamento padronizado para todos os pacientes com a mesma condição.", "Centralizar as decisões exclusivamente no profissional de saúde.", "Buscar maior empoderamento do usuário em relação à sua saúde e autonomia.", "Ignorar as necessidades individuais e singularidades do usuário."],
+          answer: 2, // Gabarito: c)
+          comment: "O PTS é construído com base nas necessidades individuais, historicidade e singularidades, buscando *maior empoderamento em relação à sua saúde e autonomia* [7].",
+        },
+        {
+          question: "O diálogo é considerado essencial na elaboração de um Projeto Terapêutico Singular (PTS). Entre quem deve ocorrer esse diálogo?",
+          options: ["Apenas entre o médico e o paciente.", "Apenas entre a equipe multiprofissional.", "Entre a equipe multiprofissional, família e paciente.", "Apenas entre o paciente e seus cuidadores."],
+          answer: 2, // Gabarito: c)
+          comment: "O *diálogo entre a equipe multiprofissional, família e paciente é essencial* [8].",
+        },
+        {
+          question: "Qual a primeira etapa na construção de um Projeto Terapêutico Singular (PTS)?",
+          options: ["Definição de metas.", "Divisão de responsabilidades.", "Reavaliação.", "Diagnóstico (avaliação completa, biopsicossocial)."],
+          answer: 3, // Gabarito: d)
+          comment: "As etapas do PTS começam pelo *Diagnóstico, que é o momento de realizar uma **avaliação completa, biopsicossocial*, buscando entender o indivíduo e levantar diagnósticos [9].",
+        },
+        {
+          question: "O SOAP é uma estrutura para organizar informações e o plano de cuidado. Na seção 'S - Subjetivo', que tipo de informação é registrada?",
+          options: ["Exame físico e resultados laboratoriais.", "O problema clínico abordado de forma biopsicossocial.", "O motivo da consulta, impressões subjetivas e experiência anterior com a doença.", "O plano diagnóstico e terapêutico."],
+          answer: 2, // Gabarito: c)
+          comment: "O SOAP é uma estrutura onde *S - Subjetivo* inclui o *Motivo da consulta, **Impressões subjetivas* e *Experiência anterior com doença* [10].",
+        },
+        {
+          question: "Ainda sobre a estrutura SOAP, qual seção corresponde à Avaliação (Problema Clínico)?",
+          options: ["S - Subjetivo.", "O - Objetivo.", "A - Avaliação.", "P - Plano."],
+          answer: 2, // Gabarito: c)
+          comment: "A estrutura SOAP é composta por: S - Subjetivo, O - Objetivo, *A - Avaliação* (Problema Clínico) e P - Plano [10, 11].",
+        },
+        {
+          question: "É imprescindível que os profissionais atuantes em equipes de Saúde da Família (eSF) desenvolvam a capacidade de trabalhar em equipe. Além disso, quais outras especificidades são mencionadas como importantes?",
+          options: ["Focar apenas no atendimento individual na unidade de saúde.", "Participar do processo de territorialização, identificar DSS, conhecer famílias e grupos, e cuidar da população na unidade e no domicílio.", "Restringir a atuação apenas a ações de recuperação da saúde.", "Delegar a identificação de DSS apenas a assistentes sociais."],
+          answer: 1, // Gabarito: b)
+          comment: "É imprescindível que os profissionais da eSF desenvolvam a capacidade de *trabalhar em equipe, participando da **territorialização, identificando **DSS, conhecendo as **famílias e grupos* e *cuidando da população* tanto na unidade quanto no domicílio [11, 12].",
+        },
+        {
+          question: "Qual é um dos papéis específicos do médico dentro da Estratégia Saúde da Família (ESF), conforme descrito nos excertos?",
+          options: ["Realizar apenas ações de promoção da saúde em grupo.", "Realizar consultas clínicas, procedimentos e atividades em grupo, além de atenção à saúde dos usuários sob sua responsabilidade.", "Limitar sua atuação ao ambiente hospitalar.", "Ser o único profissional responsável pela territorialização."],
+          answer: 1, // Gabarito: b)
+          comment: "O papel do médico inclui *realizar atenção à saúde dos usuários cadastrados, **consultas clínicas, procedimentos e atividades em grupo*, e realizar ações de acordo com a demanda da comunidade [13].",
+        },
+        {
+          question: "Segundo as definições epidemiológicas apresentadas, o que caracteriza uma Endemia?",
+          options: ["A ocorrência de casos de uma doença em excesso ao esperado em uma comunidade ou região.", "Um tipo de epidemia restrito a uma área geográfica pequena.", "A disseminação mundial de uma nova doença.", "Doença localizada ou com grande incidência em um espaço limitado ('faixa endêmica')."],
+          answer: 3, // Gabarito: d)
+          comment: "Endemia é o termo utilizado para definir qualquer doença *localizada ou com uma grande incidência em um espaço limitado denominado de “faixa endêmica”* [14].",
+        },
+        {
+          question: "Qual termo é usado para descrever a ocorrência de casos de uma doença em uma comunidade ou região em excesso ao que normalmente se esperaria?",
+          options: ["Endemia.", "Surto epidêmico.", "Pandemia.", "Epidemia."],
+          answer: 3, // Gabarito: d)
+          comment: "Epidemia é definida como a *ocorrência de casos de uma doença em uma comunidade ou região em excesso ao que normalmente se esperaria* [15].",
+        },
+        {
+          question: "Um tipo de epidemia restrito a uma área geográfica pequena e bem delimitada ou a uma população institucionalizada, ou a ocorrência de dois ou mais casos epidemiologicamente relacionados, é definido como:",
+          options: ["Endemia.", "Surto epidêmico.", "Pandemia.", "Epidemia."],
+          answer: 1, // Gabarito: b)
+          comment: "Surto epidêmico é definido como um *tipo de epidemia restrito a uma área geográfica pequena ou população institucionalizada, ou a ocorrência de **dois ou mais casos epidemiologicamente relacionados* [14, 15].",
+        },
+        {
+          question: "Quando uma epidemia se espalha por diferentes continentes com transmissão sustentada de pessoa para pessoa, o termo utilizado é:",
+          options: ["Endemia.", "Surto epidêmico.", "Pandemia.", "Epidemia."],
+          answer: 2, // Gabarito: c)
+          comment: "Pandemia é a *disseminação mundial de uma nova doença, quando uma epidemia se espalha por diferentes continentes com transmissão sustentada de pessoa para pessoa* [14, 16].",
+        },
+        {
+          question: "Qual é o principal objetivo de uma investigação de surto?",
+          options: ["Documentar apenas o número de casos.", "Identificar a etiologia, fonte e modos de transmissão apenas para fins de pesquisa.", "Interromper as cadeias de transmissão e controlar o problema, evitando novos casos.", "Apenas divulgar os resultados na mídia."],
+          answer: 2, // Gabarito: c)
+          comment: "O objetivo principal de uma investigação de surto é a *interrupção das cadeias de transmissão e o controle do problema, evitando a ocorrência de novos casos* [17].",
+        },
+        {
+          question: "Qual a primeira etapa listada na investigação de surto?",
+          options: ["Identificar e quantificar os casos.", "Preparar para o trabalho de campo.", "Descrever os dados (Tempo, Lugar e Pessoa).", "Verificar o diagnóstico."],
+          answer: 1, // Gabarito: b)
+          comment: "As etapas de uma investigação de surto iniciam com *1) Preparar para o trabalho de campo* [16].",
+        },
+        {
+          question: "Na investigação de surto, a 'definição de caso' deve ser:",
+          options: ["Complexa e difícil de aplicar, para garantir precisão.", "Abrangente no início e refinada à medida que a investigação progredir.", "Aplicada apenas a um subgrupo da população investigada.", "Baseada apenas em critérios clínicos."],
+          answer: 1, // Gabarito: b)
+          comment: "A definição de caso deve ser *simples e fácil de aplicar, **abrangente no início e refinada* à medida em que a investigação progredir [18].",
+        },
+        {
+          question: "A descrição dos dados em uma investigação de surto é fundamental. Quais dimensões principais são utilizadas para descrever os dados?",
+          options: ["Apenas Idade e Sexo.", "Tempo, Lugar e Pessoa.", "Etiologia e Gravidade.", "Diagnóstico e Tratamento."],
+          answer: 1, // Gabarito: b)
+          comment: "A descrição dos dados em uma investigação de surto é feita por *Tempo, Lugar e Pessoa* [19].",
+        },
+        {
+          question: "Na descrição dos dados por 'Tempo' em uma investigação de surto, qual ferramenta é utilizada para visualizar a distribuição de casos por data de início de sintomas?",
+          options: ["Genograma.", "Ecomapa.", "Curva epidêmica (histograma).", "Mapa geográfico."],
+          answer: 2, // Gabarito: c)
+          comment: "A descrição do tempo utiliza a *Curva epidêmica (histograma)* para mostrar a distribuição de casos por data de início de sintomas [18].",
+        },
+        {
+          question: "Ao descrever os dados por 'Lugar' em uma investigação de surto, que tipo de informações geográficas ou ambientais são relevantes?",
+          options: ["Apenas o país e o estado.", "Cidade, bairro, endereço, local de trabalho, endereço escolar e características do ambiente físico.", "Histórico familiar dos casos.", "Dados socioeconômicos da população."],
+          answer: 1, // Gabarito: b)
+          comment: "A descrição por Lugar inclui *País, Estado, Cidade, Bairro, Endereço de residência, Local de trabalho, Endereço escolar, Unidade hospitalar* e *Características do ambiente físico* [20].",
+        },
+        {
+          question: "A descrição dos dados segundo as características das 'Pessoas' em uma investigação de surto inclui diversos atributos. Quais exemplos são mencionados?",
+          options: ["Apenas a data de início dos sintomas.", "Idade, Sexo, Raça/Cor, Estado conjugal, Ocupação, Educação, uso de drogas, atividades de lazer.", "O número de reprodução básico (R0).", "As medidas de controle implementadas."],
+          answer: 1, // Gabarito: b)
+          comment: "A descrição por Pessoa inclui *Idade, Sexo, Raça/Cor, Estado conjugal e familiar, Ocupação, Educação, Uso de drogas/medicamentos/tabaco/álcool, Atividades de lazer*, entre outras características de interesse [17].",
+        },
+        {
+          question: "Qual das seguintes opções NÃO é um objetivo da investigação de surto listado nos excertos?",
+          options: ["Identificar a etiologia.", "Subsidiar as intervenções de controle e prevenção.", "Realizar o tratamento individual de todos os casos.", "Identificar grupos expostos a maior risco."],
+          answer: 2, // Gabarito: c)
+          comment: "Os objetivos listados da investigação de surto incluem identificar etiologia, fonte, modos de transmissão, grupos de risco, gravidade, subsidiar intervenções de controle/prevenção, pesquisa e capacitação [16]. O tratamento individual é parte da atenção à saúde, mas não o objetivo principal da investigação do surto em si, que visa controlar a disseminação.",
+        },
+        {
+          question: "O que representam R0 (número de reprodução básico) e R (número de infecções efetivas) no contexto da epidemiologia de pandemias?",
+          options: ["Apenas a taxa de mortalidade da doença.", "Indicadores importantes para determinar as medidas de controle e imunização.", "O tempo de incubação da doença.", "A porcentagem da população que já foi vacinada."],
+          answer: 1, // Gabarito: b)
+          comment: "R0 e R são apresentados como indicadores cujos resultados são *importantes para determinar as medidas de controle e imunização* [21]. R0 indica para quantas pessoas um infectado transmite diretamente, enquanto R indica quantas novas pessoas podem ser infectadas na população [21]. Um R < 1 sugere que a população está protegida/com imunidade [21].",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
