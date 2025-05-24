@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz: Revisão de Conceitos de Pesquisa e Estatística</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz: Revisão de Conceitos de Pesquisa e Estatística</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question:
+            "Qual a principal diferença entre estatística puramente descritiva e estatística indutiva/inferencial?",
+          options: [
+            "A estatística descritiva envolve erros probabilísticos, enquanto a indutiva/inferencial não.",
+            "A estatística indutiva/inferencial permite extrapolar resultados para uma população maior, enquanto a descritiva se restringe ao grupo estudado.",
+            "A estatística descritiva utiliza gráficos e tabelas, enquanto a indutiva/inferencial utiliza apenas cálculos.",
+            "A estatística indutiva/inferencial não utiliza medidas de tendência central, apenas a descritiva.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "A estatística puramente descritiva tem como objetivo descrever características de um grupo específico e o resultado fica restrito a esse grupo [1]. A estatística indutiva ou inferencial, por outro lado, utiliza dados de uma amostra para gerar conclusões que podem ser extrapoladas para toda uma população ou universo [2, 3].",
+        },
+        {
+          question:
+            "Em qual tipo de análise estatística há envolvimento de erros probabilísticos?",
+          options: [
+            "Estatística puramente descritiva.",
+            "Estatística indutiva/inferencial.",
+            "Ambas, descritiva e indutiva/inferencial.",
+            "Nenhuma delas, erros probabilísticos são apenas teóricos.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Para a estatística puramente descritiva, não há envolvimento de erros probabilísticos [4]. Já na estatística indutiva/inferencial, como a conclusão para toda uma população é gerada a partir de uma amostra, há envolvimento de uma margem de erro e erros probabilísticos [3].",
+        },
+        {
+          question:
+            "Um pesquisador avaliou o peso médio de 5 professores de sua faculdade. Que tipo de estatística foi utilizada nesse caso?",
+          options: [
+            "Estatística indutiva/inferencial.",
+            "Estatística puramente descritiva.",
+            "Análise de regressão.",
+            "Análise de concordância.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Neste exemplo, o pesquisador avaliou um grupo específico (5 professores) e calculou o peso médio apenas para esse grupo. Não houve a intenção de extrapolar o resultado para uma população maior, caracterizando uma análise puramente descritiva [1, 5].",
+        },
+        {
+          question:
+            "Ao coletar dados de uma amostra com o objetivo de tirar conclusões sobre toda uma população, estamos utilizando:",
+          options: [
+            "Estatística puramente descritiva.",
+            "Análise descritiva indutiva/inferencial.",
+            "Análise de frequência absoluta.",
+            "Medidas de variabilidade.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "A estatística indutiva/inferencial se utiliza de mecanismos para que você avalie apenas uma amostra, uma parte de um universo, mas a conclusão do seu trabalho pode ser extrapolada para todo esse universo, para toda essa população [2, 3].",
+        },
+        {
+          question:
+            "Qual das seguintes ferramentas pode ser utilizada tanto na estatística puramente descritiva quanto na estatística descritiva indutiva/inferencial para apresentar resultados?",
+          options: [
+            "Testes estatísticos comparativos.",
+            "Análise de regressão.",
+            "Gráficos e tabelas.",
+            "Nível de significância.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Para a descrição, seja análise estatística puramente descritiva ou estatística descritiva indutiva/inferencial, é possível se utilizar de dados de medida de tendência central, medida de variabilidade, frequência absoluta e relativa, como porcentagens, gráficos e tabelas [6, 7].",
+        },
+        {
+          question:
+            "Revisões sistemáticas e meta-análises são poderosas em sua capacidade de:",
+          options: [
+            "Limitar a generalização dos resultados.",
+            "Combinar resultados de pacientes de estudos distintos mas similares.",
+            "Aumentar os vieses individuais nos estudos.",
+            "Depender exclusivamente de estudos narrativos.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Revisões sistemáticas e meta-análises são poderosas em sua capacidade de combinar resultados de pacientes de estudos distintos mas similares [8].",
+        },
+        {
+          question: "Qual o principal objetivo de uma revisão sistemática, segundo os vídeos?",
+          options: [
+            "Defender o ponto de vista do autor sobre um tema.",
+            "Apresentar uma visão geral e transparente das informações disponíveis sobre uma questão específica.",
+            "Ilustrar seletivamente a literatura para fundamentar uma filosofia.",
+            "Simplificar processos de pesquisa para autores individuais.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Considerando que a revisão sistemática caracteriza-se pela identificação, avaliação e síntese das principais evidências de pesquisa para uma questão específica, esse tipo de trabalho resulta em uma visão geral e transparente das informações disponíveis [9].",
+        },
+        {
+          question:
+            "Estudos clínicos randomizados são considerados a principal matéria-prima para a realização de qual tipo de revisão?",
+          options: [
+            "Revisão narrativa.",
+            "Revisão de literatura.",
+            "Revisão sistemática.",
+            "Opinião de especialista.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Como dito anteriormente, os estudos clínicos randomizados são considerados a principal matéria-prima para a realização de uma revisão sistemática [9].",
+        },
+        {
+          question:
+            "Revisões sistemáticas baseadas em estudos de natureza básica (pré-clínica) são consideradas:",
+          options: [
+            "Confirmatórias, pois definem qual terapia optar.",
+            "Exploratórias, pois permitem apenas uma síntese de resultados pré-clínicos.",
+            "Definitivas, pois não agregam resultados de vários estudos.",
+            "Limitadas, pois não direcionam futuros ensaios clínicos.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "As revisões sistemáticas feitas a partir de estudos de natureza básica são exploratórias, pois apesar de agregar os resultados de vários estudos em um único trabalho, permitem tão somente uma síntese de resultados de natureza pré-clínica [10].",
+        },
+        {
+          question:
+            "Qual a principal característica que diferencia uma revisão sistemática de uma revisão narrativa?",
+          options: [
+            "A revisão narrativa envolve processos mais complexos e demorados.",
+            "A revisão sistemática possui critérios de seleção objetivos e sistemáticos e um protocolo pré-definido.",
+            "A revisão narrativa exige uma equipe de especialistas para ser escrita.",
+            "A revisão sistemática predomina a subjetividade do autor.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "As revisões narrativas não possuem critérios de seleção objetivos e sistemáticos [11]. Todavia, as revisões sistemáticas devem possuir hipóteses básicas e clínicas claras, protocolo pré definido, critérios transparentes de seleção de artigos, qualidade dos estudos incluídos e síntese dos dados [11].",
+        },
+        {
+          question: "Medidas de tendência central são utilizadas em pesquisa para:",
+          options: [
+            "Inferir acerca de possíveis diferenças entre grupos.",
+            "Resumir e sintetizar dados de um trabalho.",
+            "Avaliar a variabilidade de um conjunto de valores.",
+            "Definir a relação entre variáveis.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "As medidas de tendência central têm a capacidade, ou seja, têm um alto poder de síntese e resumo de muitas vezes dados muito complexos [12].",
+        },
+        {
+          question:
+            "Qual medida de tendência central é definida como o valor que ocorre com maior frequência em uma distribuição de valores?",
+          options: ["Média.", "Mediana.", "Moda.", "Amplitude."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Segundo a definição estatística, moda é igual ao valor que ocorre com maior frequência em uma distribuição de valores [13].",
+        },
+        {
+          question:
+            "Qual medida de tendência central é a única que pode ser utilizada para variáveis qualitativas nominais?",
+          options: ["Média.", "Mediana.", "Moda.", "Desvio-padrão."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "A moda é a única medida de tendência central possível de ser utilizada para as variáveis qualitativas nominais [14].",
+        },
+        {
+          question:
+            "Quando um conjunto de valores apresenta dois valores que ocorrem com a mesma maior frequência, a distribuição é considerada:",
+          options: ["Amodal.", "Bimodal.", "Trimodal.", "Multimodal."],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Quando você faz o cálculo da moda para um conjunto de valores, você pode ter de uma moda, portanto pode ter uma distribuição bimodal se tiver duas, trimodal se tiver três, tetra modal e aí vai poder várias modas [15].",
+        },
+        {
+          question:
+            "Qual medida de tendência central é calculada pelo somatório de todos os valores assumidos por uma variável dividido pelo número de observações desse conjunto de valores?",
+          options: ["Moda.", "Mediana.", "Média.", "Intervalo interquartílico."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Por definição, a média é o somatório de todos os valores assumidos por uma variável dividido pelo número de observações desse conjunto de valores [16].",
+        },
+        {
+          question:
+            "Uma das propriedades da média, que pode ser uma limitação em alguns casos, é que ela é influenciada por:",
+          options: [
+            "Apenas o menor valor da distribuição.",
+            "Apenas o maior valor da distribuição.",
+            "Valores extremos.",
+            "A quantidade total de valores.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "A média é influenciada por valores extremos [17]. Em situações em que você tem valores extremos, valores muito discrepantes, a média provavelmente não vai ser a melhor medida de tendência central [17].",
+        },
+        {
+          question:
+            "Quando os valores de um conjunto são colocados em ordem crescente, qual medida de tendência central representa o valor que fica no meio dessa fila?",
+          options: ["Média.", "Moda.", "Mediana.", "Amplitude."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Dado um conjunto de valores, se esses valores estiverem em ordem crescente, a mediana é o valor que fica no meio dessa fila [18].",
+        },
+        {
+          question:
+            "Qual medida de tendência central não é influenciada por valores extremos?",
+          options: ["Média.", "Moda.", "Mediana.", "Amplitude."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "A mediana tem a vantagem, ela não é influenciada por valores extremos [19].",
+        },
+        {
+          question:
+            "Para calcular a mediana, qual o tipo de variável mínima necessária que pode ser ordenada?",
+          options: [
+            "Qualitativa nominal.",
+            "Qualitativa ordinal.",
+            "Quantitativa discreta.",
+            "Quantitativa contínua.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Para você fazer o cálculo da mediana, você tem que ter no mínimo uma variável qualitativa ordinal [20].",
+        },
+        {
+          question:
+            "Qual medida de tendência central é indicada como a melhor opção para variáveis quantitativas, desde que não haja valores extremos discrepantes?",
+          options: ["Moda.", "Mediana.", "Média.", "Intervalo interquartílico."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Para as variáveis quantitativas, independente elas são contínuas ou discretas, a melhor medida de tendência central como plano A é a média [21].",
+        },
+        {
+          question:
+            "As medidas de variabilidade nos dão a ideia do quão ____ ou ____ são os dados de uma pesquisa.",
+          options: [
+            "Significativos ou não significativos.",
+            "Dependentes ou independentes.",
+            "Homogêneos ou heterogêneos.",
+            "Qualitativos ou quantitativos.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "As medidas de variabilidade nos dão a ideia do quão homogêneos ou heterogêneos são os dados de uma pesquisa [22].",
+        },
+        {
+          question:
+            "Qual medida de variabilidade é calculada subtraindo o menor valor do maior valor em um conjunto de dados?",
+          options: [
+            "Desvio-padrão.",
+            "Variância.",
+            "Amplitude.",
+            "Intervalo interquartílico.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Você pega o valor maior que você tem e subtrai do maior o menor valor de todos. Essa é a amplitude [23].",
+        },
+        {
+          question:
+            "Uma limitação da amplitude como medida de variabilidade é que ela:",
+          options: [
+            "Considera todos os elementos do conjunto.",
+            "É difícil de calcular.",
+            "Só considera dois valores para ser calculada (o maior e o menor).",
+            "Apresenta a unidade de medida elevada ao quadrado.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "A amplitude, infelizmente, só considera dois valores para ser calculada de todo o conjunto [24].",
+        },
+        {
+          question:
+            "Qual medida de variabilidade calcula a distância ao quadrado de todos os elementos com relação à média?",
+          options: [
+            "Amplitude.",
+            "Desvio-padrão.",
+            "Intervalo interquartílico.",
+            "Variância.",
+          ],
+          answer: 3, // Gabarito: d)
+          comment:
+            "A variância, ela calcula a distância ao quadrado de todos os elementos com relação à média [25].",
+        },
+        {
+          question:
+            "Qual a principal desvantagem da variância como medida de variabilidade?",
+          options: [
+            "É difícil de calcular.",
+            "Não considera todos os elementos do conjunto.",
+            "Apresenta a unidade de medida elevada ao quadrado.",
+            "É influenciada por valores extremos.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Infelizmente a variância é uma medida de dispersão, uma medida de variabilidade que apresenta a unidade medida elevado ao quadrado [26].",
+        },
+        {
+          question:
+            "Qual medida de variabilidade é a raiz quadrada da variância e apresenta a mesma unidade de medida da média?",
+          options: [
+            "Amplitude.",
+            "Intervalo interquartílico.",
+            "Desvio-padrão.",
+            "Mediana.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "O que é a raiz quadrada da variância? O famoso desvio padrão [27, 28]. A medida do desvio padrão é dada na mesma escala de mensuração da sua média [29].",
+        },
+        {
+          question:
+            "O desvio-padrão é considerado o casal perfeito de qual medida de tendência central?",
+          options: ["Moda.", "Mediana.", "Média.", "Amplitude."],
+          answer: 2, // Gabarito: c)
+          comment:
+            "O casal perfeito, casal mais perfeito que já existiu na história da humanidade é a média e o desvio-padrão [30].",
+        },
+        {
+          question:
+            "Em um artigo científico, como é comum representar a média e o desvio-padrão de um conjunto de dados?",
+          options: [
+            "Média (Desvio-padrão).",
+            "Média ± Desvio-padrão.",
+            "Média / Desvio-padrão.",
+            "Média - Desvio-padrão.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "É muito comum, por exemplo, você tem um valor de média, média = 10, uma medida qualquer, você está fazendo lá 10 e o desvio padrão é dois, aí você encontra no artigo ele representado assim: média 10 mais ou menos 2 [31].",
+        },
+        {
+          question:
+            "Para casos em que a média não é a melhor medida de tendência central devido a valores discrepantes, qual medida de variabilidade é indicada para acompanhar a mediana?",
+          options: [
+            "Desvio-padrão.",
+            "Variância.",
+            "Amplitude.",
+            "Intervalo interquartílico.",
+          ],
+          answer: 3, // Gabarito: d)
+          comment:
+            "Nos casos em que eu tenho valor discrepante, em que a média não representa tão bem aquele conjunto de valores, aí meu amigo você não vai utilizar mais a média, você vai utilizar a mediana (...) e aí eu uso a mediana com desvio-padrão? Não, nada a ver, nada a ver. O desvio padrão ele é super fiel e não vai largar a média por nada nesse mundo [32, 33]. A mediana é casada com o intervalo interquartílico [33].",
+        },
+        {
+          question: "O intervalo interquartílico é formado por quais valores?",
+          options: [
+            "Menor valor e maior valor.",
+            "Média e desvio-padrão.",
+            "Primeiro quartil (25%) e terceiro quartil (75%).",
+            "Moda e mediana.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Quando você tem que utilizar a mediana para apresentar sua medida de tendência central, a mediana é bigamia, ela é casada com dois valores de variabilidade: o primeiro quartil que ao 25 porcento e o terceiro quartil que é o 75 por cento [34, 35].",
+        },
+        {
+          question:
+            "Qual gráfico é indicado para apresentar dados quando se utiliza mediana e intervalo interquartílico (primeiro e terceiro quartil)?",
+          options: [
+            "Gráfico de barras.",
+            "Gráfico de linhas.",
+            "Histograma.",
+            "Box plot.",
+          ],
+          answer: 3, // Gabarito: d)
+          comment:
+            "O gráfico box-plot ele é utilizado no seu artigo quando você tiver apresentando os resultados da sua pesquisa por meio de mediana, primeiro e terceiro quartil [36, 37].",
+        },
+        {
+          question:
+            "Qual gráfico é indicado para apresentar dados quando se utiliza média e desvio-padrão?",
+          options: [
+            "Box plot.",
+            "Gráfico de pizza.",
+            "Gráfico de barras.",
+            "Gráfico de dispersão.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Quando você tem dados representados por meio da média, desvio-padrão, aí sim você vai utilizar o gráfico de barras [37].",
+        },
+        {
+          question: "Variáveis em pesquisa são definidas como:",
+          options: [
+            "Apenas valores numéricos.",
+            "Características a serem estudadas de cada elemento de estudo.",
+            "Opiniões de especialistas.",
+            "Protocolos pré-definidos.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "O que são as variáveis de uma pesquisa? São características a serem estudadas de cada elemento de estudo [38].",
+        },
+        {
+          question:
+            "Quais são os dois grandes grupos em que as variáveis podem ser divididas, segundo os vídeos?",
+          options: [
+            "Dependentes e independentes.",
+            "Discretas e contínuas.",
+            "Qualitativas e quantitativas.",
+            "Nominais e ordinais.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Basicamente as variáveis podem ser divididas em dois grandes grupos: primeiro as variáveis qualitativas e depois as variáveis quantitativa [39].",
+        },
+        {
+          question: "Variáveis qualitativas nominais são aquelas em que:",
+          options: [
+            "Há uma ordem clara entre as categorias.",
+            "São sempre associadas a valores numéricos.",
+            "Não há ordem entre as categorias.",
+            "Representam contagens de eventos.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Para a variável qualitativa nominal não há ordem, são atributos características mas não a ordem para ela [39].",
+        },
+        {
+          question:
+            "Gênero (masculino/feminino) e tipo sanguíneo (A, B, AB, O) são exemplos de qual tipo de variável?",
+          options: [
+            "Qualitativa ordinal.",
+            "Quantitativa discreta.",
+            "Qualitativa nominal.",
+            "Quantitativa contínua.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "O primeiro tipo de variável que nós temos é a variável qualitativa nominal (...) O primeiro deles é o gênero (...) Um outro exemplo que utilizo bastante é o tipo sanguíneo [39, 40].",
+        },
+        {
+          question: "Variáveis qualitativas ordinais são aquelas em que:",
+          options: [
+            "Não há ordem entre as categorias.",
+            "São sempre mensuradas por números inteiros.",
+            "Possuem uma ordem ou hierarquia entre as categorias.",
+            "Representam frações ou decimais.",
+          ],
+          answer: 2, // Gabarito: c)
+          comment:
+            "Continua sendo uma qualidade, um atributo, mas para essa qualidade, para esse atributo agora uma ordem [40].",
+        },
+        {
+          question:
+            "Escolaridade (nível de instrução) e grau de dor (leve, moderada, severa) são exemplos de qual tipo de variável?",
+          options: [
+            "Qualitativa nominal.",
+            "Qualitativa ordinal.",
+            "Quantitativa discreta.",
+            "Quantitativa contínua.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Para as variáveis qualitativas ordinais eu costumo citar dois exemplos, o primeiro deles é a escolaridade (...) exemplo bastante comum se refere à dor [41].",
+        },
+        {
+          question:
+            "Variáveis quantitativas contínuas são aquelas em que, entre dois valores na escala de mensuração, há:",
+          options: [
+            "Apenas um número finito de possibilidades.",
+            "Infinitas possibilidades de valores fracionados.",
+            "Nenhuma possibilidade de valores intermediários.",
+            "Apenas valores inteiros.",
+          ],
+          answer: 1, // Gabarito: b)
+          comment:
+            "Nós temos basicamente a variável quantitativa contínua que são mensurações basicamente fracionadas em que entre o intervalo de dois valores eu tenho infinitas possibilidades [42].",
+        },
+        {
+          question: "Peso e altura são exemplos de qual tipo de variável?",
+          options: [
+            "Qualitativa nominal.",
+            "Qualitativa ordinal.",
+            "Quantitativa discreta.",
+            "Quantitativa contínua.",
+          ],
+          answer: 3, // Gabarito: d)
+          comment:
+            "Como exemplo nesse caso eu posso citar o peso e a altura [42].",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
