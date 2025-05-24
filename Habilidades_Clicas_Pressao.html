@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz: Hipertensão Arterial e Sons de Korotkoff</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz: Hipertensão Arterial e Sons de Korotkoff</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "De acordo com a aula, qual é uma das principais características da hipertensão arterial que a torna um desafio clínico?",
+          options: [
+            "Seus sintomas são sempre muito evidentes no início.",
+            "É uma doença que regride espontaneamente com o tempo.",
+            "É considerada uma 'doença silenciosa'.",
+            "Afeta apenas idosos.",
+            "Seu diagnóstico é simples e não exige rigor.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael enfatiza que a hipertensão é uma '**doença silenciosa**' e que muitas vezes o paciente descobre a condição por acaso, após anos de evolução.",
+        },
+        {
+          question: "Qual é uma das consequências a longo prazo da hipertensão arterial não diagnosticada ou não tratada, mencionada pelo Dr. Rafael?",
+          options: [
+            "Diminuição da necessidade de diálise.",
+            "Redução do risco de infarto.",
+            "Acabar 'enfartado ou na fila da diálise'.",
+            "Melhora da circulação sanguínea.",
+            "Fortalecimento do coração.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael destaca as consequências graves, como **infarto e necessidade de diálise**, para ilustrar a importância do diagnóstico e tratamento precoces.",
+        },
+        {
+          question: "Segundo a aula, qual é um dos grandes desafios para o profissional de saúde em relação à hipertensão arterial?",
+          options: [
+            "Convencer o paciente a não procurar tratamento.",
+            "Apenas prescrever medicação sem acompanhamento.",
+            "O diagnóstico e o convencimento do paciente sobre a doença.",
+            "Desconsiderar os critérios rigorosos de hipertensão.",
+            "Minimizar os riscos da doença.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael salienta que é um '**desafio muito grande**' tanto diagnosticar quanto convencer o paciente da necessidade de tratamento e acompanhamento.",
+        },
+        {
+          question: "O que acontece com as válvulas cardíacas durante a contração ventricular (sístole), de acordo com a explicação do Dr. Rafael?",
+          options: [
+            "Elas se fecham, impedindo a passagem de sangue.",
+            "Elas se abrem, permitindo a passagem de sangue para a aorta.",
+            "Elas permanecem inalteradas.",
+            "Elas se dilatam para encher de sangue.",
+            "Elas vibram para criar os sons de Korotkoff.",
+          ],
+          answer: 1,
+          comment: "Durante a **sístole**, com a contração do ventrículo esquerdo, as válvulas cardíacas (como a aórtica) **se abrem para permitir a ejeção do sangue para a aorta**.",
+        },
+        {
+          question: "Qual é o movimento do coração que corresponde à contração ventricular, durante o qual o sangue é ejetado para a aorta?",
+          options: [
+            "Diástole",
+            "Sistole",
+            "Enchimento ventricular",
+            "Relaxamento atrial",
+            "Fluxo retrógrado",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael explica que 'enquanto o ventrículo tá contraindo um movimento chamado **sístole**', o sangue está sendo injetado.",
+        },
+        {
+          question: "Durante a diástole, o que acontece com o ventrículo e o que as válvulas cardíacas fazem para impedir o refluxo de sangue?",
+          options: [
+            "O ventrículo se contrai e as válvulas se abrem.",
+            "O ventrículo se dilata e as válvulas se fecham.",
+            "O ventrículo se dilata e as válvulas permanecem abertas.",
+            "O ventrículo se contrai e as válvulas se fecham.",
+            "O ventrículo não se move e as válvulas se abrem.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael afirma que 'Depois esse ventrículo vai parar de contrair até que ele começa a dilatar, que é a **diástole** normal. Ou seja sempre voltar, né? Tá enchendo de novo. Por isso que nós temos as **válvulas que não permite esse fluxo de sangue**'.",
+        },
+        {
+          question: "Qual problema de válvula é mencionado como uma condição em que a válvula não fecha completamente, permitindo um refluxo de sangue e queda de pressão?",
+          options: [
+            "Estenose.",
+            "Insuficiência valvar.",
+            "Prolapso.",
+            "Aneurisma.",
+            "Trombose.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael diz: 'Já dá para saber que na **insuficiência valvular** essa válvula ela não fecha, ela continua um pouco aberta. Devi um pouco de sangue, cai a pressão'.",
+        },
+        {
+          question: "O que é necessário para medir a pressão arterial, de acordo com o material?",
+          options: [
+            "Apenas um estetoscópio.",
+            "Um esfigmomanômetro e um estetoscópio.",
+            "Somente o manguito.",
+            "Um termômetro e um estetoscópio.",
+            "Um oxímetro de pulso.",
+          ],
+          answer: 1,
+          comment: "A aferição da pressão arterial requer o uso combinado de um **esfigmomanômetro** (que inclui o manguito) e um **estetoscópio**.",
+        },
+        {
+          question: "Antes de iniciar a aferição da pressão arterial, qual é a condição ideal para o paciente, conforme implicitamente sugerido pela aula e prática comum?",
+          options: [
+            "Acabou de fazer exercício físico intenso.",
+            "Está com vontade de ir ao banheiro.",
+            "Está em repouso e relaxado.",
+            "Está falando ativamente.",
+            "Acabou de consumir cafeína.",
+          ],
+          answer: 2,
+          comment: "Embora não explícito em cada palavra, a aula se refere à prática clínica, onde o paciente deve estar em **repouso e relaxado** para uma aferição precisa. A menção à 'pressão do branco' (ansiedade) reforça a necessidade de um estado calmo.",
+        },
+        {
+          question: "Qual a importância do tamanho do manguito na aferição da pressão arterial?",
+          options: [
+            "Não interfere no resultado.",
+            "Manguitos muito grandes superestimam a pressão.",
+            "Manguitos muito pequenos podem subestimar a pressão.",
+            "Um manguito de tamanho inadequado pode levar a erros na medida.",
+            "Manguitos apertados são mais confortáveis para o paciente.",
+          ],
+          answer: 3,
+          comment: "Embora não detalhado na transcrição, a importância da escolha do **manguito de tamanho adequado** é um pilar da técnica correta de aferição da PA e é um erro comum abordado em aulas de habilidades clínicas.",
+        },
+        {
+          question: "Em que local do braço o manguito deve ser posicionado para a aferição da pressão arterial?",
+          options: [
+            "No punho.",
+            "No cotovelo.",
+            "2-3 cm acima da fossa cubital.",
+            "Na axila.",
+            "Em qualquer parte do braço.",
+          ],
+          answer: 2,
+          comment: "A técnica correta de aferição da pressão arterial preconiza o posicionamento do manguito **2-3 cm acima da fossa cubital**.",
+        },
+        {
+          question: "Qual artéria é fundamental para a ausculta dos sons de Korotkoff durante a aferição da pressão arterial?",
+          options: [
+            "Radial.",
+            "Ulnar.",
+            "Carótida.",
+            "Braquial.",
+            "Femoral.",
+          ],
+          answer: 3,
+          comment: "A **artéria braquial** é o local de escolha para a ausculta dos sons de Korotkoff na aferição da pressão arterial no braço.",
+        },
+        {
+          question: "Qual o valor aproximado de insuflação inicial do manguito, conforme a prática comum e o que é ensinado?",
+          options: [
+            "80 mmHg.",
+            "120 mmHg.",
+            "180-200 mmHg ou 20-30 mmHg acima do desaparecimento do pulso radial.",
+            "250 mmHg.",
+            "100 mmHg.",
+          ],
+          answer: 2,
+          comment: "A insuflação inicial deve ser rápida e atingir um valor que exceda a pressão sistólica esperada, geralmente **180-200 mmHg, ou 20-30 mmHg acima do ponto de desaparecimento do pulso radial**.",
+        },
+        {
+          question: "Qual é a velocidade ideal de desinsuflação do manguito para uma aferição precisa da pressão arterial?",
+          options: [
+            "10 mmHg por segundo.",
+            "5 mmHg por segundo.",
+            "2-3 mmHg por segundo.",
+            "O mais rápido possível.",
+            "Não há velocidade ideal, pode ser variável.",
+          ],
+          answer: 2,
+          comment: "A velocidade de desinsuflação lenta e controlada (**2-3 mmHg por segundo**) é crucial para a correta identificação dos sons de Korotkoff.",
+        },
+        {
+          question: "Qual é a descrição do primeiro som de Korotkoff que aparece e que corresponde à pressão sistólica?",
+          options: [
+            "Um som abafado.",
+            "Um som em sopro ou murmúrio.",
+            "Um som nítido, em pancada ('Pum').",
+            "A ausência de som.",
+            "Um som contínuo e fraco.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael descreve: 'O primeiro som é **pum é a pancada**. É o primeiro som que aparece... É o mais fácil'.",
+        },
+        {
+          question: "O que representa o último som de Korotkoff (Fase V), que desaparece completamente durante a desinsuflação?",
+          options: [
+            "Pressão sistólica.",
+            "Pressão diastólica.",
+            "Pressão de pulso.",
+            "Pressão média.",
+            "Pressão arterial sistêmica.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael explica que 'O último você não ouve. O último é ausência de som. É.', indicando que o desaparecimento do som marca a **pressão diastólica** (Fase V).",
+        },
+        {
+          question: "O que a transcrição sugere ser a Fase V dos sons de Korotkoff?",
+          options: [
+            "O som mais nítido que aparece.",
+            "Um murmúrio suave.",
+            "O abafamento dos sons.",
+            "O desaparecimento completo dos sons.",
+            "O aumento da intensidade dos sons.",
+          ],
+          answer: 3,
+          comment: "A transcrição afirma: 'O último você não ouve. O último é **ausência de som**. É.', referindo-se à Fase V (desaparecimento completo dos sons).",
+        },
+        {
+          question: "Qual fase dos sons de Korotkoff é descrita como 'o murmúrio' e é considerada mais difícil de ouvir?",
+          options: [
+            "Fase I.",
+            "Fase II.",
+            "Fase III.",
+            "Fase IV.",
+            "Fase V.",
+          ],
+          answer: 1,
+          comment: "A transcrição menciona '**o murmúrio**. É mais difícil de ouvir. É.', referindo-se à **Fase II**, onde os sons são tipo sopro ou murmúrio.",
+        },
+        {
+          question: "Qual é uma das dicas do Dr. Rafael para treinar a identificação dos sons de Korotkoff?",
+          options: [
+            "Apenas ler livros sobre o assunto.",
+            "Assistir a filmes de ficção científica.",
+            "Colocar 'Korotkoff sounds' em inglês no YouTube para ouvir os sons.",
+            "Não praticar, apenas memorizar.",
+            "Depender exclusivamente da aula prática.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael sugere: 'Dá uma olhada no no no no no YouTube, põe **corot sounds em inglês** que vai aparecer aquele videozinho'.",
+        },
+        {
+          question: "Segundo o Dr. Rafael, qual é o som de Korotkoff mais fácil de identificar e que é o que mais confunde com o externo?",
+          options: [
+            "O murmúrio.",
+            "O som abafado.",
+            "O primeiro som, em pancada ('Pum').",
+            "O último som, quando desaparece.",
+            "O som que aumenta de intensidade.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael comenta sobre o primeiro som: 'É o mais fácil, tá? [...] mas o **primeiro som** você tem que treinar bem e é o que mais confunde com o externo.'",
+        },
+        {
+          question: "Qual é a principal dificuldade em relação ao 'murmúrio' (Fase II dos sons de Korotkoff)?",
+          options: [
+            "Ele é muito intenso.",
+            "Ele é fácil de confundir com o primeiro som.",
+            "Ele é mais difícil de ouvir.",
+            "Ele não tem relevância clínica.",
+            "Ele não existe.",
+          ],
+          answer: 2,
+          comment: "A transcrição indica: 'O murmúrio. **É mais difícil de ouvir**. É.'",
+        },
+        {
+          question: "O que o Dr. Rafael enfatiza sobre a prática na ausculta dos sons de Korotkoff?",
+          options: [
+            "É desnecessária, basta ler a teoria.",
+            "É importante apenas para identificar o primeiro som.",
+            "É fundamental para o aprimoramento da habilidade.",
+            "Não deve ser feita sem supervisão constante.",
+            "Só deve ser feita após a conclusão do curso.",
+          ],
+          answer: 2,
+          comment: "A repetição da palavra '**treinar**' e a sugestão de ouvir vídeos e praticar na aula prática reforçam a importância do treinamento.",
+        },
+        {
+          question: "Qual o critério para o diagnóstico de hipertensão, segundo a aula?",
+          options: [
+            "Os critérios são flexíveis e variam muito.",
+            "Os critérios são rigorosos e bem definidos.",
+            "Apenas um valor isolado de pressão alta.",
+            "Apenas a presença de sintomas.",
+            "Não há critérios claros para o diagnóstico.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael afirma: 'vocês vão ver que os critérios de hipertensão eles são **rigorosos e bem definidos**'.",
+        },
+        {
+          question: "Se o paciente está nervoso com o médico ('pressão do branco'), o que o Dr. Rafael sugere que pode acontecer com a pressão arterial?",
+          options: [
+            "Ela permanece inalterada.",
+            "Ela pode baixar significativamente.",
+            "Ela pode aumentar, levando a um resultado falso-positivo.",
+            "Ela se estabiliza.",
+            "O nervosismo não afeta a pressão arterial.",
+          ],
+          answer: 2,
+          comment: "A '**pressão do branco**' é uma condição conhecida onde a ansiedade do paciente no ambiente médico pode **elevar temporariamente a pressão arterial**.",
+        },
+        {
+          question: "O que ocorre com o sangue durante a sístole, de acordo com o texto?",
+          options: [
+            "Ele retorna ao coração.",
+            "Ele está sendo injetado e seguindo seu fluxo dentro da artéria.",
+            "Ele está enchendo o ventrículo.",
+            "Ele permanece estagnado.",
+            "Ele entra nos pulmões.",
+          ],
+          answer: 1,
+          comment: "'O sangue tá sendo **injetado e tá seguindo seu fluxo dentro da artéria**' durante a sístole.",
+        },
+        {
+          question: "Qual é a principal função das válvulas cardíacas mencionada na diástole?",
+          options: [
+            "Bombear o sangue para as artérias.",
+            "Impedir o refluxo de sangue.",
+            "Facilitar a contração ventricular.",
+            "Produzir os sons do coração.",
+            "Regular a frequência cardíaca.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael explica que 'nós temos as **válvulas que não permite esse fluxo de sangue**', referindo-se ao refluxo durante o enchimento ventricular.",
+        },
+        {
+          question: "Se uma válvula cardíaca tem 'estenose', o que isso implica em relação ao fluxo sanguíneo?",
+          options: [
+            "A válvula não fecha, causando refluxo.",
+            "A válvula está apertada, dificultando a passagem do sangue.",
+            "A válvula está mais aberta do que o normal.",
+            "A válvula não tem função.",
+            "Não há impacto no fluxo sanguíneo.",
+          ],
+          answer: 1,
+          comment: "Embora o Dr. Rafael não detalhe a estenose tanto quanto a insuficiência, ele a menciona em contraste, e **estenose significa um estreitamento que dificulta o fluxo**.",
+        },
+        {
+          question: "Para que serve o vídeo 'Korotkoff sounds' em inglês no YouTube, de acordo com a recomendação do Dr. Rafael?",
+          options: [
+            "Para aprender a história da medicina.",
+            "Para praticar a escuta e identificar os sons de Korotkoff.",
+            "Para assistir a procedimentos cirúrgicos.",
+            "Para relaxar e ouvir música.",
+            "Para aprender um novo idioma.",
+          ],
+          answer: 1,
+          comment: "A sugestão é clara: 'põe corot sounds em inglês que vai aparecer aquele videozinho, tá? você vai **ouvir no**'.",
+        },
+        {
+          question: "O que o Dr. Rafael quer dizer com 'a hora que você tá desinsuflando' em relação à identificação dos sons?",
+          options: [
+            "Que os sons devem ser ouvidos enquanto o manguito está enchendo.",
+            "Que os sons devem ser ouvidos no momento de esvaziar o manguito lentamente.",
+            "Que os sons aparecem apenas antes de insuflar o manguito.",
+            "Que os sons são ouvidos apenas após a desinsuflação completa.",
+            "Que não há um momento específico para ouvir os sons.",
+          ],
+          answer: 1,
+          comment: "A identificação dos sons de Korotkoff ocorre durante a **desinsuflação lenta e controlada do manguito**.",
+        },
+        {
+          question: "Em relação à pressão arterial, a sístole é o momento de:",
+          options: [
+            "Enchimento ventricular.",
+            "Relaxamento do coração.",
+            "Contração ventricular e ejeção de sangue.",
+            "Fechamento das válvulas atrioventriculares.",
+            "Retorno venoso.",
+          ],
+          answer: 2,
+          comment: "A **sístole** corresponde à **contração do ventrículo esquerdo e à ejeção do sangue** para a aorta e demais artérias.",
+        },
+        {
+          question: "A diástole representa o momento de:",
+          options: [
+            "Pressão máxima nas artérias.",
+            "Contração ventricular.",
+            "Relaxamento e enchimento ventricular.",
+            "Abertura das válvulas semilunares.",
+            "Ejeção do sangue.",
+          ],
+          answer: 2,
+          comment: "A **diástole** é o período de **relaxamento do coração e enchimento dos ventrículos** com sangue.",
+        },
+        {
+          question: "Qual a principal implicação clínica da insuficiência valvar mencionada na aula?",
+          options: [
+            "Aumento da pressão arterial.",
+            "Diminuição da pressão arterial devido ao refluxo.",
+            "Normalização do fluxo sanguíneo.",
+            "Aumento da força de contração do coração.",
+            "Eliminação dos sons de Korotkoff.",
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael afirma: 'Devi um pouco de sangue, **cai a pressão**', quando a válvula não fecha completamente.",
+        },
+        {
+          question: "Por que a hipertensão é um 'desafio muito grande' para o profissional de saúde, segundo o Dr. Rafael?",
+          options: [
+            "Porque os pacientes raramente necessitam de diagnóstico.",
+            "Porque é fácil de diagnosticar e convencer o paciente.",
+            "Pelo diagnóstico e pelo convencimento do paciente em relação à doença e ao tratamento.",
+            "Porque a doença não apresenta riscos a longo prazo.",
+            "Porque não existem tratamentos eficazes.",
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael ressalta que o desafio está tanto em **diagnosticar a doença (que é silenciosa) quanto em convencer o paciente da necessidade de tratamento e acompanhamento**.",
+        },
+        {
+          question: "Se um aluno só consegue identificar três sons de Korotkoff, qual é a principal orientação do Dr. Rafael?",
+          options: [
+            "Que ele desista de aferir a pressão.",
+            "Que ele consulte um especialista imediatamente.",
+            "Que ele precisa treinar mais a ausculta.",
+            "Que é uma condição normal.",
+            "Que ele use apenas a palpação.",
+          ],
+          answer: 2,
+          comment: "A ênfase na aula é a importância do '**treinar**' para identificar os sons. 'Três. Três do tem que treinar.'",
+        },
+        {
+          question: "A 'pancada' ou 'Pum' é o som característico de qual fase dos sons de Korotkoff?",
+          options: [
+            "Fase II.",
+            "Fase III.",
+            "Fase IV.",
+            "Fase V.",
+            "Fase I.",
+          ],
+          answer: 4,
+          comment: "'O **primeiro som é pum é a pancada**. É o primeiro som que aparece.'",
+        },
+        {
+          question: "A ausência de som, que marca o final da ausculta e a pressão diastólica, corresponde a qual fase dos sons de Korotkoff?",
+          options: [
+            "Fase I.",
+            "Fase II.",
+            "Fase III.",
+            "Fase IV.",
+            "Fase V.",
+          ],
+          answer: 4,
+          comment: "'O último você não ouve. O último é **ausência de som**. É.'",
+        },
+        {
+          question: "O que a transcrição sugere sobre a comparação entre o primeiro som de Korotkoff e os sons externos?",
+          options: [
+            "Eles são fáceis de diferenciar.",
+            "O primeiro som é o que mais confunde com o externo.",
+            "Os sons externos nunca interferem na ausculta.",
+            "A identificação é sempre clara.",
+            "Os sons externos são irrelevantes.",
+          ],
+          answer: 1,
+          comment: "...mas o **primeiro som você tem que treinar bem e é o que mais confunde com o externo**.'",
+        },
+        {
+          question: "Qual dos seguintes não é um critério para o diagnóstico de hipertensão, de acordo com o que se pode inferir da aula?",
+          options: [
+            "Serem rigorosos.",
+            "Serem bem definidos.",
+            "Serem apenas uma medida isolada.",
+            "Exigirem repetição e confirmação.",
+            "Considerarem a 'pressão do branco'.",
+          ],
+          answer: 2,
+          comment: "A aula enfatiza que os critérios são 'rigorosos e bem definidos', e o contexto de uma 'doença silenciosa' e 'pressão do branco' implica que **uma única medida não é suficiente para o diagnóstico**.",
+        },
+        {
+          question: "O que o Dr. Rafael menciona sobre a intensidade dos sons de Korotkoff ao longo das fases?",
+          options: [
+            "A intensidade só diminui.",
+            "A intensidade só aumenta.",
+            "O terceiro som eleva e a intensidade abaixa antes de sumir.",
+            "Os sons são sempre da mesma intensidade.",
+            "Os sons desaparecem imediatamente após a insuflação.",
+          ],
+          answer: 2,
+          comment: "'O terceiro som quando sumiu o murmúrio, ele elevou, quando a intensidade abaixou e quando sumiu.'",
+        },
+        {
+          question: "Qual a importância de o ventrículo 'começar a dilatar' na diástole, de acordo com a fisiologia explicada?",
+          options: [
+            "Para ejetar o sangue.",
+            "Para se contrair novamente.",
+            "Para encher de sangue.",
+            "Para fechar as válvulas atriais.",
+            "Para diminuir o retorno venoso.",
+          ],
+          answer: 2,
+          comment: "'Depois esse ventrículo vai parar de contrair até que ele começa a dilatar, que é a diástole normal. Ou seja sempre voltar, né? Tá **enchendo de novo**.'",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
