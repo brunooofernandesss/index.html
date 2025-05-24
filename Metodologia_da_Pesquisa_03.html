@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz: Variáveis em Pesquisa</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz: Variáveis em Pesquisa</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual é o outro nome pelo qual a variável dependente é conhecida?",
+          options: [
+            "Variável de grupamento",
+            "Variável de intervenção",
+            "Variável de resposta",
+            "Variável de comparação",
+          ],
+          answer: 2, 
+          comment: "O vídeo menciona que a variável dependente é sinônimo de **variável de resposta** [2].",
+        },
+        {
+          question: "Em uma pesquisa hipotética comparando o colesterol de homens e mulheres, qual seria a variável dependente?",
+          options: [
+            "Gênero",
+            "Homens",
+            "Mulheres",
+            "Colesterol",
+          ],
+          answer: 3, 
+          comment: "Neste exemplo, o **colesterol** é o que está sendo avaliado ou medido na pesquisa, tornando-o a variável dependente [1].",
+        },
+        {
+          question: "A variável independente tem a função de:",
+          options: [
+            "Ser o resultado medido na pesquisa.",
+            "Depender diretamente do resultado da variável dependente.",
+            "Ser sinônimo de variável de resposta.",
+            "Dividir as amostras da pesquisa em grupos.",
+          ],
+          answer: 3, 
+          comment: "O vídeo explica que a variável independente é também conhecida como variável de grupamento porque **divide as amostras em grupos** [1].",
+        },
+        {
+          question: "Em uma pesquisa, as variáveis dependentes e independentes:",
+          options: [
+            "Devem ser sempre de naturezas diferentes (qualitativas vs. quantitativas).",
+            "São conceitos aplicáveis apenas a estudos clínicos randomizados.",
+            "Podem ser de diferentes tipos (qualitativas nominais, ordinais ou quantitativas).",
+            "São definidas exclusivamente pelo pesquisador no final da análise.",
+          ],
+          answer: 2, 
+          comment: "O vídeo afirma que os diferentes tipos de variáveis (qualitativas nominais, ordinais ou quantitativas) podem exercer o papel de **variáveis dependentes e independentes** [4].",
+        },
+        {
+          question: "Qual afirmação sobre variáveis independentes é correta?",
+          options: [
+            "Elas são o que é medido na pesquisa.",
+            "Elas são sinônimos de variáveis de resposta.",
+            "Elas influenciam diretamente o resultado das variáveis dependentes.",
+            "Elas são sempre quantitativas.",
+          ],
+          answer: 2, 
+          comment: "A variável independente é aquela que **influencia diretamente o resultado das variáveis dependentes** [2].",
+        },
+        {
+          question: "Em um estudo que investiga o efeito de um novo medicamento (Grupo A) versus um placebo (Grupo B) nos níveis de glicose no sangue de pacientes diabéticos, qual seria a variável independente?",
+          options: [
+            "Níveis de glicose no sangue",
+            "Pacientes diabéticos",
+            "Tratamento (medicamento vs. placebo)",
+            "Grupo A e Grupo B",
+          ],
+          answer: 2, 
+          comment: "O **tratamento (medicamento vs. placebo)** é a característica que está sendo manipulada ou que define os grupos, sendo, portanto, a variável independente.",
+        },
+        {
+          question: "Continuando a questão anterior, qual seria a variável dependente neste estudo?",
+          options: [
+            "Tratamento (medicamento vs. placebo)",
+            "Pacientes diabéticos",
+            "Grupo A e Grupo B",
+            "Níveis de glicose no sangue",
+          ],
+          answer: 3, 
+          comment: "Os **níveis de glicose no sangue** são o resultado que está sendo medido para ver o efeito do tratamento, sendo a variável dependente.",
+        },
+        {
+          question: "Um pesquisador está avaliando se o tempo de estudo (em horas por semana) influencia a nota final dos alunos em uma disciplina. Qual é a variável dependente?",
+          options: [
+            "Tempo de estudo",
+            "Pesquisador",
+            "Disciplina",
+            "Nota final",
+          ],
+          answer: 3, 
+          comment: "A **nota final** é o resultado que pode ser influenciado pelo tempo de estudo, tornando-a a variável dependente.",
+        },
+        {
+          question: "Nesta mesma pesquisa sobre tempo de estudo e nota final, qual é a variável independente?",
+          options: [
+            "Nota final",
+            "Alunos",
+            "Disciplina",
+            "Tempo de estudo",
+          ],
+          answer: 3, 
+          comment: "O **tempo de estudo** é a característica que pode influenciar a nota final, sendo a variável independente.",
+        },
+        {
+          question: "A variável independente é também conhecida como variável de grupamento porque [1]:",
+          options: [
+            "Ela é a característica medida.",
+            "Ela é o resultado da pesquisa.",
+            "Ela divide as amostras em grupos.",
+            "Ela é influenciada pela variável dependente.",
+          ],
+          answer: 2, 
+          comment: "Conforme explicado no vídeo, a variável independente é de grupamento porque **define os grupos da pesquisa** [1].",
+        },
+        {
+          question: "Em uma pesquisa onde se compara o peso médio de dois grupos de animais que receberam dietas diferentes (Dieta X e Dieta Y), qual seria a variável independente?",
+          options: [
+            "Peso médio",
+            "Animais",
+            "Tipo de dieta",
+            "Grupos de animais",
+          ],
+          answer: 2, 
+          comment: "O **tipo de dieta** é a característica que diferencia os grupos de animais e pode influenciar o peso, sendo a variável independente.",
+        },
+        {
+          question: "Em uma pesquisa, a variável dependente é aquilo que [2]:",
+          options: [
+            "Influencia diretamente outra variável.",
+            "Divide a amostra em grupos.",
+            "É avaliado ou medido.",
+            "É sempre qualitativo.",
+          ],
+          answer: 2, 
+          comment: "O vídeo usa a pergunta 'o que você mediu?' para ajudar a identificar a variável dependente, que é aquilo que **é avaliado ou medido** [2].",
+        },
+        {
+          question: "A diferenciação entre variável dependente e independente é fundamental em pesquisa porque [3]:",
+          options: [
+            "Ajuda a definir o tamanho da amostra.",
+            "Determina o tipo de gráfico a ser utilizado.",
+            "Facilita a coleta de dados.",
+            "Ajuda a identificar o papel de cada variável no trabalho.",
+          ],
+          answer: 3, 
+          comment: "O vídeo inicia a explicação sobre as variáveis dependentes e independentes destacando a importância de saber **identificar o papel de cada variável no trabalho** [3].",
+        },
+        {
+          question: "Qual das seguintes opções representa um exemplo de variável dependente em uma pesquisa sobre a eficácia de um creme dental no clareamento dos dentes?",
+          options: [
+            "Tipo de creme dental",
+            "Frequência de escovação",
+            "Participantes da pesquisa",
+            "Grau de clareamento dos dentes",
+          ],
+          answer: 3, 
+          comment: "O **grau de clareamento dos dentes** é o resultado que está sendo medido, dependendo do uso do creme dental, sendo a variável dependente.",
+        },
+        {
+          question: "Qual das seguintes opções representa um exemplo de variável independente em uma pesquisa sobre o impacto do exercício físico na pressão arterial?",
+          options: [
+            "Pressão arterial",
+            "Idade dos participantes",
+            "Nível de exercício físico",
+            "Histórico familiar",
+          ],
+          answer: 2, 
+          comment: "O **nível de exercício físico** é a característica que está sendo investigada quanto ao seu impacto na pressão arterial, sendo a variável independente.",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
