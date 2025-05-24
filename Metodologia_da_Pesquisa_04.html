@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz: Metodologia da Pesquisa</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Quiz: Metodologia da Pesquisa</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual é o objetivo principal de uma revisão sistemática? [1]",
+          options: [
+            "Apresentar a opinião de um especialista sobre um tema.",
+            "Realizar uma busca seletiva da literatura para fundamentar uma filosofia.",
+            "Responder a uma importante questão clínica, identificando, avaliando criticamente e integrando resultados de estudos relevantes.",
+            "Descrever o panorama geral da pesquisa sobre um determinado tópico.",
+          ],
+          answer: 2,
+          comment:
+            "O objetivo principal de uma revisão sistemática é **responder a uma questão clínica importante através da análise criteriosa e integração de estudos existentes que abordem essa questão** [1, 2]. As opções a, b e d descrevem características de revisões narrativas, que se diferenciam das sistemáticas [3, 4].",
+        },
+        {
+          question:
+            "Qual é o primeiro passo fundamental para desenvolver uma revisão sistemática? [5]",
+          options: [
+            "Realizar uma busca preliminar de informações.",
+            "Formular uma questão clara e focalizada (pergunta chave).",
+            "Criar um protocolo de pesquisa.",
+            "Coletar dados dos estudos primários.",
+          ],
+          answer: 1,
+          comment:
+            "O primeiro passo para uma revisão sistemática é a **formulação de uma questão clara e focalizada, conhecida como pergunta chave** [5]. Todas as etapas subsequentes dependem diretamente dela [5].",
+        },
+        {
+          question:
+            "O que é a pergunta chave em uma revisão sistemática e qual sua importância? [5]",
+          options: [
+            "É um resumo dos resultados esperados e serve para obter financiamento.",
+            "É a dúvida clínica principal que permeia o estudo e direciona todas as etapas da revisão sistemática.",
+            "É a lista de referências bibliográficas a serem consultadas durante a pesquisa.",
+            "É a descrição detalhada dos materiais e métodos a serem utilizados.",
+          ],
+          answer: 1,
+          comment:
+            "A pergunta chave é a dúvida clínica principal do estudo e é fundamental porque **todas as etapas da revisão sistemática, como busca bibliográfica, critérios de elegibilidade, coleta de dados, entre outras, dependem diretamente dela** [5].",
+        },
+        {
+          question:
+            "Qual acrônimo é recomendado para elaborar a pergunta chave de uma revisão sistemática, e o que cada letra representa? [6]",
+          options: [
+            "SWOT: Strengths, Weaknesses, Opportunities, Threats.",
+            "PICO: Paciente, Intervenção, Comparação, Outcome (Desfecho).",
+            "SMART: Specific, Measurable, Achievable, Relevant, Time-bound.",
+            "FISH: Factors, Issues, Solutions, Help.",
+          ],
+          answer: 1,
+          comment:
+            "O acrônimo **PICO é o mais recomendado para estruturar a pergunta chave**. Cada letra representa um componente fundamental da dúvida clínica: Paciente (P), Intervenção (I), Comparação (C) e Outcome/Desfecho (O) [6].",
+        },
+        {
+          question:
+            "Em uma pergunta chave estruturada no acrônimo PICO, o que a letra 'C' representa? [6]",
+          options: [
+            "Conclusão.",
+            "Critérios de Elegibilidade.",
+            "Comparação ou Grupo Controle.",
+            "Coleta de Dados.",
+          ],
+          answer: 2,
+          comment:
+            "Na estratégia PICO, a letra 'C' representa a **Comparação, ou seja, o grupo controle** utilizado no estudo [6].",
+        },
+        {
+          question:
+            "Em uma pergunta chave estruturada no acrônimo PICO, o que a letra 'O' representa? [6]",
+          options: ["Orçamento.", "Objetivo.", "Outcome ou Desfecho no estudo.", "Organização."],
+          answer: 2,
+          comment:
+            "A letra 'O' no acrônimo PICO se refere ao **Outcome, ou Desfecho**, que são os resultados avaliados no estudo [6].",
+        },
+        {
+          question:
+            "A estratégia PICO é como montar um quebra-cabeça, pois a pergunta chave somente estará completa se... [7]",
+          options: [
+            "Tiver um título claro e conciso.",
+            "Todas as quatro peças (P, I, C, O) estiverem juntas.",
+            "A busca preliminar for exaustiva.",
+            "O protocolo de pesquisa estiver registrado em uma base de dados.",
+          ],
+          answer: 1,
+          comment:
+            "A estratégia PICO é comparada a um quebra-cabeça porque a pergunta chave só é considerada completa quando **os quatro elementos (P, I, C, O) são identificados e definidos** [7].",
+        },
+        {
+          question:
+            "A pergunta chave pode ser classificada quanto ao objetivo da revisão sistemática. Quais são alguns exemplos de classificações quanto ao objetivo? [8]",
+          options: [
+            "Pesquisas laboratoriais, pesquisas em animais, estudos observacionais.",
+            "Avaliação de uma intervenção, prognóstico, diagnóstico, etiologia, prevenção.",
+            "Busca preliminar, busca bibliográfica, coleta de dados, análise de qualidade.",
+            "Protocolo de pesquisa, critérios de elegibilidade, análise estatística.",
+          ],
+          answer: 1,
+          comment:
+            "Quanto ao objetivo, as revisões sistemáticas podem ser divididas em categorias como **avaliação de uma intervenção, prognóstico, diagnóstico de uma alteração, etiologia de uma alteração e prevenção** [8]. A opção a se refere ao delineamento experimental.",
+        },
+        {
+          question:
+            "Qual é o terceiro passo fundamental no desenvolvimento de uma revisão sistemática? [9]",
+          options: [
+            "Formulação da pergunta chave.",
+            "Criação do protocolo de pesquisa.",
+            "Busca preliminar de informações.",
+            "Determinação dos critérios de elegibilidade.",
+          ],
+          answer: 2,
+          comment:
+            "O terceiro passo fundamental é a **busca preliminar de informações**, também conhecida como busca exploratória da literatura [9, 10].",
+        },
+        {
+          question:
+            "Qual é o principal objetivo da busca preliminar de informações em uma revisão sistemática? [10]",
+          options: [
+            "Identificar todos os estudos primários relevantes para a pergunta chave.",
+            "Verificar se a pergunta chave já foi respondida por uma revisão sistemática existente.",
+            "Definir os critérios de inclusão e exclusão de estudos.",
+            "Coletar dados dos estudos potencialmente elegíveis.",
+          ],
+          answer: 1,
+          comment:
+            "A busca preliminar tem como objetivo **verificar se já existe uma revisão sistemática que aborde a pergunta chave elaborada pelo pesquisador** [10]. Isso ajuda a decidir se o trabalho de revisão sistemática deve ser realizado [11].",
+        },
+        {
+          question:
+            "Durante a busca preliminar, quais tipos de trabalhos devem ser procurados nas bases de dados? [11]",
+          options: [
+            "Artigos de estudos clínicos randomizados.",
+            "Estudos de coorte e laboratoriais.",
+            "Trabalhos específicos de revisão sistemática.",
+            "Estudos transversais e caso-controle.",
+          ],
+          answer: 2,
+          comment:
+            "Na busca preliminar, o foco é encontrar **trabalhos específicos de revisão sistemática**, não artigos de estudos primários como os clínicos randomizados ou observacionais [11].",
+        },
+        {
+          question:
+            "Se, após a busca preliminar, for encontrada uma revisão sistemática que responde à pergunta chave, isso significa necessariamente o fim do projeto? [12, 13]",
+          options: [
+            "Sim, pois a pergunta já foi respondida e não há necessidade de uma nova revisão.",
+            "Não necessariamente, pois fatores como a atualização, métodos e evidências geradas pela revisão existente podem justificar uma nova revisão ou complementação.",
+            "Sim, a menos que a revisão encontrada apresente plágio.",
+            "Não, pois a busca preliminar não é exaustiva e pode ter deixado de fora revisões importantes.",
+          ],
+          answer: 1,
+          comment:
+            "Mesmo encontrando uma revisão sistemática que responde à pergunta chave, é importante **avaliar sua atualização, a adequação dos métodos e a suficiência das evidências**. Esses fatores podem justificar a realização de uma nova revisão ou a complementação da existente [12, 13].",
+        },
+        {
+          question:
+            "O que o pesquisador deve fazer se decidir conduzir uma nova revisão sistemática mesmo existindo trabalhos prévios sobre a mesma pergunta chave? [13]",
+          options: [
+            "Copiar a metodologia da revisão existente e apenas atualizar os resultados.",
+            "Publicar a nova revisão sem mencionar os trabalhos anteriores.",
+            "Ter motivos razoáveis para justificar a nova revisão e descrever essa justificativa.",
+            "Considerar a revisão existente como plágio e não a citar.",
+          ],
+          answer: 2,
+          comment:
+            "Publicar uma nova revisão sistemática com uma pergunta chave já publicada não é plágio, desde que o pesquisador tenha **motivos razoáveis para justificar essa nova revisão e descreva essa decisão** [13].",
+        },
+        {
+          question:
+            "Qual é o quarto passo fundamental para se desenvolver uma revisão sistemática? [14]",
+          options: [
+            "Busca bibliográfica.",
+            "Definição dos critérios de elegibilidade.",
+            "Criação de um protocolo de pesquisa.",
+            "Coleta de dados.",
+          ],
+          answer: 2,
+          comment:
+            "O quarto passo fundamental é a **criação de um protocolo de pesquisa** [14].",
+        },
+        {
+          question:
+            "Por que a redação de um protocolo de pesquisa é considerada um 'padrão ouro' para a escrita adequada de uma revisão sistemática? [15]",
+          options: [
+            "Porque garante que o trabalho será publicado em um periódico de alto impacto.",
+            "Porque torna a revisão sistemática transparente e reprodutível, evitando vieses e alteração de critérios posteriores.",
+            "Porque elimina a necessidade de busca bibliográfica e coleta de dados.",
+            "Porque permite que apenas um autor realize a revisão sistemática.",
+          ],
+          answer: 1,
+          comment:
+            "A redação de um protocolo é um padrão ouro porque **torna a revisão sistemática transparente e reprodutível**. Ele permite planejar o desenvolvimento, analisar a qualidade da seleção de artigos, evitar vieses e impede que critérios sejam alterados posteriormente [15, 16].",
+        },
+        {
+          question:
+            "Onde a ideia do trabalho de revisão sistemática deve ser registrada, além da redação do protocolo? [15]",
+          options: [
+            "Em um periódico científico.",
+            "Em uma base de registros de revisões sistemáticas.",
+            "Em um gerenciador bibliográfico.",
+            "Em um software de análise estatística.",
+          ],
+          answer: 1,
+          comment:
+            "Além de redigir um protocolo, é importante registrar a ideia do trabalho em uma **base de registros de revisões sistemáticas** [15]. Isso funciona como uma 'cápsula do tempo', trazendo transparência à revisão [17].",
+        },
+        {
+          question:
+            "O que a redação de um protocolo de pesquisa impede que ocorra durante o desenvolvimento de uma revisão sistemática? [16]",
+          options: [
+            "A publicação dos resultados em um artigo científico.",
+            "A colaboração de outros pesquisadores.",
+            "A alteração de critérios em momentos posteriores e a ocorrência de esforços duplicados.",
+            "A análise estatística dos dados.",
+          ],
+          answer: 2,
+          comment:
+            "O protocolo de pesquisa impede que os **critérios da revisão sistemática sejam alterados em momentos posteriores e evita a ocorrência de esforços duplicados** [16].",
+        },
+        {
+          question:
+            "Quais são algumas das diretrizes criadas para a redação e registro do protocolo de pesquisa? [18]",
+          options: [
+            "PubMed, LILACS, SciELO.",
+            "Coleta de Dados, Análise de Qualidade, Meta-análise.",
+            "Cochrane, Próspero, Prisma P.",
+            "PICO, PICOS, PRISMA.",
+          ],
+          answer: 2,
+          comment:
+            "Existem diversas diretrizes para a redação e registro de protocolos de pesquisa, como a base **Cochrane, a base Próspero e o Prisma P** [18].",
+        },
+        {
+          question:
+            "O que pode ser suspeitado se houver grandes diferenças entre o protocolo de pesquisa registrado e o artigo de revisão sistemática submetido para publicação? [17]",
+          options: [
+            "Falta de tempo dos autores para seguir o protocolo.",
+            "Falta de transparência dos autores por ocultação de dados possivelmente desfavoráveis.",
+            "Aprimoramento da metodologia durante a execução do trabalho.",
+            "A relevância da pergunta chave mudou ao longo do tempo.",
+          ],
+          answer: 1,
+          comment:
+            "Grandes diferenças entre o protocolo registrado e o artigo submetido podem levar à suspeita de **falta de transparência dos autores, possivelmente por ocultação de dados desfavoráveis** [17].",
+        },
+        {
+          question:
+            "Qual é o quinto passo fundamental para realizar uma revisão sistemática? [19]",
+          options: [
+            "Criação do protocolo de pesquisa.",
+            "Busca bibliográfica de dados.",
+            "Definição dos critérios de elegibilidade.",
+            "Coleta de dados.",
+          ],
+          answer: 1,
+          comment:
+            "O quinto passo fundamental é a **busca bibliográfica de dados**, considerada uma etapa crucial para a qualidade da revisão sistemática [19].",
+        },
+        {
+          question:
+            "Qual é a etapa mais importante de uma revisão sistemática, segundo a fonte, representando 80% do nível de qualidade do estudo? [19]",
+          options: [
+            "Formulação da pergunta chave.",
+            "Criação do protocolo de pesquisa.",
+            "Busca bibliográfica.",
+            "Análise estatística.",
+          ],
+          answer: 2,
+          comment:
+            "A **busca bibliográfica** é considerada a etapa mais importante de uma revisão sistemática, representando 80% do nível de qualidade do estudo, pois quanto mais ampla e aprofundada, mais completa e confiável será a evidência gerada [19].",
+        },
+        {
+          question:
+            "A busca bibliográfica para uma revisão sistemática deve contemplar quais tipos de fontes de informação? [19]",
+          options: [
+            "Apenas bases de dados eletrônicas de artigos científicos.",
+            "Somente a literatura cinzenta.",
+            "Bases de dados eletrônicas e a literatura cinzenta.",
+            "Exclusivamente estudos clínicos randomizados.",
+          ],
+          answer: 2,
+          comment:
+            "A busca bibliográfica para uma revisão sistemática deve incluir tanto **bases de dados eletrônicas quanto a literatura cinzenta** (literatura não publicada em bases de dados importantes) [19].",
+        },
+        {
+          question:
+            "Além das bases de dados eletrônicas, quais são consideradas outras fontes importantes para a busca bibliográfica em uma revisão sistemática? [19]",
+          options: [
+            "Redes sociais e blogs.",
+            "Busca manual, leitura de listas de referências e literatura cinzenta.",
+            "Artigos de opinião de especialistas.",
+            "Livros didáticos e enciclopédias.",
+          ],
+          answer: 1,
+          comment:
+            "Além das bases de dados eletrônicas, a **busca manual, a leitura das listas de referências e a literatura cinzenta** são consideradas fontes adicionais importantes para minimizar o viés de publicação [19].",
+        },
+        {
+          question:
+            "Qual a importância de consultar descritores em vocabulários controlados (como MeSH para PubMed e DeCS para BVS/LILACS) na definição das palavras-chave para a busca bibliográfica? [19]",
+          options: [
+            "Para limitar a busca a um número reduzido de artigos.",
+            "Para garantir que a busca seja realizada apenas em uma base de dados.",
+            "Para identificar palavras que representem os assuntos da pesquisa e seus sinônimos nas diferentes bases de dados.",
+            "Para excluir artigos que não se encaixam na pergunta chave.",
+          ],
+          answer: 2,
+          comment:
+            "Consultar descritores em vocabulários controlados é fundamental para **identificar as palavras que representam os assuntos da pesquisa e seus sinônimos, garantindo uma busca adequada nas diferentes bases de dados** [19].",
+        },
+        {
+          question:
+            "Quais são os operadores booleanos utilizados para elaborar a estratégia de busca bibliográfica, e qual a função de cada um? [19]",
+          options: [
+            "ADD, SUBTRACT, MULTIPLY.",
+            "AND, OR, NOT.",
+            "IF, THEN, ELSE.",
+            "SUM, AVERAGE, COUNT.",
+          ],
+          answer: 1,
+          comment:
+            "Os operadores booleanos utilizados para elaborar a estratégia de busca são **AND, OR e NOT**. O OR separa descritores sinônimos dentro de um mesmo componente PICO, o AND combina os diferentes componentes PICO, e o NOT exclui termos específicos [19].",
+        },
+        {
+          question:
+            "Qual é o sexto passo fundamental para você realizar sua revisão sistemática? [20]",
+          options: [
+            "Busca bibliográfica.",
+            "Coleta de dados.",
+            "Definição de critérios de elegibilidade.",
+            "Análise de qualidade dos estudos.",
+          ],
+          answer: 2,
+          comment:
+            "O sexto passo fundamental é a **definição dos critérios de elegibilidade**, que são essenciais para a seleção dos estudos a serem incluídos na revisão sistemática [20].",
+        },
+        {
+          question:
+            "O que distingue uma revisão sistemática de uma revisão narrativa em relação aos critérios de elegibilidade? [21]",
+          options: [
+            "A revisão narrativa não utiliza critérios de elegibilidade.",
+            "A revisão sistemática não possui critérios de elegibilidade.",
+            "A revisão sistemática tem pré-definição de critérios de elegibilidade (inclusão e exclusão), enquanto a revisão narrativa não.",
+            "Ambas utilizam os mesmos critérios de elegibilidade.",
+          ],
+          answer: 2,
+          comment:
+            "Uma das características que distingue a revisão sistemática da revisão narrativa é a **pré-definição clara dos critérios de elegibilidade (inclusão e exclusão) na revisão sistemática**, o que não ocorre na revisão narrativa [21].",
+        },
+        {
+          question:
+            "O que os critérios de elegibilidade correspondem na descrição detalhada de uma revisão sistemática? [21]",
+          options: [
+            "Apenas aos participantes do trabalho.",
+            "Apenas às intervenções e comparações.",
+            "Apenas aos desfechos do estudo.",
+            "À descrição detalhada dos participantes, intervenções, comparações e desfechos.",
+          ],
+          answer: 3,
+          comment:
+            "Os critérios de elegibilidade correspondem à **descrição detalhada de quem são os participantes, quais as intervenções a serem pesquisadas, com que grupos serão feitas as comparações e quais desfechos o estudo se fundamentará** [21].",
+        },
+        {
+          question:
+            "Após definir os critérios de elegibilidade, onde eles devem ser registrados? [22]",
+          options: [
+            "Apenas na seção de resultados do artigo final.",
+            "Apenas em um gerenciador bibliográfico.",
+            "Em um protocolo de pesquisa.",
+            "Em uma base de dados de estudos primários.",
+          ],
+          answer: 2,
+          comment:
+            "Após definir os critérios de elegibilidade, eles devem ser registrados em um **protocolo de pesquisa**, orientando a etapa de identificação e seleção dos estudos [22].",
+        },
+        {
+          question:
+            "O que o protocolo PRISMA recomenda utilizar para incluir todas as informações da metodologia de uma revisão sistemática, especialmente na seção de material e métodos? [22]",
+          options: [
+            "Uma tabela com todos os estudos incluídos.",
+            "Um fluxograma padronizado.",
+            "Uma lista de palavras-chave.",
+            "Um gráfico de barras.",
+          ],
+          answer: 1,
+          comment:
+            "O protocolo PRISMA recomenda a utilização de um **fluxograma padronizado** para incluir todas as informações da metodologia de uma revisão sistemática, que deve ser apresentado na seção de material e métodos [22].",
+        },
+        {
+          question:
+            "No fluxograma PRISMA, o que representam os 'estudos identificados'? [23]",
+          options: [
+            "Todos os trabalhos excluídos após a leitura do texto completo.",
+            "Todos os estudos localizados nas diversas bases de dados após a aplicação das estratégias de busca.",
+            "Todos os estudos incluídos na análise final.",
+            "Todos os estudos potencialmente elegíveis após a leitura de título e resumo.",
+          ],
+          answer: 1,
+          comment:
+            "Os '**estudos identificados**' no fluxograma PRISMA representam o total de estudos localizados nas diversas bases de dados após a aplicação das estratégias de busca [23].",
+        },
+        {
+          question:
+            "No fluxograma PRISMA, o que representam os 'estudos incluídos'? [24]",
+          options: [
+            "Todos os estudos que não se enquadram nos critérios de elegibilidade.",
+            "Todos os estudos potencialmente elegíveis após a leitura de título e resumo.",
+            "Todos os trabalhos selecionados após a leitura integral e que preenchem todos os critérios de elegibilidade.",
+            "Todos os estudos excluídos após a leitura de texto completo.",
+          ],
+          answer: 2,
+          comment:
+            "Os '**estudos incluídos**' no fluxograma PRISMA são os trabalhos selecionados após a leitura integral e que preenchem todos os critérios de elegibilidade propostos na revisão sistemática [24].",
+        },
+        {
+          question:
+            "Qual é o sétimo passo fundamental para realizar uma revisão sistemática? [25]",
+          options: [
+            "Definição dos critérios de elegibilidade.",
+            "Busca bibliográfica.",
+            "Coleta de dados.",
+            "Análise de qualidade.",
+          ],
+          answer: 2,
+          comment:
+            "O sétimo passo fundamental é a **coleta de dados**, que é essencial para sintetizar as informações relevantes dos estudos incluídos [25].",
+        },
+        {
+          question:
+            "Como a extração ou coleta de dados em uma revisão sistemática é realizada? [25]",
+          options: [
+            "Através da leitura integral de todos os artigos e anotação livre das informações.",
+            "Através de uma ficha ou formulário padrão elaborado previamente.",
+            "Através de um software de análise estatística.",
+            "Através da consulta aos autores dos estudos primários.",
+          ],
+          answer: 1,
+          comment:
+            "A extração de dados é realizada através de uma **ficha ou formulário padrão elaborado previamente**, com o objetivo de incluir as principais informações dos estudos [25].",
+        },
+        {
+          question:
+            "Em uma revisão sistemática, quem geralmente realiza a fase de extração de dados e como as discrepâncias são resolvidas? [25]",
+          options: [
+            "Apenas um revisor, para garantir a consistência.",
+            "Dois revisores que trabalham independentemente; discrepâncias são resolvidas por um terceiro revisor ou reunião de consenso.",
+            "Apenas o autor principal da revisão sistemática.",
+            "Um estatístico, para garantir a precisão dos dados.",
+          ],
+          answer: 1,
+          comment:
+            "A fase de extração de dados é realizada por **dois revisores independentes, e as discrepâncias nos dados coletados são resolvidas por um terceiro revisor ou por uma reunião de consenso** [25].",
+        },
+        {
+          question:
+            "Qual é o nono passo fundamental para se desenvolver uma revisão sistemática? [26]",
+          options: [
+            "Coleta de dados.",
+            "Análise estatística (meta-análise).",
+            "Análise de qualidade dos estudos.",
+            "Redação do relatório.",
+          ],
+          answer: 2,
+          comment:
+            "O nono passo fundamental abordado é a **análise de qualidade dos estudos incluídos** [26].",
+        },
+        {
+          question:
+            "Em uma revisão sistemática, por que é fundamental avaliar a qualidade dos artigos incluídos e o risco de viés? [26]",
+          options: [
+            "Para aumentar o número de artigos incluídos na análise.",
+            "Para justificar a exclusão de artigos da revisão.",
+            "Para determinar a confiabilidade das conclusões da revisão sistemática.",
+            "Para facilitar a publicação do trabalho em um periódico científico.",
+          ],
+          answer: 2,
+          comment:
+            "A avaliação da qualidade dos artigos incluídos e do risco de viés é fundamental para **determinar a confiabilidade das conclusões de uma revisão sistemática**. Conclusões baseadas em artigos de alta qualidade e baixo risco de viés são mais confiáveis [26].",
+        },
+        {
+          question:
+            "Qual é a diferença entre a avaliação de qualidade metodológica e a análise do risco de viés em uma revisão sistemática? [26]",
+          options: [
+            "São termos sinônimos e se referem ao mesmo processo.",
+            "A avaliação de qualidade metodológica quantifica o impacto da qualidade, enquanto a análise do risco de viés estima o seu efeito.",
+            "A avaliação de qualidade metodológica se aplica a ensaios clínicos, enquanto a análise de risco de viés se aplica a estudos observacionais.",
+            "A avaliação de qualidade é subjetiva, enquanto a análise de risco de viés é objetiva.",
+          ],
+          answer: 1,
+          comment:
+            "A avaliação crítica dos estudos primários pode ser denominada avaliação de qualidade metodológica, enquanto a **análise do risco de viés permite uma estimativa do seu efeito**. O viés deve ser diferenciado da qualidade [26].",
+        },
+        {
+          question:
+            "Quais são alguns exemplos de escalas ou ferramentas utilizadas para a análise de qualidade ou risco de viés em estudos incluídos em revisões sistemáticas? [26]",
+          options: [
+            "PICO, PRISMA, MECIR.",
+            "Delphi, Jadad, Pedro, Newcastle-Ottawa, GRADE.",
+            "PubMed, LILACS, Web of Science.",
+            "EndNote, Mendeley, Zotero.",
+          ],
+          answer: 1,
+          comment:
+            "Existem diversas escalas e ferramentas para avaliar a qualidade e o risco de viés, como **Delphi, Jadad, Pedro (para ensaios clínicos randomizados), Newcastle-Ottawa (para estudos observacionais) e GRADE (para avaliar a certeza da evidência)** [26].",
+        },
+        {
+          question:
+            "As escalas de qualidade utilizadas na análise dos estudos incluídos em uma revisão sistemática possuem o poder de mudar a conclusão do trabalho ou excluir artigos? [26]",
+          options: [
+            "Sim, as escalas de qualidade determinam a conclusão final e quais artigos devem ser excluídos.",
+            "Não, as escalas de qualidade ajudam a dizer o quão fortes ou confiáveis são as conclusões ou evidências geradas, mas a exclusão de artigos é feita pelos critérios de elegibilidade.",
+            "Sim, se a pontuação de qualidade for baixa, o artigo deve ser excluído.",
+            "Apenas a meta-análise tem o poder de mudar a conclusão do trabalho.",
+          ],
+          answer: 1,
+          comment:
+            "As escalas de qualidade **não têm o poder de mudar a conclusão da revisão sistemática ou excluir artigos**. Elas ajudam a avaliar o quão fortes ou confiáveis são as conclusões com base nos estudos incluídos. A exclusão de artigos é determinada pelos critérios de elegibilidade pré-definidos [26].",
+        },
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
