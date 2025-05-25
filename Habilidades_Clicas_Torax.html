@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Questionário: Semiologia do Exame Físico do Sistema Respiratório e Tórax
+    </title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário: Semiologia do Exame Físico do Sistema Respiratório e Tórax</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "Qual é a primeira etapa na sequência de abordagem do paciente, conforme ensinado pelo Dr. Rafael?",
+          options: [
+            "Inspeção.",
+            "Ausculta.",
+            "Anamnese.",
+            "Palpação."
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael enfatiza que a sequência de abordagem do paciente começa com a **anamnese**, seguida do exame físico."
+        },
+        {
+          question: "A ectoscopia é sinônimo de qual parte do exame físico?",
+          options: [
+            "Percussão.",
+            "Palpação.",
+            "Ausculta.",
+            "Inspeção."
+          ],
+          answer: 3,
+          comment: "A **ectoscopia** corresponde à **inspeção** geral do paciente, avaliando aspectos visíveis."
+        },
+        {
+          question: "Qual dos seguintes dados antropométricos NÃO foi explicitamente mencionado pelo Dr. Rafael como parte da avaliação inicial do paciente?",
+          options: [
+            "Pressão arterial.",
+            "Peso.",
+            "Altura.",
+            "Temperatura."
+          ],
+          answer: 3,
+          comment: "Embora a temperatura seja um dado vital importante, o Dr. Rafael mencionou especificamente pressão, peso e altura no contexto dos dados antropométricos iniciais na ectoscopia."
+        },
+        {
+          question: "No exame físico do tórax, ao percutir uma área com acúmulo de líquido, qual som é esperado, conforme a aula?",
+          options: [
+            "Claro pulmonar.",
+            "Timpânico.",
+            "Maciço.",
+            "Hiperclaro."
+          ],
+          answer: 2,
+          comment: "A percussão de uma área com líquido (como em um derrame pleural) ou tecido denso produz um som **maciço** ou submaciço."
+        },
+        {
+          question: "Qual estrutura anatômica marca o limite superior do tórax, acima da qual já é considerado pescoço?",
+          options: [
+            "Processo xifoide.",
+            "Ângulo de Louis.",
+            "Clavícula.",
+            "Esterno."
+          ],
+          answer: 2,
+          comment: "Conforme o Dr. Rafael, a **clavícula** define o limite superior do tórax."
+        },
+        {
+          question: "Qual músculo é considerado o principal da respiração?",
+          options: [
+            "Músculos intercostais.",
+            "Esternocleidomastoideo.",
+            "Diafragma.",
+            "Escalenos."
+          ],
+          answer: 2,
+          comment: "O **diafragma** é o principal músculo responsável pelos movimentos respiratórios."
+        },
+        {
+          question: "A traqueostomia e a cricostomia são procedimentos que exigem atenção especial à linha média no pescoço devido à lateralização de quais estruturas vitais?",
+          options: [
+            "Veias jugulares e nervos frênicos.",
+            "Artérias subclávias e nervos laríngeos.",
+            "Artérias carótidas e nervo vago.",
+            "Glândula tireoide e esôfago."
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael destaca a importância da linha média no pescoço para evitar lesão das **carótidas e do nervo vago** durante esses procedimentos."
+        },
+        {
+          question: "Em uma radiografia de tórax, qual a aparência esperada para as áreas com ar (pulmões saudáveis)?",
+          options: [
+            "Brancas (radiopacas).",
+            "Pretas (radiotransparentes/radiolucentes).",
+            "Cinzas.",
+            "Com múltiplas opacidades."
+          ],
+          answer: 1,
+          comment: "O ar atenua pouco a radiação, aparecendo **preto** na radiografia."
+        },
+        {
+          question: "Uma massa mediastinal, como um bócio mergulhante da tireoide, pode causar qual alteração visível no raio-x do tórax?",
+          options: [
+            "Apagamento do ângulo costofrênico.",
+            "Desvio de traqueia.",
+            "Aumento da área cardíaca.",
+            "Consolidação pulmonar."
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael utilizou o exemplo de bócio mergulhante para ilustrar uma massa que pode **desviar a traqueia**."
+        },
+        {
+          question: "Qual grupo de linfonodos é o principal sítio de drenagem para o câncer de mama?",
+          options: [
+            "Linfonodos cervicais.",
+            "Linfonodos inguinais.",
+            "Linfonodos axilares.",
+            "Linfonodos epitrocleares."
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael enfatizou que o câncer de mama drena primariamente para os **linfonodos axilares**, sendo um importante local para rastreamento."
+        },
+        {
+          question: "Qual dos seguintes sinais é um indicativo de câncer de mama avançado, segundo a aula?",
+          options: [
+            "Nódulos únicos e móveis.",
+            "Ausência de dor à palpação.",
+            "Pele em 'casca de laranja'.",
+            "Descarga papilar bilateral."
+          ],
+          answer: 2,
+          comment: "A **pele em 'casca de laranja'** e a retração mamilar são sinais clássicos de câncer de mama avançado."
+        },
+        {
+          question: "Em relação ao fibroadenoma da mama, qual característica o Dr. Rafael utilizou para diferenciá-lo de uma lesão maligna?",
+          options: [
+            "Causa retração mamilar.",
+            "Altera a pele da mama.",
+            "É um nódulo benigno que não altera a pele nem o mamilo.",
+            "Geralmente é acompanhado de dor intensa."
+          ],
+          answer: 2,
+          comment: "O fibroadenoma, mesmo grande, **não causa alterações na pele ou mamilo**, ao contrário das lesões malignas."
+        },
+        {
+          question: "Para a realização de uma drenagem torácica de forma segura, em que parte do espaço intercostal a punção deve ser feita para evitar o feixe vásculo-nervoso?",
+          options: [
+            "Na borda superior da costela inferior.",
+            "Na parte inferior do espaço intercostal (borda superior da costela inferior).",
+            "Na borda inferior da costela superior.",
+            "No centro do espaço intercostal."
+          ],
+          answer: 1,
+          comment: "O feixe vásculo-nervoso passa na borda inferior da costela superior. Para evitá-lo, a punção deve ser feita na parte inferior do espaço intercostal, ou seja, sobre a **borda superior da costela abaixo**."
+        },
+        {
+          question: "Uma dor torácica bem localizada, que piora com a ventilação e à palpação, é mais sugestiva de qual tipo de problema?",
+          options: [
+            "Infarto agudo do miocárdio.",
+            "Doença do refluxo gastroesofágico.",
+            "Problema na caixa torácica.",
+            "Pneumonia."
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael enfatizou que dores ventilatório-dependentes e que pioram à palpação são características de **problemas da caixa torácica**, como costocondrite."
+        },
+        {
+          question: "Qual condição é uma inflamação da cartilagem da costela, com dor localizada que piora com a movimentação e inspiração?",
+          options: [
+            "Neurite intercostal.",
+            "Infarto.",
+            "Costocondrite.",
+            "Herpes Zóster."
+          ],
+          answer: 2,
+          comment: "A **costocondrite** é a inflamação da cartilagem costal com as características de dor descritas."
+        },
+        {
+          question: "Em um caso de dor neuropática com queimação e formigamento na região torácica, que pode piorar com a movimentação e tosse, qual a principal hipótese diagnóstica relacionada aos nervos intercostais?",
+          options: [
+            "Costocondrite.",
+            "Miocardite.",
+            "Neurite intercostal.",
+            "Pleurisia."
+          ],
+          answer: 2,
+          comment: "A **neurite intercostal** é a inflamação do nervo intercostal, manifestando-se com dor neuropática."
+        },
+        {
+          question: "Para localizar a segunda costela no tórax, qual ponto de referência anatômico é utilizado, conforme a aula?",
+          options: [
+            "Processo espinhoso da C7.",
+            "Incisura jugular do esterno.",
+            "Ângulo de Louis (Ângulo Esternal).",
+            "Processo xifoide."
+          ],
+          answer: 2,
+          comment: "O **Ângulo de Louis** corresponde à altura da segunda costela."
+        },
+        {
+          question: "A tosse que se inicia ou piora significativamente apenas quando o paciente deita é fortemente sugestiva de qual condição?",
+          options: [
+            "Asma.",
+            "Bronquite.",
+            "Doença do Refluxo Gastroesofágico (DRGE).",
+            "Sinusite."
+          ],
+          answer: 2,
+          comment: "A **tosse posicional**, que piora ao deitar, é uma manifestação comum da **DRGE** devido ao refluxo de conteúdo gástrico."
+        },
+        {
+          question: "Qual das seguintes linhas é utilizada para a descrição topográfica do tórax?",
+          options: [
+            "Linha médio-abdominal.",
+            "Linha médio-esternal.",
+            "Linha para-umbilical.",
+            "Linha ilíaca."
+          ],
+          answer: 1,
+          comment: "As linhas de referência no tórax incluem a **linha médio-esternal**, médio-clavicular e axilares."
+        },
+        {
+          question: "Na radiografia de tórax de um paciente com derrame pleural, qual achado é esperado devido ao acúmulo de líquido?",
+          options: [
+            "Áreas hipertransparentes (pretas).",
+            "Pulmão com infiltrados reticulares.",
+            "Áreas radiopacas (brancas) e apagamento do ângulo costofrênico.",
+            "Desvio da traqueia para o lado oposto ao derrame."
+          ],
+          answer: 2,
+          comment: "O acúmulo de líquido torna a imagem **radiopaca (branca) e apaga o ângulo costofrênico**."
+        },
+        {
+          question: "Qual dos seguintes achados no exame físico é esperado no lado do tórax de um paciente com grande derrame pleural?",
+          options: [
+            "Murmúrio vesicular aumentado.",
+            "Som claro pulmonar à percussão.",
+            "Hipomotilidade (movimento respiratório diminuído).",
+            "Frêmito toracovocal aumentado."
+          ],
+          answer: 2,
+          comment: "O volume de líquido no derrame pleural restringe o movimento do tórax, causando **hipomotilidade**."
+        },
+        {
+          question: "Na ausculta pulmonar de um paciente com derrame pleural significativo, qual é o achado esperado na área afetada?",
+          options: [
+            "Sibilos.",
+            "Crepitações.",
+            "Murmúrio vesicular abolido ou muito diminuído.",
+            "Atrito pleural."
+          ],
+          answer: 2,
+          comment: "O líquido impede a propagação do som do ar, resultando na **abolição ou diminuição do murmúrio vesicular**."
+        },
+        {
+          question: "O que é o pneumotórax, conforme a aula do Dr. Rafael?",
+          options: [
+            "Acúmulo de sangue no espaço pleural.",
+            "Acúmulo de líquido no espaço pleural.",
+            "Presença de ar no espaço pleural.",
+            "Inflamação da pleura."
+          ],
+          answer: 2,
+          comment: "**Pneumotórax** é a condição de **ar no espaço pleural**."
+        },
+        {
+          question: "Qual é a principal característica radiológica do pneumotórax?",
+          options: [
+            "Apagamento do ângulo costofrênico.",
+            "Áreas radiopacas (brancas).",
+            "Áreas bem mais pretas (radiotransparentes) sem trama vascular pulmonar.",
+            "Nódulos pulmonares."
+          ],
+          answer: 2,
+          comment: "O ar no espaço pleural torna a área **radiotransparente (preta) e sem os vasos pulmonares** normalmente visíveis."
+        },
+        {
+          question: "A inspiração é um processo:",
+          options: [
+            "Passivo.",
+            "Ativo que gasta energia.",
+            "Ativo apenas em situações de esforço.",
+            "Independente da ação muscular."
+          ],
+          answer: 1,
+          comment: "A inspiração é um processo **ativo** que envolve a contração do diafragma e outros músculos, demandando energia."
+        },
+        {
+          question: "Qual é um sinal de urgência em pacientes com falta de ar, segundo o Dr. Rafael?",
+          options: [
+            "Tosse seca.",
+            "Dor torácica que piora ao palpar.",
+            "Incapacidade de completar sentenças.",
+            "Edema unilateral de membros inferiores."
+          ],
+          answer: 2,
+          comment: "A **incapacidade de completar frases** indica um esforço respiratório significativo e é um sinal de urgência."
+        },
+        {
+          question: "Qual das seguintes causas de falta de ar foi citada como 'traiçoeira' e que pode se manifestar por dias ou semanas?",
+          options: [
+            "Ansiedade.",
+            "Asma.",
+            "Tromboembolismo Pulmonar (TEP).",
+            "Anemia."
+          ],
+          answer: 2,
+          comment: "O Dr. Rafael ressaltou que o **TEP** pode ser traiçoeiro e apresentar sintomas como falta de ar por um período prolongado."
+        },
+        {
+          question: "Qual dos seguintes fatores de risco foi associado a um paciente com TEP na aula?",
+          options: [
+            "Tabagismo crônico.",
+            "Cirurgia de quadril com acamamento.",
+            "Histórico de alergias.",
+            "Hipertensão arterial."
+          ],
+          answer: 1,
+          comment: "O Dr. Rafael deu o exemplo de pacientes que operam o quadril e ficam acamados como tendo fator de risco para **TEP**."
+        },
+        {
+          question: "A tosse causada por gotejamento pós-nasal é um sintoma comum de qual condição?",
+          options: [
+            "Doença do Refluxo Gastroesofágico.",
+            "Asma.",
+            "Sinusite.",
+            "DPOC."
+          ],
+          answer: 2,
+          comment: "O gotejamento pós-nasal, comum na **sinusite**, pode irritar as vias aéreas e causar tosse."
+        },
+        {
+          question: "Qual das seguintes condições é considerada um diagnóstico de exclusão para a tosse?",
+          options: [
+            "Asma.",
+            "Sinusite.",
+            "Tosse psicogênica.",
+            "Refluxo gastroesofágico."
+          ],
+          answer: 2,
+          comment: "A **tosse psicogênica** é um diagnóstico difícil, feito apenas após a exclusão de outras causas orgânicas."
+        },
+        {
+          question: "Quando a tosse é mais intensa pela manhã e ao fim da tarde/início da noite, qual das seguintes condições deve ser pensada, segundo o Dr. Rafael?",
+          options: [
+            "Doença do Refluxo Gastroesofágico.",
+            "Sinusite crônica.",
+            "Asma ou irritação brônquica.",
+            "Pneumonia bacteriana."
+          ],
+          answer: 2,
+          comment: "Esse padrão temporal é característico de **asma ou bronquite (irritação brônquica)**."
+        },
+        {
+          question: "Qual tipo de tosse é mais frequentemente associado à asma, conforme a aula?",
+          options: [
+            "Produtiva com grande quantidade de escarro.",
+            "Tosse seca ou com pouca secreção.",
+            "Tosse com hemoptise.",
+            "Tosse com ruído metálico."
+          ],
+          answer: 1,
+          comment: "A tosse asmática é geralmente **seca ou com pouca secreção**."
+        },
+        {
+          question: "Em um raio-x de tórax, a presença de linfonodos aumentados no hilo pulmonar pode indicar:",
+          options: [
+            "Pneumotórax.",
+            "Infarto do miocárdio.",
+            "Inflamação ou processo patológico na região.",
+            "Fratura de costela."
+          ],
+          answer: 2,
+          comment: "O aumento dos **linfonodos hilares (linfonodomegalia hilar)** é um sinal de inflamação ou doença na área."
+        },
+        {
+          question: "A neuralgia pós-herpética é uma sequela que pode ser evitada com o tratamento precoce do:",
+          options: [
+            "Herpes simples.",
+            "Herpes zóster.",
+            "Varicela.",
+            "Condrite costal."
+          ],
+          answer: 1,
+          comment: "O tratamento precoce do **herpes zóster**, idealmente em 48 horas, pode prevenir a neuralgia pós-herpética."
+        },
+        {
+          question: "Qual é a principal diferença entre um raio-x normal e um com derrame pleural em relação à cor da imagem pulmonar?",
+          options: [
+            "O pulmão normal é branco e o com derrame pleural é preto.",
+            "O pulmão normal é cinza e o com derrame pleural é branco.",
+            "O pulmão normal é preto (radiotransparente) e o com derrame pleural é branco (radiopaco).",
+            "Não há diferença na cor, apenas na forma."
+          ],
+          answer: 2,
+          comment: "O ar nos pulmões normais aparece **preto**, enquanto o líquido do derrame pleural torna a área **branca e opaca**."
+        },
+        {
+          question: "Qual das seguintes manifestações NÃO é esperada em um paciente com Doença Pulmonar Obstrutiva Crônica (DPOC) avançada?",
+          options: [
+            "Falta de ar crônica.",
+            "Dependência de oxigênio.",
+            "História de tabagismo de longa data.",
+            "Cura completa com tratamento broncodilatador."
+          ],
+          answer: 3,
+          comment: "A **DPOC é uma doença crônica e progressiva, não tendo cura completa**."
+        },
+        {
+          question: "A sensação de 'bola parada na garganta' pode ser uma manifestação extraesofágica de qual condição?",
+          options: [
+            "Asma.",
+            "Sinusite.",
+            "Doença do Refluxo Gastroesofágico (DRGE).",
+            "Amigdalite."
+          ],
+          answer: 2,
+          comment: "A **DRGE** pode causar sintomas atípicos, como a sensação de **globo faríngeo (bola na garganta)**."
+        },
+        {
+          question: "Qual dos seguintes achados na anamnese de um paciente com dor torácica indicaria que a dor NÃO é de origem na caixa torácica?",
+          options: [
+            "Piora com a movimentação.",
+            "Piora à palpação.",
+            "É bem localizada.",
+            "Não é ventilatório-dependente."
+          ],
+          answer: 3,
+          comment: "Dores de origem em órgãos internos geralmente **não pioram com a respiração ou movimentação da caixa torácica**."
+        },
+        {
+          question: "O edema de membros inferiores com cacifo (sinal da godet) bilateral é um sinal que pode estar associado a:",
+          options: [
+            "Trombose venosa profunda unilateral.",
+            "Infecção localizada.",
+            "Insuficiência cardíaca ou doenças renais.",
+            "Fratura de tornozelo."
+          ],
+          answer: 2,
+          comment: "O **edema bilateral com cacifo** é um sinal clássico de condições sistêmicas como **insuficiência cardíaca ou doenças renais**."
+        },
+        {
+          question: "Conforme a aula, qual a principal função do líquido entre as pleuras (visceral e parietal)?",
+          options: [
+            "Auxiliar na troca gasosa.",
+            "Produzir o murmúrio vesicular.",
+            "Permitir o deslizamento das pleuras sem atrito.",
+            "Proteger o pulmão contra infecções."
+          ],
+          answer: 2,
+          comment: "A pequena quantidade de líquido pleural é essencial para que as **pleuras deslizem suavemente durante a respiração**."
+        }
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  ${option}
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${questionNumber + 1}) ${
+                currentQuestion.question
+              }</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        if (event.target.classList.contains("option")) {
+          const questionNumber = event.target.dataset.question;
+          const selected = quizContainer.querySelector(
+            `.option[data-question="${questionNumber}"].selected`
+          );
+          if (selected) selected.classList.remove("selected");
+          event.target.classList.add("selected");
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
