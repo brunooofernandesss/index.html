@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atividade Escrita sobre SOAP e PTS: Caso 01</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  h1, h2 {
+    color: #333;
+    text-align: center; /* Centraliza o título */
+  }
+  table {
+    width: 100%; /* A tabela ocupará a largura total do contêiner */
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed; /* Isso ajuda a prevenir que o conteúdo estoure a largura da coluna */
+  }
+  table, th, td {
+    border: 1px solid black;
+  }
+  th, td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: top; /* Alinha o texto ao topo em células com várias linhas */
+  }
+  /* Estilo para as células editáveis para quebrar a linha */
+  td[contenteditable="true"] {
+    word-wrap: break-word; /* Quebra palavras longas que não cabem na linha */
+    overflow-wrap: break-word; /* Versão mais moderna de word-wrap */
+    white-space: pre-wrap; /* Permite quebras de linha manuais (Enter) e automáticas */
+  }
+
+  /* Definição de largura para as colunas para evitar estouro */
+  #soapTable th:nth-child(1), #soapTable td:nth-child(1) {
+    width: 15%; /* Coluna SOAP */
+  }
+  #soapTable th:nth-child(2), #soapTable td:nth-child(2) {
+    width: 30%; /* Coluna ITENS */
+  }
+  #soapTable th:nth-child(3), #soapTable td:nth-child(3) {
+    width: 55%; /* Coluna DADOS, que terá o texto maior */
+  }
+
+  #ptciTable th:nth-child(1), #ptciTable td:nth-child(1) {
+    width: 25%; /* Coluna Problemas */
+  }
+  #ptciTable th:nth-child(2), #ptciTable td:nth-child(2) {
+    width: 25%; /* Coluna DADOS */
+  }
+  #ptciTable th:nth-child(3), #ptciTable td:nth-child(3) {
+    width: 25%; /* Coluna Profissionais */
+  }
+  #ptciTable th:nth-child(4), #ptciTable td:nth-child(4) {
+    width: 25%; /* Coluna Prazo */
+  }
+
+  .export-button-container {
+    text-align: center; /* Centraliza o conteúdo (o botão) */
+    margin-top: 20px;
+  }
+
+  .export-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block; /* Permite o text-align no container pai funcionar */
+  }
+  .export-button:hover {
+    background-color: #45a049;
+  }
+
+  .caso-clinico-section p {
+    margin-bottom: 10px;
+    line-height: 1.5;
+    text-align: justify; /* Melhora a leitura do texto do caso clínico */
+  }
+
+  /* Estilo para a tabela de exames não editável */
+  #examesTable {
+    width: 80%; /* Ajuste a largura conforme necessário */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #examesTable td {
+    background-color: #f9f9f9; /* Um fundo leve para indicar que não é editável */
+  }
+</style>
+</head>
+<body>
+
+  <h1>Atividade Escrita sobre SOAP e PTS: Caso 01</h1>
+
+  <h2>1- Caso Clínico</h2>
+  <div class="caso-clinico-section" id="casoClinicoContent">
+    <p>A senhora Josefa da Silva, de 40 anos, negra, sexo feminino, cursou até o ensino médio mora em casa própria com a mãe de 76 anos para auxiliar em seus cuidados, cujo é divorciada de seu pai e não sabe o paradeiro deste, como também sempre teve uma relação conflituosa. Possui uma irmã que é casada e mora com o marido e atualmente está grávida de seu primeiro filho. Josefa tem o diagnóstico de diabetes mellitus há 5 anos, porém tem dificuldade em cumprir com o tratamento medicamentoso e não mudar o estilo de vida, usufruindo de uma dieta abusiva de doces e massas. Leva um estilo de vida sedentário e se encontra acima do peso no momento. Relata ter um bom relacionamento com a irmã e cunhado. Está ansiosa com a chegada do bebe. Mas seu vínculo mais forte é com sua mãe. Se afastou das amigas no período do namoro. Possuía um bom relacionamento com os colegas de trabalho e relatou sentir saudades de ter rotina e sair de casa.</p>
+    <p>Foram colhidos os seguintes dados: Histórico de Diabetes na família; Relata dificuldade na adesão ao tratamento medicamentoso; Relata não praticar exercícios físicos; Relata não ter disposição para seguir dieta diabética.</p>
+    <p>Observado que Josefa não desenvolve o auto cuidado desde que terminou seu noivado de 5 anos com João. Parou de trabalhar no comércio após sua mãe adoecer e necessitar de cuidados. As duas sobrevivem com a aposentadoria da mãe de 1 salário mínimo, e ao ser questionada relata viver bem, pois não pagam aluguel, os medicamentos são fornecidos pelo SUS assim como o tratamento da mãe. Mas não possuem dinheiro para viagens ou compra de roupas novas, como gostaria. Quando a irmã necessita de ajuda, Josefa também a auxilia por causa da gravidez, mas relata estar sobrecarregada e as vezes se sentir mal com a situação. Relatou que só conseguiu passar por esse momento por frequentar a igreja e ir nas missas, mas mesmo assim, se sente triste e deprimida com sentimento de culpa, então está ingerindo alimentos tipo fastfood com maior frequência.</p>
+  </div>
+
+  <h2>Exames</h2>
+  <table id="examesTable">
+    <tbody>
+      <tr>
+        <td>Glicemia:</td>
+        <td>241 mg/dl</td>
+      </tr>
+      <tr>
+        <td>Exame físico:</td>
+        <td>Aferido o peso (92kg) e altura (1,70m), com o IMC (31) indicando obesidade; Aferição da PA: 120x80mmHg; palpação e a ausculta das artérias carótidas normais; Pulsos periféricos normais, ausculta pulmonar e cardíaca normais, FC 68 bpm; Cansaço físico aos esforços.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2- SOAP</h2>
+  <table id="soapTable">
+    <thead>
+      <tr>
+        <th>SOAP</th>
+        <th>ITENS</th>
+        <th>DADOS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3">S- SUBJETIVO</td>
+        <td>Motivo consulta:</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Impressões subjetivas</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Experiência anterior com doença</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td rowspan="3">O- OBJETIVO</td>
+        <td>Exame físico</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Exames laboratoriais</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Exame complementar</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td rowspan="7">A- AVALIAÇÃO (Problema clinico) P-PLANO</td>
+        <td>Biológico</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Psicológico</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Social</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Emocional</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Espiritual</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Plano diagnóstico</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Plano terapêutico</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td colspan="2">Seguimento</td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td colspan="2">Educação em saúde</td>
+        <td contenteditable="true"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4- PTCI</h2>
+  <table id="ptciTable">
+    <thead>
+      <tr>
+        <th>PTCI</th>
+        <th>DADOS</th>
+        <th>PROFISSIONAIS</th>
+        <th>PRAZO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Problemas levantados</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Hipótese diagnósticas</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Exames</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>complementares</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Meta curto prazo</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Meta médio prazo</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Meta longo prazo</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Orientações</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Avaliações</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Manejo clínico</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>Retorno</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="export-button-container">
+    <button class="export-button" onclick="exportAndDownloadData()">Exportar e Baixar Dados</button>
+  </div>
+
+  <p><strong>Instruções de Uso:</strong> Clique em "Exportar e Baixar Dados" e salve o arquivo em alguma pasta. Depois, faça o upload desse arquivo em alguma IA e peça para ela corrigir o que estiver errado ou incompleto nas tabelas em texto corrido.</p>
+
+  <script>
+    function exportAndDownloadData() {
+      // Obter o texto do Caso Clínico
+      const casoClinicoContentDiv = document.getElementById('casoClinicoContent');
+      const casoClinicoText = Array.from(casoClinicoContentDiv.getElementsByTagName('p'))
+                                 .map(p => p.innerText.trim())
+                                 .join('\n\n'); // Junta os parágrafos com duas quebras de linha
+
+      // Obter os dados da tabela de Exames
+      const examesData = [];
+      const examesTable = document.getElementById('examesTable');
+      // Itera pelas linhas do tbody (ignorando thead se existisse)
+      for (let i = 0; i < examesTable.rows.length; i++) {
+        const row = examesTable.rows[i];
+        const cells = row.cells;
+        if (cells.length >= 2) { // Garante que a linha tem pelo menos duas células
+          examesData.push({
+            tipo: cells[0].innerText.trim(),
+            resultado: cells[1].innerText.trim()
+          });
+        }
+      }
+
+      const soapData = [];
+      const soapTable = document.getElementById('soapTable');
+      for (let i = 1; i < soapTable.rows.length; i++) {
+        const row = soapTable.rows[i];
+        let soapType = '';
+        if (row.cells[0] && row.cells[0].rowSpan > 1) {
+          soapType = row.cells[0].innerText.trim();
+        } else if (i > 0) {
+            let currentRow = i - 1;
+            while(currentRow >= 0 && (!soapTable.rows[currentRow].cells[0] || soapTable.rows[currentRow].cells[0].rowSpan < 2)) {
+                currentRow--;
+            }
+            if(currentRow >= 0 && soapTable.rows[currentRow].cells[0]) {
+                soapType = soapTable.rows[currentRow].cells[0].innerText.trim();
+            }
+        }
+
+        let item = '';
+        let data = '';
+
+        if (row.cells.length === 3) {
+            item = row.cells[1].innerText.trim();
+            data = row.cells[2].innerText.trim();
+        } else if (row.cells.length === 2) {
+            item = row.cells[0].innerText.trim();
+            data = row.cells[1].innerText.trim();
+        }
+
+        soapData.push({
+          soap: soapType,
+          item: item,
+          dados: data
+        });
+      }
+
+      const ptciData = [];
+      const ptciTable = document.getElementById('ptciTable');
+      for (let i = 1; i < ptciTable.rows.length; i++) {
+        const row = ptciTable.rows[i];
+        ptciData.push({
+          problema: row.cells[0].innerText.trim(),
+          dados: row.cells[1].innerText.trim(),
+          profissionais: row.cells[2].innerText.trim(),
+          prazo: row.cells[3].innerText.trim()
+        });
+      }
+
+      // Combinar todos os dados em um único objeto para exportação
+      const allData = {
+        casoClinico: casoClinicoText,
+        exames: examesData,
+        soap: soapData,
+        ptci: ptciData
+      };
+
+      const filename = 'dados_atividade_07.json';
+      const jsonStr = JSON.stringify(allData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      alert("Dados exportados e baixados como " + filename + "!");
+    }
+  </script>
+
+</body>
+</html>
