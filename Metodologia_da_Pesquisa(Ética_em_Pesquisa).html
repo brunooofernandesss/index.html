@@ -52,6 +52,8 @@
         margin-bottom: 8px;
         cursor: pointer;
         transition: background-color 0.2s ease, border-color 0.2s ease;
+        display: flex; /* Para alinhar a tesoura e o texto */
+        align-items: center;
       }
 
       .option:hover {
@@ -74,6 +76,24 @@
         background-color: #f8d7da;
         color: red;
         border-color: #e53e3e;
+      }
+
+      .option.struck-through {
+        text-decoration: line-through;
+        color: #888; /* Opcional: para que fique mais suave ao ser riscado */
+      }
+
+      .scissor-icon {
+        margin-right: 8px;
+        cursor: pointer;
+        opacity: 0.5; /* Transparência de 50% */
+        width: 16px; /* Tamanho pequeno */
+        height: 16px; /* Tamanho pequeno */
+        flex-shrink: 0; /* Impede que a tesoura encolha */
+      }
+
+      .scissor-icon.hidden {
+        display: none; /* Esconde a tesoura */
       }
 
       .comment {
@@ -525,7 +545,8 @@
             .map(
               (option, optionNumber) =>
                 `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
-                  ${option}
+                  <img src="tesouras.png" class="scissor-icon" title="Cortar alternativa">
+                  <span>${option}</span>
                 </div>`
             )
             .join("");
@@ -559,6 +580,14 @@
           options.forEach((option) => {
             const optionIndex = parseInt(option.dataset.option);
             option.classList.remove("correct", "incorrect");
+            option.classList.remove("struck-through"); // Remove a classe de riscado
+            
+            // Esconde a tesoura após a verificação
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) {
+              scissorIcon.classList.add('hidden');
+            }
+
             if (optionIndex === correctAnswer) {
               option.classList.add("correct");
             }
@@ -579,16 +608,29 @@
         });
 
         resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página até o final para exibir o resultado
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
 
       quizContainer.addEventListener("click", function (event) {
-        if (event.target.classList.contains("option")) {
-          const questionNumber = event.target.dataset.question;
-          const selected = quizContainer.querySelector(
-            `.option[data-question="${questionNumber}"].selected`
-          );
-          if (selected) selected.classList.remove("selected");
-          event.target.classList.add("selected");
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option'); // Encontra o div .option mais próximo
+
+        if (optionElement) {
+            // Se o clique foi diretamente na tesoura e ela não está escondida
+            if (clickedElement.classList.contains("scissor-icon") && !clickedElement.classList.contains("hidden")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            // Se o clique foi em qualquer outra parte do bloco da alternativa
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question="${questionNumber}"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                optionElement.classList.add("selected");
+            }
         }
       });
 
