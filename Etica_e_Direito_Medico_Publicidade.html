@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Questionário de Múltipla Escolha: Publicidade Médica</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        display: flex; /* Para alinhar a tesoura e o texto */
+        align-items: center;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .option.struck-through {
+        text-decoration: line-through;
+        color: #888; /* Opcional: para que fique mais suave ao ser riscado */
+      }
+
+      .scissor-icon {
+        margin-right: 8px;
+        cursor: pointer;
+        opacity: 0.5; /* Transparência de 50% */
+        width: 16px; /* Tamanho pequeno */
+        height: 16px; /* Tamanho pequeno */
+        flex-shrink: 0; /* Impede que a tesoura encolha */
+      }
+
+      .scissor-icon.hidden {
+        display: none; /* Esconde a tesoura */
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none; /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block; /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário de Múltipla Escolha: Publicidade Médica</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "1. Dr. Carlos, um oftalmologista, decide criar um perfil profissional no Instagram. Ao configurar seu perfil, qual das seguintes informações é **obrigatória** na sua biografia ou em todas as suas publicações?",
+          options: [
+            "Apenas seu nome e a especialidade.",
+            "Seu nome, CRM e um slogan chamativo.",
+            "Seu nome, número de CRM e a especialidade/área de atuação com o Registro de Qualificação de Especialista (RQE).",
+            "Nome do consultório e telefone para contato."
+          ],
+          answer: 2,
+          comment: "A nova resolução e as diretrizes éticas são claras quanto à necessidade de identificação completa e transparente do profissional. O nome, o número de registro no Conselho Regional de Medicina (CRM) e a especialidade ou área de atuação com o RQE são fundamentais para garantir a identificação e a qualificação do médico perante o público, evitando publicidade enganosa."
+        },
+        {
+          question: "2. Uma clínica de dermatologia, \"DermatoPrime\", está planejando uma nova campanha publicitária. Qual informação sobre a clínica deve constar obrigatoriamente em suas peças de publicidade, além do nome fantasia?",
+          options: [
+            "Apenas o endereço e telefone.",
+            "O nome do diretor técnico com seu CRM e RQE, se exigível.",
+            "O nome de todos os médicos que atuam na clínica.",
+            "O número de registro da clínica no Conselho Regional de Medicina (CRM da pessoa jurídica) e o nome do diretor técnico com seu CRM e RQE, se exigível."
+          ],
+          answer: 3,
+          comment: "Assim como o médico, a pessoa jurídica (clínica, hospital) também deve ser plenamente identificada na publicidade. Isso inclui o número de registro da pessoa jurídica no CRM e a identificação do diretor técnico, que é o responsável ético pela instituição, com seu respectivo CRM e RQE."
+        },
+        {
+          question: "3. Dra. Ana, ginecologista, posta em seu Stories do Instagram uma \"selfie\" dentro de seu consultório, mostrando o ambiente de trabalho e uma de suas novas cadeiras ginecológicas modernas. A publicação não tem cunho sensacionalista e não expõe pacientes. Essa conduta é:",
+          options: [
+            "Proibida, pois médicos não podem fazer \"selfies\" em ambiente de trabalho.",
+            "Permitida, desde que não mostre pacientes ou elementos sensacionalistas.",
+            "Proibida, pois expõe o consultório de forma comercial.",
+            "Permitida apenas se a foto for tirada por um profissional de marketing."
+          ],
+          answer: 1,
+          comment: "O uso de redes sociais e a publicação de imagens do ambiente de trabalho são permitidos. O vídeo destaca que \"selfies\" são aceitas. O importante é que a imagem não seja sensacionalista, não exponha a imagem de pacientes (sem autorização ou de forma identificável) e não tenha um caráter puramente mercantilista."
+        },
+        {
+          question: "4. Dr. Fernando, cirurgião plástico, publica um vídeo no YouTube com o título \"A revolução da Lipoaspiração 3D: Resultados garantidos e corpo perfeito em 24h!\". No vídeo, ele faz afirmações sobre a capacidade do aparelho de produzir resultados milagrosos. Essa prática é:",
+          options: [
+            "Permitida, se o aparelho tiver registro na Anvisa.",
+            "Permitida, desde que ele mostre o antes e depois de pacientes (com autorização).",
+            "Proibida, pois atribui capacidade privilegiada a um aparelho e promete resultados.",
+            "Permitida, pois a promessa de resultados atrai mais pacientes."
+          ],
+          answer: 2,
+          comment: "A publicidade médica proíbe a atribuição de capacidade privilegiada a aparelhos ou técnicas. A promessa ou garantia de resultados é uma infração ética grave, pois a medicina lida com a variabilidade biológica humana e não pode assegurar desfechos. \"Corpo perfeito em 24h\" é um exemplo claro de promessa e sensacionalismo."
+        },
+        {
+          question: "5. Dra. Patrícia, especialista em emagrecimento, decide organizar um grupo de WhatsApp para seus pacientes, no qual ela compartilha diariamente dicas de dieta, receitas e exercícios. Além disso, ela ocasionalmente oferece \"consultorias rápidas\" por mensagem de áudio, substituindo a consulta presencial para alguns casos mais simples. Essa conduta é:",
+          options: [
+            "Totalmente permitida e uma ótima forma de interação com os pacientes.",
+            "Permitida para as dicas de dieta, mas as \"consultorias rápidas\" por áudio são proibidas.",
+            "Proibida, pois grupos de WhatsApp são considerados sensacionalismo.",
+            "Permitida, desde que todos os pacientes do grupo tenham assinado um termo de consentimento."
+          ],
+          answer: 1,
+          comment: "Compartilhar dicas educativas (sem caráter de consulta individual) em grupos é permitido. No entanto, o vídeo deixa claro que oferecer consulta ou consultoria online a pacientes ou familiares que substitua a presencial é proibido, exceto nos casos regulamentados pela telemedicina, que exige critérios específicos e não se confunde com \"consultorias rápidas\" por mensagem de áudio de forma indiscriminada."
+        },
+        {
+          question: "6. Um médico, Dr. Ricardo, é convidado para participar de um programa de TV popular para falar sobre os benefícios da vacinação infantil. Durante sua participação, ele deve:",
+          options: [
+            "Aproveitar para divulgar o endereço de sua clínica e seus horários de atendimento.",
+            "Focar no caráter educativo e informativo, evitando autopromoção e indicando possíveis conflitos de interesse.",
+            "Utilizar a oportunidade para criticar os médicos que são contra a vacinação.",
+            "Sugere que os telespectadores agendem uma consulta com ele para tirar dúvidas mais específicas."
+          ],
+          answer: 1,
+          comment: "A participação em veículos de comunicação de massa é permitida e até incentivada para disseminar conhecimento médico. No entanto, o foco deve ser sempre o caráter educativo e informativo, sem fins de autopromoção ou mercantilismo. Qualquer conflito de interesse (ex: se o médico tiver participação em uma empresa de vacinas) deve ser declarado."
+        },
+        {
+          question: "7. Dra. Sofia, pediatra, possui um blog onde escreve artigos sobre saúde infantil. Em um de seus artigos, ela decide postar um \"antes e depois\" de uma criança que tratou com um novo medicamento para uma condição rara, mostrando a melhora significativa. Ela obteve autorização dos pais da criança para a publicação da foto. Essa conduta é:",
+          options: [
+            "Permitida, já que obteve autorização dos pais.",
+            "Proibida, pois a divulgação de \"antes e depois\" de pacientes é vedada na publicidade médica.",
+            "Permitida apenas se a criança não for identificável na imagem.",
+            "Permitida, desde que a criança seja maior de idade."
+          ],
+          answer: 1,
+          comment: "A divulgação de \"antes e depois\" de pacientes é proibida. Mesmo com a autorização, essa prática é considerada antiética por poder induzir o público a acreditar em resultados garantidos, o que não existe na medicina, e por expor o paciente. O foco deve ser na informação e não na promessa de resultados visuais."
+        },
+        {
+          question: "8. Um laboratório farmacêutico convida a Dra. Lúcia, infectologista renomada, para participar de uma propaganda de um novo antibiótico, afirmando que o medicamento \"garante 100% de cura\" para uma infecção específica. A Dra. Lúcia, embora concorde com a eficácia do medicamento, decide participar da propaganda. Essa atitude da médica é:",
+          options: [
+            "Permitida, se o medicamento tiver registro na Anvisa.",
+            "Proibida, pois participa de propaganda que induz à garantia de resultados.",
+            "Permitida, desde que ela não seja a única a aparecer na propaganda.",
+            "Proibida, pois médicos não podem participar de propagandas de medicamentos."
+          ],
+          answer: 1,
+          comment: "É proibido ao médico participar de propaganda de produtos, medicamentos ou serviços que induzam à garantia de resultados. A medicina não oferece garantias de cura de 100%, e a participação em publicidade com tal promessa é antiética, pois pode enganar o público e levar a expectativas irreais."
+        },
+        {
+          question: "9. Dr. Paulo, ortopedista, decide criar um consórcio de cirurgias ortopédicas em sua clínica para facilitar o acesso aos seus serviços. Os pacientes pagariam parcelas mensais e, ao serem sorteados, realizariam a cirurgia. Essa forma de oferecer serviços é:",
+          options: [
+            "Permitida, pois facilita o acesso do paciente.",
+            "Proibida, pois a oferta de serviços médicos por meio de consórcio é vedada.",
+            "Permitida, desde que o consórcio seja regulamentado.",
+            "Permitida, se ele avisar o Conselho Regional de Medicina."
+          ],
+          answer: 1,
+          comment: "A oferta de serviços médicos por meio de consórcios é expressamente proibida. Essa prática desvirtua a relação médico-paciente, mercantiliza a medicina e pode gerar expectativas e pressões indevidas sobre o ato médico, que deve ser focado na necessidade clínica e não em sorteios ou pagamentos antecipados em esquema de consórcio."
+        },
+        {
+          question: "10. Dra. Roberta, psiquiatra, recebe um convite para ser homenageada como \"Psiquiatra do Ano\" em um evento local promovido por uma revista. Ela aceita a homenagem e permite que seu nome e foto sejam divulgados na revista com o título da premiação. Essa conduta é:",
+          options: [
+            "Permitida, pois é um reconhecimento público de seu trabalho.",
+            "Proibida, pois a participação em listas de premiações ou homenagens como \"médico do ano/destaque\" é vedada.",
+            "Permitida, desde que a homenagem não envolva dinheiro.",
+            "Permitida, se a revista for de circulação restrita."
+          ],
+          answer: 1,
+          comment: "A ética médica proíbe a participação em listas de premiações ou homenagens que atribuam ao médico o título de \"melhor\", \"do ano\", \"destaque\", entre outros. Isso é considerado autopromoção e sensacionalismo, que vai contra a sobriedade e o caráter humanitário da profissão, além de gerar concorrência desleal."
+        },
+        {
+          question: "11. Dr. José, cirurgião geral, posta uma foto de uma nova técnica cirúrgica que ele desenvolveu, afirmando ser o \"único no Brasil a realizar esse procedimento\" e que ela \"garante uma recuperação 50% mais rápida\". Essa afirmação é:",
+          options: [
+            "Permitida, se ele realmente for o único a usar a técnica.",
+            "Proibida, pois atribui capacidade privilegiada à técnica e promete resultados.",
+            "Permitida, desde que ele apresente dados científicos que comprovem a recuperação mais rápida.",
+            "Proibida apenas se ele não tiver o registro da técnica."
+          ],
+          answer: 1,
+          comment: "É proibido anunciar técnica atribuindo capacidade privilegiada, mesmo que o médico seja o único a utilizá-la. A medicina não aceita o sensacionalismo de ser \"o único\" ou promessas de resultados (\"recuperação 50% mais rápida\"), pois isso pode enganar o público e desvirtuar o ato médico."
+        },
+        {
+          question: "12. Um paciente elogia muito o Dr. Pedro, cardiologista, em uma rede social, afirmando que ele é o \"melhor médico do mundo\". O Dr. Pedro decide \"repostar\" o elogio em seu perfil profissional. Essa conduta é:",
+          options: [
+            "Permitida, pois é um elogio espontâneo do paciente.",
+            "Proibida, pois a repostagem de elogios reiterados pode ser considerada autopromoção.",
+            "Permitida, desde que o paciente tenha autorizado a repostagem.",
+            "Proibida, pois o médico não pode repostar nada de pacientes."
+          ],
+          answer: 1,
+          comment: "Embora um elogio espontâneo não seja problema, a repostagem reiterada de elogios em perfil profissional pode ser interpretada como autopromoção e sensacionalismo. A ética médica preza pela sobriedade e pelo profissionalismo, evitando a exploração da imagem do paciente para fins publicitários do médico."
+        },
+        {
+          question: "13. Uma clínica de estética, \"Beleza e Bem-Estar\", que não tem nenhum médico em seu corpo clínico, oferece procedimentos como aplicação de botox e preenchimentos faciais, anunciando-os como atos médicos. Essa conduta é:",
+          options: [
+            "Permitida, se os profissionais que realizam os procedimentos forem capacitados.",
+            "Proibida, pois esses procedimentos são atos médicos e só podem ser anunciados e realizados por médicos ou sob supervisão médica.",
+            "Permitida, se a clínica tiver um alvará de funcionamento.",
+            "Proibida apenas se a clínica não tiver um esteticista responsável."
+          ],
+          answer: 1,
+          comment: "O exercício da medicina e a realização de atos médicos são privativos de médicos. Clínicas sem corpo clínico médico não podem anunciar ou realizar procedimentos que são considerados atos médicos, configurando exercício ilegal da medicina e publicidade enganosa."
+        },
+        {
+          question: "14. Dra. Camila, nutricionista, frequentemente posta em seu perfil profissional do Instagram fotos de alimentos e dicas de alimentação saudável. Ela também, ocasionalmente, compartilha fotos de pratos feitos por ela e pergunta a seus seguidores se eles \"topam o desafio\" de seguir uma dieta específica por uma semana. Essa conduta é:",
+          options: [
+            "Permitida, pois são apenas dicas e desafios.",
+            "Proibida, pois caracteriza a oferta de consulta online.",
+            "Permitida, desde que ela não mencione o nome de pacientes.",
+            "Proibida, pois a nutricionista não é médica."
+          ],
+          answer: 0,
+          comment: "O foco da questão está nas dicas e desafios genéricos, que são permitidos como conteúdo educativo. O importante é que não se configure como consulta individualizada ou prescrição de tratamento sem a devida avaliação e acompanhamento profissional. A questão não se refere ao campo da medicina, mas é relevante para o contexto geral da ética na saúde. (Considerando que a nutricionista não é médica, a questão se encaixa nos princípios gerais de publicidade profissional)."
+        },
+        {
+          question: "15. Um médico decide abrir um consultório dentro de uma farmácia, para facilitar o acesso dos pacientes à consulta e à compra de medicamentos. Essa prática é:",
+          options: [
+            "Permitida, se a farmácia tiver uma licença sanitária.",
+            "Proibida, pois manter consultório dentro de farmácia é vedado.",
+            "Permitida, se o médico tiver um contrato de aluguel com a farmácia.",
+            "Proibida apenas se o médico for proprietário da farmácia."
+          ],
+          answer: 1,
+          comment: "É expressamente proibido manter consultório médico dentro de farmácia ou ótica. Essa proibição visa evitar a mercantilização da medicina, o conflito de interesses e a pressão para a prescrição ou venda de produtos, garantindo a autonomia e a independência do ato médico."
+        },
+        {
+          question: "16. Dr. Guilherme, clínico generalista, decide criar um perfil no Facebook para sua clínica. No perfil, ele anuncia \"serviços agregados\", como estacionamento gratuito para pacientes e convênio com um laboratório de análises clínicas parceiro que oferece descontos. Essa conduta é:",
+          options: [
+            "Proibida, pois serviços agregados não podem ser anunciados.",
+            "Permitida, pois são informações úteis para os pacientes.",
+            "Permitida, mas apenas se o estacionamento for dentro da clínica.",
+            "Proibida, pois gera concorrência desleal."
+          ],
+          answer: 1,
+          comment: "O anúncio de serviços agregados, como estacionamento, convênios com laboratórios ou facilidades para o paciente, é permitido. Essas informações são consideradas úteis para o público e não configuram sensacionalismo ou mercantilismo, desde que não envolvam vendas casadas ou outras práticas antiéticas."
+        },
+        {
+          question: "17. Dra. Juliana, radiologista, utiliza um novo aparelho de ressonância magnética e decide anunciar em seu site que seu equipamento é o \"mais moderno e preciso do país\". Essa afirmação é:",
+          options: [
+            "Permitida, se ela tiver um laudo comprovando a superioridade do aparelho.",
+            "Proibida, pois atribui capacidade privilegiada a um aparelho e pode gerar concorrência desleal.",
+            "Permitida, se o aparelho tiver registro na Anvisa.",
+            "Proibida apenas se o aparelho não tiver a tecnologia anunciada."
+          ],
+          answer: 1,
+          comment: "É proibido atribuir capacidade privilegiada a aparelhos ou tecnologias. A afirmação de ser o \"mais moderno e preciso do país\" é um exemplo de sensacionalismo e pode configurar concorrência desleal, já que o médico não deve se valer de superlativos para atrair pacientes."
+        },
+        {
+          question: "18. Dr. Léo, cardiologista, recebe um convite de uma empresa para certificar a qualidade de um novo aparelho de eletrocardiograma que está sendo lançado no mercado. Ele aceita o convite e assina a certificação. Essa conduta é:",
+          options: [
+            "Permitida, se ele for um especialista na área.",
+            "Proibida, pois é vedado ao médico certificar a qualidade de produtos ou ambientes, salvo em caso de empresa de certificação oficial.",
+            "Permitida, se ele não receber dinheiro pela certificação.",
+            "Proibida apenas se o aparelho não tiver registro na Anvisa."
+          ],
+          answer: 1,
+          comment: "É proibido ao médico certificar a qualidade de produtos ou ambientes, a menos que ele seja parte de uma empresa de certificação oficial. Essa proibição visa evitar conflitos de interesse e que o médico utilize sua autoridade profissional para endossar produtos comerciais, o que pode ser visto como uma forma de publicidade velada."
+        },
+        {
+          question: "19. Um grupo de médicos da mesma especialidade decide criar um perfil conjunto no Instagram para divulgar informações sobre saúde para leigos, com vídeos e posts educativos. Em todas as publicações, eles informam seus nomes, CRMs e RQEs. Essa iniciativa é:",
+          options: [
+            "Proibida, pois um grupo de médicos não pode ter um perfil conjunto.",
+            "Permitida, desde que o conteúdo seja educativo e não tenha cunho sensacionalista ou mercantilista.",
+            "Permitida apenas se o grupo for ligado a uma sociedade de especialidade.",
+            "Proibida, pois pode gerar concorrência desleal."
+          ],
+          answer: 1,
+          comment: "A divulgação de conteúdo educativo para leigos é permitida e incentivada, desde que siga as diretrizes éticas. A colaboração entre médicos para esse fim é positiva, desde que a identificação seja clara e o objetivo seja a disseminação de conhecimento, e não a promoção individual ou comercial excessiva."
+        },
+        {
+          question: "20. Dra. Vanessa, ginecologista, posta um vídeo em seu canal do YouTube onde ela faz um \"desabafo\" sobre a dificuldade de lidar com pacientes que não seguem as orientações, utilizando exemplos genéricos de situações que a irritam, mas sem identificar pacientes. Essa conduta é:",
+          options: [
+            "Proibida, pois médicos não devem reclamar do trabalho em redes sociais.",
+            "Permitida, desde que não identifique pacientes, não utilize linguagem ofensiva ou sensacionalista.",
+            "Proibida, pois expõe o ambiente de trabalho de forma negativa.",
+            "Permitida apenas se ela tiver autorização do Conselho Regional de Medicina."
+          ],
+          answer: 1,
+          comment: "Comentários genéricos sobre o prazer ou as dificuldades do trabalho são permitidos. O fundamental é que o médico não identifique pacientes, não faça críticas ofensivas ou sensacionalistas e mantenha o tom profissional. Se for uma crítica sobre o ambiente de trabalho, o canal adequado seria o próprio CRM."
+        },
+        {
+          question: "21. Dr. Marcos, oncologista, participa de uma live em que ele responde a perguntas de pacientes sobre sintomas de câncer, oferecendo diagnósticos preliminares e sugerindo tratamentos específicos com base nas descrições dos pacientes. Essa conduta é:",
+          options: [
+            "Permitida, pois é telemedicina e ele está ajudando os pacientes.",
+            "Proibida, pois é vedado oferecer consulta ou consultoria online que substitua a presencial, exceto em casos regulamentados de telemedicina que exigem critérios mais rigorosos.",
+            "Permitida, se ele deixar claro que não é um diagnóstico definitivo.",
+            "Proibida, pois lives não são permitidas para médicos."
+          ],
+          answer: 1,
+          comment: "A teleconsulta (ou telemedicina) tem regulamentação específica e exige uma relação médico-paciente pré-existente ou um protocolo de atendimento bem definido, além de garantir a segurança dos dados. Oferecer diagnósticos preliminares ou sugerir tratamentos em lives abertas, sem a devida anamnese e exame físico, é uma prática proibida por substituir a consulta presencial de forma inadequada e irresponsável."
+        },
+        {
+          question: "22. Uma clínica de fisioterapia, \"FisioMovimento\", anuncia um \"Programa de Reabilitação Milagrosa\" para problemas de coluna, prometendo a \"cura total em 10 sessões\". Essa publicidade é:",
+          options: [
+            "Permitida, se eles tiverem estatísticas de sucesso.",
+            "Proibida, pois garante/promete resultados e utiliza termos sensacionalistas.",
+            "Permitida, desde que os fisioterapeutas sejam capacitados.",
+            "Proibida apenas para médicos, não para fisioterapeutas."
+          ],
+          answer: 1,
+          comment: "A proibição de garantir ou prometer resultados de tratamento é um princípio ético fundamental que se estende a todas as áreas da saúde. Termos como \"cura total\" e \"milagrosa\" são sensacionalistas e induzem o público a erro."
+        },
+        {
+          question: "23. Dr. Carlos, cirurgião, posta uma foto em seu Instagram de um \"kit de órteses e próteses\" que ele utiliza em suas cirurgias, mencionando as marcas comerciais dos produtos e afirmando que são as \"melhores do mercado\". Essa conduta é:",
+          options: [
+            "Permitida, se as órteses e próteses tiverem registro na Anvisa.",
+            "Proibida, pois é vedado anunciar órteses, próteses e insumos com marcas comerciais.",
+            "Permitida, se ele não estiver recebendo patrocínio.",
+            "Proibida apenas se as órteses e próteses não forem de boa qualidade."
+          ],
+          answer: 1,
+          comment: "A publicidade de órteses, próteses e insumos deve descrever suas características, mas é proibido mencionar marcas comerciais ou fazer endossos de produtos específicos. Isso evita o conflito de interesses e a promoção de produtos em detrimento da neutralidade e do interesse do paciente."
+        },
+        {
+          question: "24. Dra. Clara, dermatologista, anuncia em seu site que oferece \"promoção de consulta com 50% de desconto para novos pacientes\". Essa conduta é:",
+          options: [
+            "Permitida, pois a resolução permite anunciar abatimentos e descontos em campanhas promocionais.",
+            "Proibida, pois a medicina não pode oferecer descontos.",
+            "Permitida, desde que não haja venda casada.",
+            "Proibida, pois descaracteriza a profissão médica."
+          ],
+          answer: 0,
+          comment: "O vídeo menciona que a resolução permite anunciar abatimentos e descontos em campanhas promocionais, desde que não vincule essas promoções a vendas casadas, premiações ou outros objetivos que desvirtuem a finalidade da Medicina."
+        },
+        {
+          question: "25. Dr. Felipe, urologista, anuncia em seu site que atende a diversos planos de saúde e mostra fotos da estrutura do consultório, incluindo a sala de espera e a recepção. Essa conduta é:",
+          options: [
+            "Proibida, pois a divulgação de planos de saúde e fotos do consultório é considerada mercantilista.",
+            "Permitida, pois são informações relevantes para o paciente.",
+            "Permitida apenas se as fotos não forem muito chamativas.",
+            "Proibida, pois expõe o paciente ao ambiente do consultório."
+          ],
+          answer: 1,
+          comment: "A publicidade do local de atendimento, dos planos de saúde atendidos e da infraestrutura do consultório ou clínica é permitida. São informações consideradas úteis para o paciente que busca um profissional e não configuram sensacionalismo ou mercantilismo."
+        },
+        {
+          question: "26. Uma clínica de cirurgia bariátrica organiza um evento aberto ao público, com palestras sobre os riscos e benefícios da cirurgia. Durante o evento, um dos médicos realiza uma \"demonstração\" ao vivo de uma parte da cirurgia em um manequim. Essa demonstração é:",
+          options: [
+            "Permitida, pois é educativa e feita em um manequim.",
+            "Proibida, pois procedimentos ao vivo/lives são vedados, exceto em eventos científicos.",
+            "Permitida, se houver um público restrito.",
+            "Proibida apenas se o médico for pago para fazer a demonstração."
+          ],
+          answer: 1,
+          comment: "Embora o caráter educativo seja importante, a realização de \"procedimentos ao vivo\" em eventos abertos ao público, mesmo em manequins, pode ser interpretada como sensacionalismo e é vedada pela resolução, com raras exceções para eventos estritamente científicos e captação de imagens de parto."
+        },
+        {
+          question: "27. Dr. Gustavo, geriatra, posta em seu perfil profissional uma foto com uma frase inspiradora sobre a importância da saúde na terceira idade e, no final da legenda, coloca um link para agendamento de consultas online. Essa conduta é:",
+          options: [
+            "Proibida, pois links para agendamento online não são permitidos.",
+            "Permitida, pois a referência à forma de marcação de consulta e agendamentos é expressamente permitida.",
+            "Proibida, pois a frase inspiradora é sensacionalista.",
+            "Permitida, se o agendamento online for gratuito."
+          ],
+          answer: 1,
+          comment: "O vídeo e as diretrizes permitem a referência à forma de marcação de consulta e agendamentos, inclusive online. O importante é que a publicidade como um todo não seja sensacionalista ou enganosa."
+        },
+        {
+          question: "28. Dra. Mônica, médica do trabalho, é convidada por uma empresa para participar de um vídeo institucional sobre segurança no trabalho, no qual ela fala sobre a importância dos equipamentos de proteção individual (EPIs). No vídeo, ela aparece com seu jaleco e estetoscópio. Essa conduta é:",
+          options: [
+            "Proibida, pois médicos não podem participar de peças publicitárias de empresas.",
+            "Permitida, pois participa como membro do corpo clínico da empresa e o tema é relevante para a saúde.",
+            "Proibida, pois ela está utilizando seus símbolos profissionais.",
+            "Permitida apenas se ela não receber pagamento pela participação."
+          ],
+          answer: 1,
+          comment: "A participação de médicos em peças publicitárias, como membro do corpo clínico de uma empresa ou instituição, é permitida, desde que haja autorização de direito de imagem e o conteúdo não tenha cunho sensacionalista ou enganoso. O foco deve ser na informação e na promoção da saúde."
+        },
+        {
+          question: "29. Um programa de rádio entrevista a Dra. Lígia, especialista em medicina integrativa, que, durante a entrevista, fala sobre a \"ozonioterapia\" como uma técnica milagrosa para diversas doenças, apesar de a ozonioterapia não ser reconhecida pelo Conselho Federal de Medicina. Essa conduta da médica é:",
+          options: [
+            "Permitida, se a técnica for eficaz.",
+            "Proibida, pois a divulgação de métodos/técnicas não reconhecidas pelo CFM é vedada.",
+            "Permitida, se ela tiver pacientes que atestem a eficácia.",
+            "Proibida apenas se ela cobrar pela entrevista."
+          ],
+          answer: 1,
+          comment: "É expressamente proibido divulgar métodos ou técnicas que não são reconhecidas pelo Conselho Federal de Medicina. Essa proibição visa proteger a população de tratamentos sem comprovação científica e garantir a seriedade da prática médica."
+        },
+        {
+          question: "30. Dr. Gabriel, cirurgião geral, decide criar um perfil pessoal em uma rede social para interagir com amigos e familiares. No entanto, ele ocasionalmente posta fotos de sua rotina no hospital e comenta sobre casos clínicos (anonimamente), misturando sua vida pessoal com a profissional. Essa conduta é:",
+          options: [
+            "Permitida, pois é um perfil pessoal.",
+            "Proibida, pois a distinção entre perfil pessoal e profissional em redes sociais deve ser mantida para evitar confusão e infrações éticas.",
+            "Permitida, se ele não divulgar o nome do hospital.",
+            "Proibida apenas se ele tiver pacientes entre seus amigos."
+          ],
+          answer: 1,
+          comment: "Embora o médico tenha direito à sua vida pessoal, a mistura indiscriminada de conteúdo pessoal e profissional em redes sociais pode gerar confusão e, em alguns casos, levar a infrações éticas, especialmente se houver comentários sobre casos clínicos (mesmo que anônimos) ou exposição indevida do ambiente de trabalho. É fundamental a distinção entre os perfis."
+        },
+        {
+          question: "31. Uma empresa farmacêutica promove um sorteio de prêmios em dinheiro para médicos que prescreverem mais de seus produtos. Dr. Roberto, clínico geral, participa e ganha um dos prêmios. Essa conduta é:",
+          options: [
+            "Permitida, pois é um prêmio oferecido por uma empresa privada.",
+            "Proibida, pois é vedado ao médico receber prêmios em geral que vinculem ao ato médico ou à prescrição.",
+            "Permitida, desde que ele declare o prêmio no imposto de renda.",
+            "Proibida apenas se o prêmio for muito alto."
+          ],
+          answer: 1,
+          comment: "O recebimento de prêmios, especialmente em dinheiro, que estejam vinculados à prescrição de produtos ou ao volume de atendimentos, é proibido. Essa prática configura mercantilismo e conflito de interesses, comprometendo a autonomia do médico e o interesse do paciente."
+        },
+        {
+          question: "32. Dra. Carolina, endocrinologista, posta em seu blog um artigo científico sobre uma nova pesquisa na área de diabetes, citando a fonte e o autor da pesquisa. Essa conduta é:",
+          options: [
+            "Proibida, pois médicos não podem divulgar pesquisas alheias.",
+            "Permitida, pois a divulgação de conhecimento científico é incentivada.",
+            "Permitida apenas se ela tiver a autorização do autor da pesquisa.",
+            "Proibida, pois a linguagem científica pode ser complexa para leigos."
+          ],
+          answer: 1,
+          comment: "A divulgação de conhecimento científico, com a devida citação das fontes, é uma prática permitida e incentivada. Contribui para a educação em saúde e para o avanço da ciência, desde que o médico não se aproprie da autoria ou faça interpretações sensacionalistas."
+        },
+        {
+          question: "33. Um médico, Dr. Eduardo, é diretor técnico de uma clínica de estética. Um dos profissionais da clínica, que não é médico, começa a divulgar em redes sociais que a clínica realiza \"harmonização facial\" com botox e preenchimento, sem mencionar que esses procedimentos são realizados por médicos. O Dr. Eduardo sabe disso, mas não toma nenhuma providência. Essa conduta do Dr. Eduardo é:",
+          options: [
+            "Permitida, pois a responsabilidade é do profissional que fez a divulgação.",
+            "Proibida, pois o diretor técnico é corresponsável pela publicidade irregular da pessoa jurídica.",
+            "Permitida, se o profissional que divulgou tiver autorização.",
+            "Proibida apenas se os procedimentos forem realizados por alguém sem qualificação."
+          ],
+          answer: 1,
+          comment: "O diretor técnico da pessoa jurídica é o responsável ético pela clínica/hospital. Ele tem o dever de fiscalizar e garantir que toda a publicidade da instituição esteja em conformidade com as normas éticas. A omissão diante de publicidade irregular o torna corresponsável pela infração."
+        },
+        {
+          question: "34. Dr. Daniel, neurocirurgião, posta em seu Instagram uma foto de sua equipe médica após uma cirurgia complexa, com todos usando máscaras e toucas, e o rosto dos pacientes não é visível. Na legenda, ele comenta sobre o sucesso da cirurgia e agradece à equipe. Essa conduta é:",
+          options: [
+            "Proibida, pois expõe a rotina do centro cirúrgico.",
+            "Permitida, desde que não identifique pacientes e o teor seja profissional e não sensacionalista.",
+            "Proibida, pois a equipe médica não pode ser fotografada.",
+            "Permitida apenas se o paciente tiver autorizado a foto."
+          ],
+          answer: 1,
+          comment: "A publicação de fotos de equipes médicas é permitida, desde que não haja identificação de pacientes e o contexto seja profissional. O foco deve ser na valorização do trabalho da equipe e não no sensacionalismo ou na promessa de resultados."
+        },
+        {
+          question: "35. Uma clínica de cardiologia instala em sua recepção um monitor que exibe uma propaganda de uma empresa de planos de saúde, da qual um dos médicos da clínica é sócio. Essa prática é:",
+          options: [
+            "Permitida, se o plano de saúde for parceiro da clínica.",
+            "Proibida, se o médico tiver algum tipo de participação financeira na empresa do plano de saúde, pois isso configura conflito de interesses e publicidade velada.",
+            "Permitida, desde que a propaganda seja discreta.",
+            "Proibida apenas se o plano de saúde não tiver registro na ANS."
+          ],
+          answer: 1,
+          comment: "É proibido ao médico manter material publicitário de empresas farmacêuticas, óticas, laboratórios ou planos de saúde nas dependências do consultório ou clínica se houver um conflito de interesses, como a participação financeira do médico na empresa. Isso visa evitar a influência comercial na decisão do paciente e na prática médica."
+        },
+        {
+          question: "36. Dr. Renato, oncologista, decide fazer uma live sobre o \"Quadro de Intoxicação por Medicamento\", utilizando o tema para alertar a população sobre os riscos do uso indevido de fármacos. Durante a live, ele discute a importância da \"Administração de Eletrólitos e Diuréticos de Alça\" em certos casos. Essa live é:",
+          options: [
+            "Proibida, pois são temas muito técnicos para o público leigo.",
+            "Permitida, pois o caráter é educativo e informativo, abordando temas relevantes de saúde pública.",
+            "Proibida, pois ele pode gerar pânico na população sobre intoxicação.",
+            "Permitida apenas se a live for restrita a outros médicos."
+          ],
+          answer: 1,
+          comment: "Abordar temas relevantes de saúde pública, como \"Quadro de Intoxicação por Medicamento\" e a importância de \"Administração de Eletrólitos e Diuréticos de Alça\", em lives com caráter educativo e informativo é permitido. O importante é que o conteúdo seja didático, sem sensacionalismo e sem configurar consulta ou prescrição."
+        },
+        {
+          question: "37. Dra. Selma, nefrologista, explica em um vídeo para seus pacientes sobre como ocorre a \"Concentração da Urina nos Rins\" e o processo de \"Diurese Renal\", utilizando animações para facilitar a compreensão. Essa conduta é:",
+          options: [
+            "Proibida, pois a fisiologia renal é muito complexa para o público leigo.",
+            "Permitida, pois busca educar e informar os pacientes sobre o funcionamento do corpo.",
+            "Proibida, pois ela está dando informações que deveriam ser dadas em consulta.",
+            "Permitida apenas se o vídeo for aprovado pelo Conselho Regional de Medicina."
+          ],
+          answer: 1,
+          comment: "A divulgação de informações didáticas sobre o funcionamento do corpo humano, como a \"Concentração da Urina nos Rins\" e a \"Diurese Renal\", contribui para a educação em saúde e para a compreensão do paciente sobre sua própria condição. É uma prática permitida e incentivada, desde que o conteúdo seja preciso e acessível."
+        },
+        {
+          question: "38. Dr. Artur, urologista, cria um infográfico explicando detalhadamente os \"Mecanismos Tubulares de Formação da Urina\" e o papel da \"Alça de Henle\" e do \"Tubo Urinário\" nesse processo. Ele publica o infográfico em seu site profissional. Essa conduta é:",
+          options: [
+            "Proibida, pois é muito técnico para a internet.",
+            "Permitida, pois é uma forma de divulgar conhecimento científico de forma didática.",
+            "Proibida, pois expõe detalhes de fisiologia que podem confundir o paciente.",
+            "Permitida apenas se o infográfico for revisado por outros especialistas."
+          ],
+          answer: 1,
+          comment: "A divulgação de informações sobre \"Mecanismos Tubulares de Formação da Urina\", \"Alça de Henle\" e \"Tubo Urinário\", mesmo que com terminologia técnica, é permitida se o objetivo for educativo e didático. Isso demonstra conhecimento do profissional e contribui para o esclarecimento do público sobre temas complexos da saúde."
+        },
+        {
+          question: "39. Dra. Helena, infectologista, faz um vídeo para a internet explicando a importância da \"Excreção Renal\" no contexto do tratamento de uma intoxicação por medicamento, fazendo a conexão com a necessidade de hidratação adequada e o uso de diuréticos. Essa conduta é:",
+          options: [
+            "Proibida, pois ela está orientando sobre um tratamento.",
+            "Permitida, pois o vídeo tem caráter informativo e educativo sobre a função renal e a sua relação com a eliminação de substâncias do corpo.",
+            "Proibida, pois ela está dando informações sobre intoxicação.",
+            "Permitida apenas se o vídeo for patrocinado por uma empresa de medicamentos."
+          ],
+          answer: 1,
+          comment: "Explicar a relevância da \"Excreção Renal\" no tratamento de intoxicações e a relação com a hidratação e diuréticos é uma forma de educação em saúde. O vídeo aborda o \"QUADRO DE INTOXICAÇÃO POR MEDICAMENTO\" e a \"DIURESE RENAL\", sendo um complemento didático para o entendimento do tema. A conduta é permitida quando o objetivo é informativo e sem fins de consulta individualizada ou mercantilista."
+        },
+        {
+          question: "40. Um médico cirurgião, Dr. Pedro, posta em suas redes sociais um vídeo de 15 segundos realizando uma cirurgia em um paciente, com foco no procedimento em si, sem mostrar o rosto do paciente. A trilha sonora do vídeo é um remix popular e ele usa alguns \"stickers\" engraçados. Essa conduta é:",
+          options: [
+            "Permitida, desde que o rosto do paciente não apareça.",
+            "Proibida, pois caracteriza procedimento ao vivo/live e sensacionalismo, mesmo que seja um trecho e não uma transmissão completa.",
+            "Permitida, se ele tiver a autorização expressa do paciente.",
+            "Proibida apenas se o vídeo for monetizado."
+          ],
+          answer: 1,
+          comment: "Mesmo um pequeno trecho de um procedimento cirúrgico, especialmente com elementos de entretenimento como trilha sonora popular e \"stickers engraçados\", é considerado sensacionalismo e viola a ética médica. A exibição de procedimentos ao vivo ou gravados em ambiente cirúrgico é vedada fora de contextos estritamente científicos e controlados, e nunca com objetivo de entretenimento ou autopromoção."
+        }
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = currentQuestion.options
+            .map(
+              (option, optionNumber) =>
+                `<div class="option" data-question="${questionNumber}" data-option="${optionNumber}">
+                  <img src="tesouras.png" class="scissor-icon" title="Cortar alternativa">
+                  <span>${option}</span>
+                </div>`
+            )
+            .join("");
+
+          output.push(`
+            <div class="card">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>
+          `);
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+
+        questions.forEach((question, questionIndex) => {
+          const options = quizContainer.querySelectorAll(
+            `.option[data-question="${questionIndex}"]`
+          );
+          const userAnswerElement = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const userAnswer = userAnswerElement ? parseInt(userAnswerElement.dataset.option) : undefined;
+          const correctAnswer = question.answer;
+          const commentElement = document.getElementById(`comment-${questionIndex}`);
+
+          options.forEach((option) => {
+            const optionIndex = parseInt(option.dataset.option);
+            option.classList.remove("correct", "incorrect");
+            option.classList.remove("struck-through"); // Remove a classe de riscado
+            
+            // Esconde a tesoura após a verificação
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) {
+              scissorIcon.classList.add('hidden');
+            }
+
+            if (optionIndex === correctAnswer) {
+              option.classList.add("correct");
+            }
+            if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+              option.classList.add("incorrect");
+            }
+          });
+
+          // Exibir o comentário
+          if (question.comment) {
+            commentElement.innerHTML = `<p><strong>Comentário:</strong> ${question.comment}</p>`;
+            commentElement.classList.add('show'); // Torna o comentário visível
+          }
+
+          if (userAnswer === correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página até o final para exibir o resultado
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option'); // Encontra o div .option mais próximo
+
+        if (optionElement) {
+            // Se o clique foi diretamente na tesoura e ela não está escondida
+            if (clickedElement.classList.contains("scissor-icon") && !clickedElement.classList.contains("hidden")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            // Se o clique foi em qualquer outra parte do bloco da alternativa
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question="${questionNumber}"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
