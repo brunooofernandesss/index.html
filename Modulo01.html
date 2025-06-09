@@ -131,6 +131,85 @@
       .comment.show {
         display: block; /* Mostrado quando ativado */
       }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
     </style>
   </head>
   <body>
@@ -139,12 +218,33 @@
       <div id="quiz"></div>
       <button class="submit-btn" id="submit">Verificar Respostas</button>
       <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
     </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon">⬇️</span> <span class="button-text">Próximo Erro</span> </button>
 
     <script>
       const quizContainer = document.getElementById("quiz");
       const submitButton = document.getElementById("submit");
       const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text"); // Novo para o texto do botão
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; // Array para armazenar os índices das questões marcadas erradas
+      let wrongQuestionTopics = new Set(); // Set para armazenar tópicos únicos dos erros
+      let currentWrongQuestionIndex = -1; // Começa em -1 para que o primeiro clique leve ao índice 0
+      let hasErrors = false; // Flag para verificar se há erros
+      let isInErrorReviewMode = false; // Flag para controlar se estamos navegando nos erros ou prontos para diagnóstico
 
       const questions = [
         {
@@ -159,6 +259,7 @@
           correctAnswer: "c) Plano transverso (horizontal)",
           comment:
             "O plano transverso (horizontal) divide o corpo em metades superior e inferior, sendo fundamental para descrever a localização de estruturas ao longo do eixo vertical.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -172,6 +273,7 @@
           correctAnswer: "a) Eixo sagital",
           comment:
             "O movimento de abdução (afastamento da linha média) ocorre no plano frontal (coronal) e é perpendicular ao eixo sagital.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -185,6 +287,7 @@
           correctAnswer: "c) Plano transverso (horizontal)",
           comment:
             "Movimentos de rotação, como a rotação do tronco, ocorrem principalmente no plano transverso (horizontal), em torno do eixo longitudinal.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -198,6 +301,7 @@
           correctAnswer: "a) Plano sagital",
           comment:
             "O plano sagital divide o corpo em metades direita e esquerda, sendo ideal para visualizar estruturas longitudinais como a medula espinhal em um corte lateral.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -206,6 +310,7 @@
           correctAnswer: "b) Lateral",
           comment:
             "O termo 'lateral' descreve uma estrutura que está mais afastada da linha média do corpo.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -214,6 +319,7 @@
           correctAnswer: "b) Proximal",
           comment:
             "O termo 'proximal' descreve uma estrutura que está mais próxima da origem ou do ponto de fixação ao tronco do corpo.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -227,6 +333,7 @@
           correctAnswer: "b) Posterior",
           comment:
             "O termo 'posterior' (ou dorsal) descreve a parte de trás do corpo ou de uma estrutura.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -240,6 +347,7 @@
           correctAnswer: "a) Anteriormente (para frente)",
           comment:
             "Na posição anatômica padrão, as palmas das mãos estão voltadas para frente (anteriormente).",
+          topic: "Anatomia",
         },
         {
           question:
@@ -253,6 +361,7 @@
           correctAnswer: "a) Plano sagital",
           comment:
             "A flexão e extensão (como no cotovelo) são movimentos que ocorrem principalmente no plano sagital, em torno de um eixo transverso.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -261,6 +370,7 @@
           correctAnswer: "b) Superficial",
           comment:
             "O termo 'superficial' descreve uma estrutura que está mais próxima da superfície externa do corpo, em oposição a 'profundo'.",
+          topic: "Anatomia",
         },
         {
           question:
@@ -274,6 +384,7 @@
           correctAnswer: "b) Preservar a estrutura celular e tecidual.",
           comment:
             "A fixação é o primeiro passo e visa manter a arquitetura celular e tecidual o mais próximo possível do estado vivo, impedindo a degradação.",
+          topic: "Histologia",
         },
         {
           question:
@@ -287,6 +398,7 @@
           correctAnswer: "a) Remover o excesso de água do tecido.",
           comment:
             "A desidratação, geralmente com concentrações crescentes de álcool, remove a água do tecido para permitir a infiltração de parafina, que é hidrofóbica.",
+          topic: "Histologia",
         },
         {
           question:
@@ -300,6 +412,7 @@
           correctAnswer: "c) Realçar estruturas celulares específicas.",
           comment:
             "A coloração (ex: Hematoxilina e Eosina) permite visualizar diferentes componentes celulares e teciduais, que seriam transparentes sem ela, facilitando a identificação microscópica.",
+          topic: "Histologia",
         },
         {
           question: "14. Qual a função da objetiva em um microscópio óptico?",
@@ -312,6 +425,7 @@
           correctAnswer: "b) Ampliar a imagem da amostra.",
           comment:
             "As objetivas são as lentes localizadas próximas à amostra e são responsáveis pela primeira e maior ampliação da imagem, sendo a mais crítica para a resolução.",
+          topic: "Histologia",
         },
         {
           question: "15. Qual a função da ocular em um microscópio óptico?",
@@ -324,6 +438,7 @@
           correctAnswer: "b) Ampliar a imagem da amostra.",
           comment:
             "A ocular (ou lente ocular) é a lente onde o observador coloca o olho, e sua função é ampliar a imagem já ampliada pela objetiva, formando a imagem final que é vista.",
+          topic: "Histologia",
         },
         {
           question: "16. Qual a função do condensador em um microscópio óptico?",
@@ -336,6 +451,7 @@
           correctAnswer: "d) Controlar a quantidade de luz que atinge a amostra.",
           comment:
             "O condensador está localizado abaixo da platina e sua função é coletar e focar os raios de luz do iluminador sobre a amostra, otimizando a iluminação para visualização.",
+          topic: "Histologia",
         },
         {
           question:
@@ -349,6 +465,7 @@
           correctAnswer: "a) Hipertônica.",
           comment:
             "Em uma solução hipertônica, a maior concentração de soluto fora da célula faz com que a água saia da célula por osmose, levando à sua desidratação (murchamento).",
+          topic: "Fisiologia Celular",
         },
         {
           question:
@@ -362,6 +479,7 @@
           correctAnswer: "b) Isotônica.",
           comment:
             "Em uma solução isotônica, a concentração de solutos é equilibrada, resultando em um movimento líquido de água nulo através da membrana celular, mantendo o volume da célula.",
+          topic: "Fisiologia Celular",
         },
         {
           question:
@@ -375,6 +493,7 @@
           correctAnswer: "c) Hipotônica.",
           comment:
             "Em uma solução hipotônica, a menor concentração de soluto fora da célula faz com que a água entre na célula por osmose, levando ao seu inchaço e possível lise (estouro).",
+          topic: "Fisiologia Celular",
         },
         {
           question:
@@ -388,6 +507,7 @@
           correctAnswer: "b) A célula murcha.",
           comment:
             "Em um meio hipertônico, a água se move para fora da célula por osmose, causando a perda de volume e o murchamento celular.",
+          topic: "Fisiologia Celular",
         },
         {
           question:
@@ -401,6 +521,7 @@
           correctAnswer: "b) Reduzir o risco de contaminação das mãos e a transmissão de microrganismos.",
           comment:
             "A NR 32 enfatiza o uso de luvas como barreira de proteção para prevenir a exposição a agentes biológicos e químicos, protegendo tanto o profissional quanto o paciente.",
+          topic: "NR 32",
         },
         {
           question:
@@ -414,6 +535,7 @@
           correctAnswer: "b) Reduzir os riscos de acidentes e doenças ocupacionais.",
           comment:
             "O objetivo primordial da NR 32 é a segurança e saúde dos trabalhadores, minimizando a exposição a riscos inerentes aos serviços de saúde e prevenindo doenças e acidentes do trabalho.",
+          topic: "NR 32",
         },
         {
           question: "23. Qual o significado da sigla EPI, conforme a NR 32?",
@@ -426,6 +548,7 @@
           correctAnswer: "c) Equipamento de Proteção Individual",
           comment:
             "EPI significa Equipamento de Proteção Individual, que são dispositivos ou produtos de uso pessoal destinados a proteger o trabalhador de riscos.",
+          topic: "NR 32",
         },
         {
           question:
@@ -439,6 +562,7 @@
           correctAnswer: "b) Devem ser separados e descartados imediatamente após o uso, em recipientes apropriados.",
           comment:
             "A NR 32 exige a segregação e o descarte correto dos Resíduos de Serviços de Saúde (RSS) em recipientes específicos e em tempo hábil para evitar contaminação e proliferação de vetores.",
+          topic: "NR 32",
         },
         {
           question:
@@ -452,6 +576,7 @@
           correctAnswer: "b) Prevenir a transmissão de microrganismos.",
           comment:
             "A higienização das mãos é a medida individual mais eficaz para prevenir a transmissão de infecções relacionadas à assistência à saúde (IRAS) e proteger os profissionais.",
+          topic: "NR 32",
         },
         {
           question:
@@ -465,6 +590,7 @@
           correctAnswer: "c) Medidas de controle de engenharia, administrativas e de higiene.",
           comment:
             "A NR 32 adota uma abordagem multifacetada para riscos biológicos, incluindo controles de engenharia (ex: isolamento de áreas), administrativos (ex: treinamentos, protocolos) e de higiene (ex: lavagem das mãos, EPIs).",
+          topic: "NR 32",
         },
         {
           question:
@@ -478,6 +604,7 @@
           correctAnswer: "c) Os trabalhadores devem ser informados sobre os riscos e medidas de prevenção.",
           comment:
             "A NR 32 exige que os trabalhadores sejam devidamente informados sobre os produtos químicos que manipulam, seus riscos e as medidas de segurança e emergência.",
+          topic: "NR 32",
         },
         {
           question:
@@ -491,6 +618,7 @@
           correctAnswer: "b) Monitorar a saúde dos trabalhadores e prevenir doenças ocupacionais.",
           comment:
             "O PCMSO é um programa obrigatório que visa rastrear e diagnosticar precocemente agravos à saúde relacionados ao trabalho, monitorando a saúde dos funcionários.",
+          topic: "NR 32",
         },
         {
           question:
@@ -504,6 +632,7 @@
           correctAnswer: "b) Todas as áreas com risco radiológico devem ser sinalizadas.",
           comment:
             "A sinalização adequada das áreas com risco radiológico é uma exigência da NR 32 para alertar e proteger trabalhadores e pacientes da exposição indevida à radiação.",
+          topic: "NR 32",
         },
         {
           question:
@@ -517,6 +646,7 @@
           correctAnswer: "b) Promover a saúde e segurança dos trabalhadores.",
           comment:
             "A CIPA atua na prevenção de acidentes e doenças decorrentes do trabalho, buscando a compatibilidade permanente entre o trabalho, a saúde e a segurança.",
+          topic: "NR 32",
         },
         {
           question:
@@ -530,6 +660,7 @@
           correctAnswer: "c) Os resíduos devem ser separados e descartados em recipientes apropriados.",
           comment:
             "A correta segregação dos resíduos de serviços de saúde em recipientes específicos é crucial para o manejo seguro e para prevenir a disseminação de patógenos.",
+          topic: "NR 32",
         },
         {
           question:
@@ -543,6 +674,7 @@
           correctAnswer: "b) Reduzir o risco de exposição a agentes nocivos à saúde.",
           comment:
             "Os EPIs são a principal barreira de proteção individual contra os diversos riscos presentes nos ambientes de saúde, como biológicos, químicos e físicos.",
+          topic: "NR 32",
         },
         {
           question:
@@ -556,6 +688,7 @@
           correctAnswer: "c) Armazenar e transmitir informações genéticas.",
           comment:
             "O DNA é o repositório da informação genética em quase todos os organismos, contendo as instruções para o desenvolvimento, funcionamento e reprodução.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -569,6 +702,7 @@
           correctAnswer: "c) Replicação",
           comment:
             "A replicação do DNA é o processo pelo qual uma molécula de DNA é copiada para produzir duas moléculas idênticas de DNA, essencial para a divisão celular.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -582,6 +716,7 @@
           correctAnswer: "c) Adenina, Guanina, Citosina, Timina",
           comment:
             "As bases nitrogenadas do DNA são Adenina (A), Guanina (G), Citosina (C) e Timina (T). A Uracila (U) substitui a Timina no RNA.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -595,6 +730,7 @@
           correctAnswer: "d) Timina",
           comment:
             "No RNA, a base nitrogenada Timina (T) é substituída pela Uracila (U).",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -608,6 +744,7 @@
           correctAnswer: "c) Transcrição",
           comment:
             "A transcrição é o processo de sintetizar uma molécula de RNA usando uma fita de DNA como molde, transferindo a informação genética do DNA para o RNA.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -621,6 +758,7 @@
           correctAnswer: "c) Ribossomos (no citoplasma ou RER)",
           comment:
             "A tradução ocorre nos ribossomos, que podem estar livres no citoplasma ou associados ao Retículo Endoplasmático Rugoso (RER).",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -634,6 +772,7 @@
           correctAnswer: "c) Levar a informação genética do DNA para o ribossomo.",
           comment:
             "O mRNA carrega a sequência de códons, que são as instruções para a montagem dos aminoácidos na ordem correta para formar a proteína.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -647,6 +786,7 @@
           correctAnswer: "c) Ligação peptídica",
           comment:
             "Os aminoácidos são unidos por ligações peptídicas durante a síntese de proteínas, formando uma cadeia polipeptídica.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -660,6 +800,7 @@
           correctAnswer: "d) Mutação",
           comment:
             "Mutação é qualquer alteração na sequência de DNA, que pode ser causada por erros na replicação ou por danos ao DNA.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -673,6 +814,7 @@
           correctAnswer: "c) DNA polimerase",
           comment:
             "A DNA polimerase é a enzima chave na replicação do DNA, catalisando a adição de nucleotídeos à nova fita em crescimento.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -686,6 +828,7 @@
           correctAnswer: "c) Abrir a dupla hélice de DNA.",
           comment:
             "A helicase 'desenrola' e separa as duas fitas da dupla hélice do DNA, rompendo as ligações de hidrogênio entre as bases, para que a replicação possa ocorrer.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -698,7 +841,8 @@
           ],
           correctAnswer: "c) Transportar aminoácidos específicos para o ribossomo.",
           comment:
-            "O tRNA atua como um 'adaptador', lendo o códon no mRNA e trazendo o aminoácido correspondente para ser adicionado à cadeia polipeptídica em crescimento.",
+            "O tRNA atua como um 'adaptador', lendo o códon no mRNA e trazendo o aminoácido correspondente para ser adicionado à cadeia polipeptidica em crescimento.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -712,6 +856,7 @@
           correctAnswer: "b) Uma sequência de três nucleotídeos no mRNA que especifica um aminoácido.",
           comment:
             "O códon é a unidade básica do código genético, sendo uma trinca de nucleotídeos no mRNA que 'codifica' um aminoácido específico ou um sinal de parada.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -725,18 +870,21 @@
           correctAnswer: "b) Proteólise",
           comment:
             "Proteólise é o processo de quebra de proteínas em peptídeos menores ou aminoácidos por meio de enzimas chamadas proteases.",
+          topic: "Biologia Molecular",
         },
         {
-          question: "47. O que é um gene?",
+          question:
+            "47. O que é um gene?",
           options: [
             "a) Uma molécula de proteína.",
             "b) Um segmento de DNA que contém informações para produzir uma molécula funcional (como uma proteína ou RNA).",
             "c) Um tipo de carboidrato.",
             "d) Uma estrutura presente apenas em células vegetais.",
           ],
-          correctAnswer: "b) Um segmento de DNA que contém informações para produzir uma molécula funcional (como uma proteína ou RNA).",
+          correctAnswer: "b) Um segmento de DNA que contém informações para informações para produzir uma molécula funcional (como uma proteína ou RNA).",
           comment:
             "Um gene é a unidade fundamental da hereditariedade, consistindo em uma sequência de DNA que codifica uma característica ou função específica.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -750,6 +898,7 @@
           correctAnswer: "b) Corrigir erros de pareamento de bases.",
           comment:
             "Além de sintetizar o DNA, a DNA polimerase possui atividade de revisão (proofreading), corrigindo a maioria dos erros de pareamento de bases durante a replicação, garantindo a fidelidade da cópia genética.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -763,6 +912,7 @@
           correctAnswer: "b) 5' para 3'",
           comment:
             "Todas as DNA polimerases conhecidas sintetizam o DNA apenas na direção 5' para 3', adicionando nucleotídeos à extremidade 3'-OH da fita em crescimento.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -776,6 +926,7 @@
           correctAnswer: "c) Genoma",
           comment:
             "O genoma é o conjunto completo de material genético de um organismo, incluindo todos os genes e sequências não codificadoras de DNA.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -789,6 +940,7 @@
           correctAnswer: "c) Endonucleases de restrição",
           comment:
             "As endonucleases de restrição (ou enzimas de restrição) são ferramentas moleculares que reconhecem e clivam o DNA em sequências nucleotídicas específicas, sendo amplamente usadas em engenharia genética.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -802,6 +954,7 @@
           correctAnswer: "b) Sinalizar o início da transcrição.",
           comment:
             "O promotor é uma sequência de DNA onde a RNA polimerase se liga para iniciar a transcrição de um gene.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -815,6 +968,7 @@
           correctAnswer: "b) Os íntrons são removidos e os éxons são unidos (splicing).",
           comment:
             "Em eucariotos, o pré-mRNA passa por um processo chamado splicing, onde os íntrons (regiões não codificadoras) são excisados e os éxons (regiões codificadoras) são unidos para formar o mRNA maduro.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -828,6 +982,7 @@
           correctAnswer: "c) Catalisar reações químicas.",
           comment:
             "Enzimas são proteínas que atuam como catalisadores biológicos, acelerando a velocidade das reações químicas sem serem consumidas no processo.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -841,6 +996,7 @@
           correctAnswer: "b) Eucariontes",
           comment:
             "Em células eucarióticas, o DNA está organizado em cromossomos e contido dentro de um núcleo delimitado por uma membrana nuclear. Em procariontes, o DNA está no citoplasma.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -854,6 +1010,7 @@
           correctAnswer: "c) Transcrição",
           comment:
             "Transcrição é o processo pelo qual a informação genética do DNA é copiada para uma molécula de RNA.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -867,6 +1024,7 @@
           correctAnswer: "b) Ligar-se ao códon no mRNA.",
           comment:
             "O anticódon é uma sequência de três nucleotídeos no tRNA que se pareia complementarmente com um códon específico no mRNA durante a tradução.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -880,6 +1038,7 @@
           correctAnswer: "a) DNA -> RNA -> Proteína",
           comment:
             "O dogma central da biologia molecular descreve o fluxo de informação genética nas células: do DNA para o RNA (transcrição) e do RNA para a proteína (tradução).",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -893,6 +1052,7 @@
           correctAnswer: "c) Ligação de hidrogênio",
           comment:
             "As duas fitas da dupla hélice de DNA são mantidas unidas por ligações de hidrogênio fracas entre as bases nitrogenadas complementares (A com T, G com C).",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -906,6 +1066,7 @@
           correctAnswer: "b) Alongar os telômeros, protegendo as extremidades dos cromossomos.",
           comment:
             "A telomerase é uma enzima que adiciona repetições teloméricas às extremidades dos cromossomos, protegendo o DNA contra a degradação e o encurtamento que ocorre a cada replicação.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -919,6 +1080,7 @@
           correctAnswer: "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
           comment:
             "Nucleossomos são as unidades básicas de empacotamento do DNA em eucariotos, consistindo em DNA enrolado em um 'core' de proteínas histonas, formando a cromatina.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -932,6 +1094,7 @@
           correctAnswer: "a) A direção em que a molécula é lida ou sintetizada.",
           comment:
             "O sentido 5' para 3' refere-se à polaridade de uma fita de ácido nucleico, indicando a direção em que os nucleotídeos são adicionados durante a síntese (do carbono 5' de um nucleotídeo para o carbono 3' do próximo) e como a informação é lida.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -945,6 +1108,7 @@
           correctAnswer: "d) Todas as alternativas anteriores, dependendo do tipo de dano.",
           comment:
             "Várias enzimas participam do reparo do DNA. DNA ligase une quebras, topoisomerase relaxa superenrolamentos e RNA polimerase, embora primariamente para transcrição, está indiretamente envolvida em alguns mecanismos de reparo acoplados à transcrição.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -958,6 +1122,7 @@
           correctAnswer: "b) O DNA é fita dupla e o RNA é fita simples.",
           comment:
             "O DNA é tipicamente uma molécula de fita dupla, enquanto o RNA é uma molécula de fita simples (embora possa formar estruturas secundárias complexas).",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -971,6 +1136,7 @@
           correctAnswer: "b) Produzir diferentes proteínas a partir de um único gene.",
           comment:
             "O splicing alternativo é um processo que permite que diferentes combinações de éxons sejam unidas a partir de um único transcrito de pré-mRNA, resultando na produção de múltiplas isoformas de proteínas de um único gene.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -984,6 +1150,7 @@
           correctAnswer: "b) Uma sequência não codificadora de RNA que é removida durante o splicing.",
           comment:
             "Íntrons são segmentos de DNA (e RNA transcrito) que não contêm informações para a síntese de proteínas e são removidos do pré-mRNA durante o splicing.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -997,6 +1164,7 @@
           correctAnswer: "b) Uma sequência codificadora de RNA que permanece no mRNA maduro.",
           comment:
             "Éxons são as sequências codificadoras de um gene que são expressas e permanecem no mRNA maduro após o splicing, sendo traduzidas em proteínas.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -1010,6 +1178,7 @@
           correctAnswer: "c) Tradução",
           comment:
             "Tradução é o processo em que a sequência de nucleotídeos no mRNA é decodificada pelos ribossomos para sintetizar uma cadeia de aminoácidos, formando uma proteína.",
+          topic: "Biologia Molecular",
         },
         {
           question:
@@ -1023,6 +1192,7 @@
           correctAnswer: "b) Significa que diferentes códons podem especificar o mesmo aminoácido.",
           comment:
             "O código genético é degenerado (ou redundante) porque a maioria dos aminoácidos é especificada por mais de um códon, o que oferece uma certa proteção contra mutações pontuais.",
+          topic: "Biologia Molecular",
         },
       ];
 
@@ -1039,8 +1209,9 @@
             );
           }
 
+          // Adiciona o atributo data-topic ao card da questão
           output.push(
-            `<div class="card">
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
               <div class="question">${currentQuestion.question}</div>
               <div class="options">${options.join("")}</div>
               <div class="comment" id="comment-${questionNumber}"></div>
@@ -1052,54 +1223,96 @@
       }
 
       function showResults() {
+        wrongQuestionIndices = []; // Reseta a lista de erros
+        wrongQuestionTopics = new Set(); // Reseta os tópicos de erro
+        currentWrongQuestionIndex = -1; // Reseta para -1 para que o primeiro clique no botão leve ao índice 0
+        hasErrors = false; // Reseta a flag de erros
+        isInErrorReviewMode = false; // Sai do modo de revisão de erros
+
+        // Esconde a seção de diagnóstico no início da verificação
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; // Limpa a lista de tópicos
+
         const answerContainers = quizContainer.querySelectorAll(".options");
         let correctAnswers = 0;
 
         questions.forEach((currentQuestion, questionNumber) => {
           const answerContainer = answerContainers[questionNumber];
-          const userAnswerElement = answerContainer.querySelector('.option.selected'); 
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
           const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
           const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores (se for clicado múltiplas vezes)
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
 
           const optionElements = answerContainer.querySelectorAll('.option');
           optionElements.forEach(option => {
             const scissorIcon = option.querySelector('.scissor-icon');
 
+            // Esconde a tesoura na opção que foi selecionada pelo usuário para não atrapalhar a visualização do gabarito
             if (option === userAnswerElement && scissorIcon) {
                 scissorIcon.classList.add('hidden');
-            } else if (scissorIcon) {
-                scissorIcon.classList.remove('hidden');
-            }
+            } 
+            // Já as outras tesouras (não selecionadas) devem estar visíveis para referência, o que foi garantido pelo reset acima
 
-            // Destaca a resposta correta e exibe o comentário
+            // Marca a resposta correta com a classe 'correct'
             if (option.dataset.value === currentQuestion.correctAnswer) {
                 option.classList.add('correct');
                 if (commentDiv && currentQuestion.comment) {
                     commentDiv.textContent = currentQuestion.comment;
                     commentDiv.classList.add('show');
                 }
-            } else {
-                option.classList.remove('correct');
-            }
-
-            // Marca a resposta do usuário como 'incorrect' se for diferente do gabarito
-            if (userAnswerValue !== currentQuestion.correctAnswer && option === userAnswerElement) {
-                option.classList.add('incorrect');
-            } else if (option === userAnswerElement) {
-                option.classList.remove('incorrect');
             }
           });
 
-          if (userAnswerValue === currentQuestion.correctAnswer) {
+          // Verifica se a resposta do usuário está incorreta E foi marcada (userAnswerElement existe)
+          if (userAnswerElement && userAnswerValue !== currentQuestion.correctAnswer) {
+            userAnswerElement.classList.add('incorrect');
+            wrongQuestionIndices.push(questionNumber);
+            wrongQuestionTopics.add(currentQuestion.topic); // Adiciona o tópico do erro
+            hasErrors = true; // Define que há erros
+          } else if (userAnswerValue === currentQuestion.correctAnswer) {
             correctAnswers++;
           }
         });
 
         resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
         
-        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        // Exibe o botão de navegação de erros se houver questões marcadas erradas
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬇️'; // Seta para baixo, indicando para rolar para o primeiro erro
+            buttonText.textContent = `Próximo Erro (1/${wrongQuestionIndices.length})`; // Exibe o contador
+            isInErrorReviewMode = true; // Entra no modo de revisão de erros
+        } else {
+            errorNavBtn.style.display = 'none'; // Esconde se não houver erros marcados
+        }
       }
 
+      // Função para rolar para uma questão específica
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      // Função para rolar para a seção de diagnóstico
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Event listener para o clique nas opções
       quizContainer.addEventListener("click", function (event) {
         const clickedElement = event.target;
         const optionElement = clickedElement.closest('.option');
@@ -1110,14 +1323,54 @@
             } 
             else {
                 const questionNumber = optionElement.dataset.question;
-                const selected = quizContainer.querySelector(
-                    `.option[data-question=\"${questionNumber}\"].selected`
-                );
-                if (selected) {
-                    selected.classList.remove("selected");
-                }
+                // Remove a classe 'selected' de outras opções na mesma questão
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                // Adiciona a classe 'selected' à opção clicada
                 optionElement.classList.add("selected");
             }
+        }
+      });
+
+      // Event listener para o botão de navegação de erros/diagnóstico
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { // Se não há erros, o botão não deveria estar visível, mas por segurança
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (isInErrorReviewMode) {
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                // Ainda há erros para revisar
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                // Chegou ao fim dos erros, agora mostra o diagnóstico
+                isInErrorReviewMode = false; // Sai do modo de revisão de erros
+                arrowIcon.textContent = '⬇️'; // Seta para baixo para o diagnóstico
+                buttonText.textContent = 'Diagnóstico';
+                
+                // Preenche e exibe a seção de diagnóstico
+                topicsToReviewList.innerHTML = ''; // Limpa antes de preencher
+                if (wrongQuestionTopics.size > 0) {
+                    wrongQuestionTopics.forEach(topic => {
+                        const li = document.createElement('li');
+                        li.textContent = topic;
+                        topicsToReviewList.appendChild(li);
+                    });
+                    errorDiagnosisSection.style.display = 'block'; // Exibe a seção
+                    scrollToDiagnosis(); // Rola para ela
+                } else {
+                    errorDiagnosisSection.style.display = 'none'; // Esconde se não houver tópicos (não deve acontecer se hasErrors é true)
+                    errorNavBtn.style.display = 'none'; // Esconde o botão se não há tópicos a mostrar
+                }
+            }
+        } else {
+            // Se já não está no modo de revisão, significa que o botão agora é para ir para o diagnóstico
+            scrollToDiagnosis();
+            errorNavBtn.style.display = 'none'; // O botão some após ir para o diagnóstico
         }
       });
 
