@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado Módulo I</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .option input[type="radio"] {
+        margin-right: 10px;
+        accent-color: #007bff; /* Cor do radio button */
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        cursor: pointer;
+        color: #6c757d;
+      }
+
+      /* Removida a classe .hidden por padrão, a tesoura agora aparece sempre */
+      /* .scissor-icon.hidden {
+        display: none;
+      } */
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Simulado de Módulo I</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+    </div>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+
+      const questions = [
+        {
+          question:
+            "1. Um paciente é admitido no pronto-socorro após sofrer um acidente automobilístico. Ao realizar o exame físico, o médico descreve uma fratura na tíbia, localizada na região distal da perna. Qual plano anatômico divide o corpo em metades superior e inferior, sendo relevante para a descrição da localização da fratura?",
+          options: [
+            "a) Plano sagital",
+            "b) Plano frontal (coronal)",
+            "c) Plano transverso (horizontal)",
+            "d) Plano mediano",
+          ],
+          correctAnswer: "c) Plano transverso (horizontal)",
+        },
+        {
+          question:
+            "2. Durante uma aula prática de anatomia, um estudante realiza o movimento de abdução do braço. Qual eixo anatômico é perpendicular ao plano de movimento realizado pelo estudante?",
+          options: [
+            "a) Eixo sagital",
+            "b) Eixo frontal (coronal)",
+            "c) Eixo longitudinal",
+            "d) Eixo transverso",
+          ],
+          correctAnswer: "a) Eixo sagital",
+        },
+        {
+          question:
+            "3. Um atleta de ginástica olímpica realiza um movimento de rotação do tronco durante sua apresentação. Qual plano anatômico é utilizado como referência para descrever esse movimento?",
+          options: [
+            "a) Plano sagital",
+            "b) Plano frontal (coronal)",
+            "c) Plano transverso (horizontal)",
+            "d) Plano mediano",
+          ],
+          correctAnswer: "c) Plano transverso (horizontal)",
+        },
+        {
+          question:
+            "4. Um paciente com suspeita de lesão medular é submetido a um exame de ressonância magnética. Qual plano de imagem permite visualizar a medula espinhal em sua extensão longitudinal, dividindo o corpo em metades direita e esquerda?",
+          options: [
+            "a) Plano sagital",
+            "b) Plano frontal (coronal)",
+            "c) Plano transverso (horizontal)",
+            "d) Plano mediano",
+          ],
+          correctAnswer: "a) Plano sagital",
+        },
+        {
+          question:
+            "5. Durante a realização de um procedimento cirúrgico, o cirurgião realiza uma incisão na pele do abdome, seguindo uma linha paralela à linha média do corpo. Qual termo anatômico descreve a localização dessa incisão em relação à linha média?",
+          options: ["a) Medial", "b) Lateral", "c) Proximal", "d) Distal"],
+          correctAnswer: "b) Lateral",
+        },
+        {
+          question:
+            "6. Um radiologista descreve uma lesão no fêmur como estando localizada na porção mais próxima do tronco. Qual termo anatômico ele utilizaria para descrever essa localização?",
+          options: ["a) Distal", "b) Proximal", "c) Superior", "d) Inferior"],
+          correctAnswer: "b) Proximal",
+        },
+        {
+          question:
+            "7. Em uma cirurgia de reconstrução do ligamento cruzado anterior, o cirurgião precisa acessar as estruturas localizadas na parte de trás do joelho. Qual termo anatômico descreve essa região?",
+          options: [
+            "a) Anterior",
+            "b) Posterior",
+            "c) Superior",
+            "d) Inferior",
+          ],
+          correctAnswer: "b) Posterior",
+        },
+        {
+          question:
+            "8. Ao descrever a posição anatômica de um paciente, as palmas das mãos estão voltadas para qual direção?",
+          options: [
+            "a) Anteriormente (para frente)",
+            "b) Posteriormente (para trás)",
+            "c) Medialmente (para o centro)",
+            "d) Lateralmente (para fora)",
+          ],
+          correctAnswer: "a) Anteriormente (para frente)",
+        },
+        {
+          question:
+            "9. Um fisioterapeuta orienta um paciente a realizar um movimento de flexão do cotovelo. Qual plano anatômico está sendo utilizado principalmente durante esse movimento?",
+          options: [
+            "a) Plano sagital",
+            "b) Plano frontal (coronal)",
+            "c) Plano transverso (horizontal)",
+            "d) Plano oblíquo",
+          ],
+          correctAnswer: "a) Plano sagital",
+        },
+        {
+          question:
+            "10. Qual termo anatômico descreve uma estrutura localizada mais próxima da superfície do corpo?",
+          options: ["a) Profundo", "b) Superficial", "c) Médio", "d) Interno"],
+          correctAnswer: "b) Superficial",
+        },
+        {
+          question:
+            "11. Qual a finalidade da fixação em um protocolo de preparação de lâminas histológicas?",
+          options: [
+            "a) Realçar estruturas celulares específicas.",
+            "b) Preservar a estrutura celular e tecidual.",
+            "c) Tornar o tecido mais resistente ao corte.",
+            "d) Remover o excesso de água do tecido.",
+          ],
+          correctAnswer: "b) Preservar a estrutura celular e tecidual.",
+        },
+        {
+          question:
+            "12. Qual o objetivo da desidratação em um protocolo de preparação de lâminas histológicas?",
+          options: [
+            "a) Remover o excesso de água do tecido.",
+            "b) Tornar o tecido mais transparente.",
+            "c) Realçar estruturas celulares específicas.",
+            "d) Preservar a estrutura celular e tecidual.",
+          ],
+          correctAnswer: "a) Remover o excesso de água do tecido.",
+        },
+        {
+          question:
+            "13. Qual o objetivo da coloração em um protocolo de preparação de lâminas histológicas?",
+          options: [
+            "a) Preservar a estrutura celular e tecidual.",
+            "b) Tornar o tecido mais resistente ao corte.",
+            "c) Realçar estruturas celulares específicas.",
+            "d) Remover o excesso de água do tecido.",
+          ],
+          correctAnswer: "c) Realçar estruturas celulares específicas.",
+        },
+        {
+          question: "14. Qual a função da objetiva em um microscópio óptico?",
+          options: [
+            "a) Iluminar a amostra.",
+            "b) Ampliar a imagem da amostra.",
+            "c) Ajustar o foco da imagem.",
+            "d) Controlar a quantidade de luz que atinge a amostra.",
+          ],
+          correctAnswer: "b) Ampliar a imagem da amostra.",
+        },
+        {
+          question: "15. Qual a função da ocular em um microscópio óptico?",
+          options: [
+            "a) Iluminar a amostra.",
+            "b) Ampliar a imagem da amostra.",
+            "c) Ajustar o foco da imagem.",
+            "d) Controlar a quantidade de luz que atinge a amostra.",
+          ],
+          correctAnswer: "b) Ampliar a imagem da amostra.",
+        },
+        {
+          question: "16. Qual a função do condensador em um microscópio óptico?",
+          options: [
+            "a) Iluminar a amostra.",
+            "b) Ampliar a imagem da amostra.",
+            "c) Ajustar o foco da imagem.",
+            "d) Controlar a quantidade de luz que atinge a amostra.",
+          ],
+          correctAnswer: "d) Controlar a quantidade de luz que atinge a amostra.",
+        },
+        {
+          question:
+            "17. Uma célula é colocada em uma solução onde a concentração de solutos é maior fora da célula do que dentro dela. Essa solução é considerada:",
+          options: [
+            "a) Hipertônica.",
+            "b) Isotônica.",
+            "c) Hipotônica.",
+            "d) Neutra.",
+          ],
+          correctAnswer: "a) Hipertônica.",
+        },
+        {
+          question:
+            "18. Uma célula é colocada em uma solução onde a concentração de solutos é igual dentro e fora da célula. Essa solução é considerada:",
+          options: [
+            "a) Hipertônica.",
+            "b) Isotônica.",
+            "c) Hipotônica.",
+            "d) Neutra.",
+          ],
+          correctAnswer: "b) Isotônica.",
+        },
+        {
+          question:
+            "19. Uma célula é colocada em uma solução onde a concentração de solutos é menor fora da célula do que dentro dela. Essa solução é considerada:",
+          options: [
+            "a) Hipertônica.",
+            "b) Isotônica.",
+            "c) Hipotônica.",
+            "d) Neutra.",
+          ],
+          correctAnswer: "c) Hipotônica.",
+        },
+        {
+          question:
+            "20. Qual o efeito de colocar uma célula em um meio hipertônico?",
+          options: [
+            "a) A célula incha e pode estourar.",
+            "b) A célula murcha.",
+            "c) Não há alteração no volume da célula.",
+            "d) A célula se divide rapidamente.",
+          ],
+          correctAnswer: "b) A célula murcha.",
+        },
+        {
+          question:
+            "21. Qual a importância do uso de luvas de proteção em ambientes de saúde, segundo a NR 32?",
+          options: [
+            "a) Proteger as mãos contra frio excessivo.",
+            "b) Reduzir o risco de contaminação das mãos e a transmissão de microrganismos.",
+            "c) Facilitar a manipulação de objetos quentes.",
+            "d) Prevenir calos e bolhas nas mãos.",
+          ],
+          correctAnswer: "b) Reduzir o risco de contaminação das mãos e a transmissão de microrganismos.",
+        },
+        {
+          question:
+            "22. A NR 32 estabelece medidas de proteção para a segurança e saúde dos trabalhadores de serviços de saúde, visando:",
+          options: [
+            "a) Apenas a proteção contra acidentes com produtos químicos.",
+            "b) Reduzir os riscos de acidentes e doenças ocupacionais.",
+            "c) Regulamentar o horário de trabalho dos funcionários.",
+            "d) Controlar a qualidade dos produtos utilizados nos hospitais.",
+          ],
+          correctAnswer: "b) Reduzir os riscos de acidentes e doenças ocupacionais.",
+        },
+        {
+          question: "23. Qual o significado da sigla EPI, conforme a NR 32?",
+          options: [
+            "a) Equipamento de Proteção Interna",
+            "b) Equipamento de Prevenção de Infecções",
+            "c) Equipamento de Proteção Individual",
+            "d) Equipamento Padrão de Higiene",
+          ],
+          correctAnswer: "c) Equipamento de Proteção Individual",
+        },
+        {
+          question:
+            "24. Em relação aos resíduos de serviços de saúde, a NR 32 determina que:",
+          options: [
+            "a) Podem ser descartados em lixo comum, desde que bem embalados.",
+            "b) Devem ser separados e descartados imediatamente após o uso, em recipientes apropriados.",
+            "c) Podem ser acumulados por longos períodos antes do descarte.",
+            "d) A responsabilidade do descarte é exclusiva da empresa coletora.",
+          ],
+          correctAnswer: "b) Devem ser separados e descartados imediatamente após o uso, em recipientes apropriados.",
+        },
+        {
+          question:
+            "25. Qual a importância da higienização das mãos nos serviços de saúde, segundo a NR 32?",
+          options: [
+            "a) Apenas para fins estéticos.",
+            "b) Prevenir a transmissão de microrganismos.",
+            "c) Economizar água e sabão.",
+            "d) Aumentar a durabilidade das luvas.",
+          ],
+          correctAnswer: "b) Prevenir a transmissão de microrganismos.",
+        },
+        {
+          question:
+            "26. A NR 32 estabelece medidas de proteção contra riscos biológicos, incluindo:",
+          options: [
+            "a) Apenas o uso de máscaras.",
+            "b) Somente a vacinação dos trabalhadores.",
+            "c) Medidas de controle de engenharia, administrativas e de higiene.",
+            "d) Apenas a proibição de comer em áreas de trabalho.",
+          ],
+          correctAnswer: "c) Medidas de controle de engenharia, administrativas e de higiene.",
+        },
+        {
+          question:
+            "27. Em relação aos riscos químicos, a NR 32 determina que:",
+          options: [
+            "a) Apenas o manuseio de substâncias corrosivas requer atenção.",
+            "b) Apenas o uso de luvas é suficiente para a proteção.",
+            "c) Os trabalhadores devem ser informados sobre os riscos e medidas de prevenção.",
+            "d) O armazenamento de produtos químicos não precisa de regras específicas.",
+          ],
+          correctAnswer: "c) Os trabalhadores devem ser informados sobre os riscos e medidas de prevenção.",
+        },
+        {
+          question:
+            "28. Qual a importância do Programa de Controle Médico de Saúde Ocupacional (PCMSO) nos serviços de saúde, segundo a NR 32?",
+          options: [
+            "a) Apenas para realizar exames de rotina.",
+            "b) Monitorar a saúde dos trabalhadores e prevenir doenças ocupacionais.",
+            "c) Controlar a assiduidade dos funcionários.",
+            "d) Determinar o salário dos trabalhadores.",
+          ],
+          correctAnswer: "b) Monitorar a saúde dos trabalhadores e prevenir doenças ocupacionais.",
+        },
+        {
+          question:
+            "29. Em relação aos riscos radiológicos, a NR 32 estabelece que:",
+          options: [
+            "a) Apenas hospitais grandes precisam se preocupar com isso.",
+            "b) Todas as áreas com risco radiológico devem ser sinalizadas.",
+            "c) A exposição à radiação é inofensiva em pequenas doses.",
+            "d) A proteção é responsabilidade exclusiva do médico radiologista.",
+          ],
+          correctAnswer: "b) Todas as áreas com risco radiológico devem ser sinalizadas.",
+        },
+        {
+          question:
+            "30. Qual a importância da Comissão Interna de Prevenção de Acidentes (CIPA) nos serviços de saúde, segundo a NR 32?",
+          options: [
+            "a) Apenas para fiscalizar o uso de EPIs.",
+            "b) Promover a saúde e segurança dos trabalhadores.",
+            "c) Organizar eventos sociais na empresa.",
+            "d) Distribuir benefícios aos funcionários.",
+          ],
+          correctAnswer: "b) Promover a saúde e segurança dos trabalhadores.",
+        },
+        {
+          question:
+            "31. Em relação aos resíduos de serviços de saúde, a NR 32 determina que:",
+          options: [
+            "a) Podem ser misturados com lixo comum para facilitar o descarte.",
+            "b) O descarte pode ser feito em qualquer lixeira, desde que seja plástico.",
+            "c) Os resíduos devem ser separados e descartados em recipientes apropriados.",
+            "d) A incineração é o único método de descarte permitido.",
+          ],
+          correctAnswer: "c) Os resíduos devem ser separados e descartados em recipientes apropriados.",
+        },
+        {
+          question:
+            "32. Qual a importância do uso de Equipamentos de Proteção Individual (EPIs) nos serviços de saúde, segundo a NR 32?",
+          options: [
+            "a) Apenas para seguir normas de moda.",
+            "b) Reduzir o risco de exposição a agentes nocivos à saúde.",
+            "c) Aumentar o conforto dos trabalhadores.",
+            "d) Diminuir a visibilidade dos funcionários.",
+          ],
+          correctAnswer: "b) Reduzir o risco de exposição a agentes nocivos à saúde.",
+        },
+        {
+          question:
+            "33. Qual a principal função do DNA nas células?",
+          options: [
+            "a) Armazenar energia.",
+            "b) Catalisar reações químicas.",
+            "c) Armazenar e transmitir informações genéticas.",
+            "d) Transportar oxigênio.",
+          ],
+          correctAnswer: "c) Armazenar e transmitir informações genéticas.",
+        },
+        {
+          question:
+            "34. Qual é o nome do processo de duplicação do DNA?",
+          options: [
+            "a) Transcrição",
+            "b) Tradução",
+            "c) Replicação",
+            "d) Mutação",
+          ],
+          correctAnswer: "c) Replicação",
+        },
+        {
+          question:
+            "35. Quais são as quatro bases nitrogenadas encontradas no DNA?",
+          options: [
+            "a) Adenina, Guanina, Citosina, Uracila",
+            "b) Adenina, Timina, Citosina, Uracila",
+            "c) Adenina, Guanina, Citosina, Timina",
+            "d) Adenina, Guanina, Uracila, Timina",
+          ],
+          correctAnswer: "c) Adenina, Guanina, Citosina, Timina",
+        },
+        {
+          question:
+            "36. Qual das seguintes bases nitrogenadas não é encontrada no RNA?",
+          options: [
+            "a) Adenina",
+            "b) Guanina",
+            "c) Citosina",
+            "d) Timina",
+          ],
+          correctAnswer: "d) Timina",
+        },
+        {
+          question:
+            "37. Qual é o processo de síntese de RNA a partir de uma fita molde de DNA?",
+          options: [
+            "a) Replicação",
+            "b) Tradução",
+            "c) Transcrição",
+            "d) Mutação",
+          ],
+          correctAnswer: "c) Transcrição",
+        },
+        {
+          question:
+            "38. Onde ocorre a tradução (síntese de proteínas) na célula eucariótica?",
+          options: [
+            "a) Núcleo",
+            "b) Mitocôndria",
+            "c) Ribossomos (no citoplasma ou RER)",
+            "d) Complexo de Golgi",
+          ],
+          correctAnswer: "c) Ribossomos (no citoplasma ou RER)",
+        },
+        {
+          question:
+            "39. Qual é o papel do RNA mensageiro (mRNA) na síntese de proteínas?",
+          options: [
+            "a) Transportar aminoácidos para o ribossomo.",
+            "b) Fazer parte da estrutura do ribossomo.",
+            "c) Levar a informação genética do DNA para o ribossomo.",
+            "d) Regular a expressão gênica.",
+          ],
+          correctAnswer: "c) Levar a informação genética do DNA para o ribossomo.",
+        },
+        {
+          question:
+            "40. Qual é a estrutura que liga os aminoácidos para formar uma proteína?",
+          options: [
+            "a) Ligação de hidrogênio",
+            "b) Ligação dissulfeto",
+            "c) Ligação peptídica",
+            "d) Ligação glicosídica",
+          ],
+          correctAnswer: "c) Ligação peptídica",
+        },
+        {
+          question:
+            "41. Uma alteração na sequência de nucleotídeos do DNA é chamada de:",
+          options: [
+            "a) Replicação",
+            "b) Transcrição",
+            "c) Tradução",
+            "d) Mutação",
+          ],
+          correctAnswer: "d) Mutação",
+        },
+        {
+          question:
+            "42. Qual enzima é responsável por sintetizar uma nova fita de DNA durante a replicação?",
+          options: [
+            "a) RNA polimerase",
+            "b) DNA ligase",
+            "c) DNA polimerase",
+            "d) Helicase",
+          ],
+          correctAnswer: "c) DNA polimerase",
+        },
+        {
+          question:
+            "43. Qual é o papel da enzima helicase na replicação do DNA?",
+          options: [
+            "a) Sintetizar a nova fita de DNA.",
+            "b) Ligar os fragmentos de DNA.",
+            "c) Abrir a dupla hélice de DNA.",
+            "d) Corrigir erros na replicação.",
+          ],
+          correctAnswer: "c) Abrir a dupla hélice de DNA.",
+        },
+        {
+          question:
+            "44. Qual a função do RNA transportador (tRNA) na síntese de proteínas?",
+          options: [
+            "a) Levar a informação genética do DNA para o ribossomo.",
+            "b) Fazer parte da estrutura do ribossomo.",
+            "c) Transportar aminoácidos específicos para o ribossomo.",
+            "d) Regular a expressão gênica.",
+          ],
+          correctAnswer: "c) Transportar aminoácidos específicos para o ribossomo.",
+        },
+        {
+          question:
+            "45. O que é um códon no contexto da Biologia Molecular?",
+          options: [
+            "a) Um tipo de aminoácido.",
+            "b) Uma sequência de três nucleotídeos no mRNA que especifica um aminoácido.",
+            "c) Uma enzima que participa da replicação.",
+            "d) Um segmento de DNA que não codifica proteína.",
+          ],
+          correctAnswer: "b) Uma sequência de três nucleotídeos no mRNA que especifica um aminoácido.",
+        },
+        {
+          question:
+            "46. Qual o processo de degradação de proteínas nas células?",
+          options: [
+            "a) Síntese proteica",
+            "b) Proteólise",
+            "c) Glicólise",
+            "d) Oxidação",
+          ],
+          correctAnswer: "b) Proteólise",
+        },
+        {
+          question: "47. O que é um gene?",
+          options: [
+            "a) Uma molécula de proteína.",
+            "b) Um segmento de DNA que contém informações para produzir uma molécula funcional (como uma proteína ou RNA).",
+            "c) Um tipo de carboidrato.",
+            "d) Uma estrutura presente apenas em células vegetais.",
+          ],
+          correctAnswer: "b) Um segmento de DNA que contém informações para produzir uma molécula funcional (como uma proteína ou RNA).",
+        },
+        {
+          question:
+            "48. Qual a função do DNA polimerase durante a replicação do DNA em relação aos erros?",
+          options: [
+            "a) Apenas sintetizar a nova fita.",
+            "b) Corrigir erros de pareamento de bases.",
+            "c) Desempacotar o DNA.",
+            "d) Juntar os fragmentos de DNA.",
+          ],
+          correctAnswer: "b) Corrigir erros de pareamento de bases.",
+        },
+        {
+          question:
+            "49. Em que sentido a nova fita de DNA é sintetizada durante a replicação?",
+          options: [
+            "a) 3' para 5'",
+            "b) 5' para 3'",
+            "c) Aleatoriamente",
+            "d) Ambas as direções simultaneamente",
+          ],
+          correctAnswer: "b) 5' para 3'",
+        },
+        {
+          question:
+            "50. Qual o nome dado ao conjunto completo de DNA em um organismo?",
+          options: [
+            "a) Proteoma",
+            "b) Transcriptoma",
+            "c) Genoma",
+            "d) Metaboloma",
+          ],
+          correctAnswer: "c) Genoma",
+        },
+        {
+          question:
+            "51. Qual o nome das enzimas que cortam o DNA em sequências específicas?",
+          options: [
+            "a) Ligases",
+            "b) Polimerases",
+            "c) Endonucleases de restrição",
+            "d) Helicases",
+          ],
+          correctAnswer: "c) Endonucleases de restrição",
+        },
+        {
+          question:
+            "52. Qual o papel do promotor na transcrição?",
+          options: [
+            "a) Codificar a sequência de aminoácidos da proteína.",
+            "b) Sinalizar o início da transcrição.",
+            "c) Terminar a transcrição.",
+            "d) Transportar o mRNA para o ribossomo.",
+          ],
+          correctAnswer: "b) Sinalizar o início da transcrição.",
+        },
+        {
+          question:
+            "53. O que acontece com os íntrons e éxons após a transcrição em eucariotos?",
+          options: [
+            "a) Ambos são traduzidos em proteína.",
+            "b) Os íntrons são removidos e os éxons são unidos (splicing).",
+            "c) Os éxons são removidos e os íntrons são unidos.",
+            "d) Nenhum deles é traduzido.",
+          ],
+          correctAnswer: "b) Os íntrons são removidos e os éxons são unidos (splicing).",
+        },
+        {
+          question:
+            "54. Qual a função principal das enzimas em processos biológicos?",
+          options: [
+            "a) Armazenar energia.",
+            "b) Atuar como componentes estruturais.",
+            "c) Catalisar reações químicas.",
+            "d) Transportar substâncias.",
+          ],
+          correctAnswer: "c) Catalisar reações químicas.",
+        },
+        {
+          question:
+            "55. Em que tipo de célula o DNA está contido em um núcleo?",
+          options: [
+            "a) Procariontes",
+            "b) Eucariontes",
+            "c) Vírus",
+            "d) Bacteriófagos",
+          ],
+          correctAnswer: "b) Eucariontes",
+        },
+        {
+          question:
+            "56. Qual o processo de produção de uma cópia de RNA a partir de uma sequência de DNA?",
+          options: [
+            "a) Replicação",
+            "b) Tradução",
+            "c) Transcrição",
+            "d) Mitose",
+          ],
+          correctAnswer: "c) Transcrição",
+        },
+        {
+          question:
+            "57. Qual a função do anticódon no tRNA?",
+          options: [
+            "a) Ligar-se ao aminoácido.",
+            "b) Ligar-se ao códon no mRNA.",
+            "c) Ligar-se ao ribossomo.",
+            "d) Catalisar a formação da ligação peptídica.",
+          ],
+          correctAnswer: "b) Ligar-se ao códon no mRNA.",
+        },
+        {
+          question:
+            "58. O que é o dogma central da biologia molecular?",
+          options: [
+            "a) DNA -> RNA -> Proteína",
+            "b) Proteína -> RNA -> DNA",
+            "c) RNA -> DNA -> Proteína",
+            "d) DNA -> Proteína -> RNA",
+          ],
+          correctAnswer: "a) DNA -> RNA -> Proteína",
+        },
+        {
+          question:
+            "59. Qual o tipo de ligação que une as duas fitas da dupla hélice de DNA?",
+          options: [
+            "a) Ligação peptídica",
+            "b) Ligação glicosídica",
+            "c) Ligação de hidrogênio",
+            "d) Ligação fosfodiéster",
+          ],
+          correctAnswer: "c) Ligação de hidrogênio",
+        },
+        {
+          question:
+            "60. Qual a função do gene da telomerase em algumas células?",
+          options: [
+            "a) Reparar o DNA danificado.",
+            "b) Alongar os telômeros, protegendo as extremidades dos cromossomos.",
+            "c) Iniciar a replicação do DNA.",
+            "d) Sintetizar proteínas.",
+          ],
+          correctAnswer: "b) Alongar os telômeros, protegendo as extremidades dos cromossomos.",
+        },
+        {
+          question:
+            "61. O que são os nucleossomos?",
+          options: [
+            "a) Unidades funcionais do RNA.",
+            "b) Estruturas que formam os ribossomos.",
+            "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
+            "d) Segmentos de DNA que codificam proteínas.",
+          ],
+          correctAnswer: "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
+        },
+        {
+          question:
+            "62. Qual o significado de 'sentido 5' para 3'' em relação ao DNA e RNA?",
+          options: [
+            "a) A direção em que a molécula é lida ou sintetizada.",
+            "b) A quantidade de bases nitrogenadas na molécula.",
+            "c) O número de cromossomos em uma célula.",
+            "d) A temperatura ideal para a replicação.",
+          ],
+          correctAnswer: "a) A direção em que a molécula é lida ou sintetizada.",
+        },
+        {
+          question:
+            "63. Qual enzima está envolvida no reparo de danos no DNA?",
+          options: [
+            "a) RNA polimerase",
+            "b) DNA ligase",
+            "c) Topoisomerase",
+            "d) Todas as alternativas anteriores, dependendo do tipo de dano.",
+          ],
+          correctAnswer: "d) Todas as alternativas anteriores, dependendo do tipo de dano.",
+        },
+        {
+          question:
+            "64. Qual a diferença principal entre DNA e RNA em termos de sua estrutura de fita?",
+          options: [
+            "a) O DNA é fita simples e o RNA é fita dupla.",
+            "b) O DNA é fita dupla e o RNA é fita simples.",
+            "c) Ambos são fita dupla.",
+            "d) Ambos são fita simples.",
+          ],
+          correctAnswer: "b) O DNA é fita dupla e o RNA é fita simples.",
+        },
+        {
+          question:
+            "65. Qual a função do splicing alternativo?",
+          options: [
+            "a) Aumentar a taxa de mutação.",
+            "b) Produzir diferentes proteínas a partir de um único gene.",
+            "c) Degradadar o RNA mensageiro.",
+            "d) Iniciar a replicação do DNA.",
+          ],
+          correctAnswer: "b) Produzir diferentes proteínas a partir de um único gene.",
+        },
+        {
+          question:
+            "66. O que é um íntron?",
+          options: [
+            "a) Uma sequência de DNA que codifica uma proteína.",
+            "b) Uma sequência não codificadora de RNA que é removida durante o splicing.",
+            "c) Uma proteína que regula a transcrição.",
+            "d) Uma região do DNA que inicia a replicação.",
+          ],
+          correctAnswer: "b) Uma sequência não codificadora de RNA que é removida durante o splicing.",
+        },
+        {
+          question:
+            "67. O que é um éxon?",
+          options: [
+            "a) Uma sequência não codificadora de RNA.",
+            "b) Uma sequência codificadora de RNA que permanece no mRNA maduro.",
+            "c) Uma proteína que atua na tradução.",
+            "d) Um tipo de mutação.",
+          ],
+          correctAnswer: "b) Uma sequência codificadora de RNA que permanece no mRNA maduro.",
+        },
+        {
+          question:
+            "68. Qual o processo de síntese de proteínas a partir de RNA mensageiro (mRNA)?",
+          options: [
+            "a) Replicação",
+            "b) Transcrição",
+            "c) Tradução",
+            "d) Mutação",
+          ],
+          correctAnswer: "c) Tradução",
+        },
+        {
+          question:
+            "69. O que é o código genético degenerado?",
+          options: [
+            "a) Significa que o código genético é instável.",
+            "b) Significa que diferentes códons podem especificar o mesmo aminoácido.",
+            "c) Significa que o código genético pode ser lido em qualquer direção.",
+            "d) Significa que o código genético está se deteriorando.",
+          ],
+          correctAnswer: "b) Significa que diferentes códons podem especificar o mesmo aminoácido.",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}">
+                <input type="radio" name="question${questionNumber}" value="${currentQuestion.options[i]}">
+                ${currentQuestion.options[i]}
+                <span class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">✂️</span>
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const selector = `input[name=question${questionNumber}]:checked`;
+          const userAnswerElement = (answerContainer.querySelector(selector) || {})
+            .value;
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            option.classList.remove('selected'); // Remove a seleção anterior
+            const radioInput = option.querySelector('input[type="radio"]');
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            // Lógica para esconder a tesoura na opção selecionada APÓS o clique de submissão
+            if (radioInput && radioInput.checked) {
+                option.classList.add('selected'); // Adiciona a classe 'selected' ao selecionado
+                if (scissorIcon) scissorIcon.classList.add('hidden'); // Esconde a tesoura na opção selecionada
+            } else {
+                if (scissorIcon) scissorIcon.classList.remove('hidden'); // Mostra a tesoura nas outras opções
+            }
+
+            // Exibe o gabarito e marca correto/incorreto
+            if (option.textContent.trim().includes(currentQuestion.correctAnswer)) {
+                option.classList.add('correct');
+            } else {
+                option.classList.remove('correct'); // Remove se não for o gabarito
+            }
+
+            if (userAnswerElement === currentQuestion.correctAnswer) {
+                if (option.textContent.trim().includes(currentQuestion.correctAnswer)) {
+                    option.classList.add('correct');
+                }
+            } else {
+                if (option.textContent.trim().includes(userAnswerElement) && userAnswerElement !== undefined) {
+                    option.classList.add('incorrect');
+                }
+            }
+          });
+
+          if (userAnswerElement === currentQuestion.correctAnswer) {
+            correctAnswers++;
+          }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página até o final para exibir o resultado
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option'); // Encontra o div .option mais próximo
+
+        if (optionElement) {
+            // Se o clique foi diretamente na tesoura
+            if (clickedElement.classList.contains("scissor-icon")) {
+                // Apenas alterna a classe 'struck-through'
+                optionElement.classList.toggle("struck-through");
+            } 
+            // Se o clique foi em qualquer outra parte do bloco da alternativa (seleção do rádio)
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question=\"${questionNumber}\"].selected`
+                );
+                
+                // Remove a classe 'selected' da opção anteriormente selecionada (se houver)
+                if (selected) {
+                    selected.classList.remove("selected");
+                    // Mostra a tesoura na opção que foi desmarcada
+                    const oldScissor = selected.querySelector('.scissor-icon');
+                    if (oldScissor) oldScissor.classList.remove('hidden');
+                }
+                
+                // Adiciona a classe 'selected' à nova opção clicada
+                optionElement.classList.add("selected");
+                // Esconde a tesoura na opção que foi selecionada
+                const newScissor = optionElement.querySelector('.scissor-icon');
+                if (newScissor) newScissor.classList.add('hidden');
+
+                // Garante que o radio button dentro da opção selecionada seja marcado
+                const radioInput = optionElement.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.checked = true;
+                }
+            }
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
