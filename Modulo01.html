@@ -228,7 +228,7 @@
     </div>
 
     <button class="error-nav-btn" id="errorNavBtn">
-      <span class="arrow-icon">⬇️</span> <span class="button-text">Próximo Erro</span> </button>
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
 
     <script>
       const quizContainer = document.getElementById("quiz");
@@ -236,15 +236,17 @@
       const resultsContainer = document.getElementById("results");
       const errorNavBtn = document.getElementById("errorNavBtn");
       const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
-      const buttonText = errorNavBtn.querySelector(".button-text"); // Novo para o texto do botão
+      const buttonText = errorNavBtn.querySelector(".button-text");
       const errorDiagnosisSection = document.getElementById("errorDiagnosis");
       const topicsToReviewList = document.getElementById("topicsToReview");
 
       let wrongQuestionIndices = []; // Array para armazenar os índices das questões marcadas erradas
-      let wrongQuestionTopics = new Set(); // Set para armazenar tópicos únicos dos erros
-      let currentWrongQuestionIndex = -1; // Começa em -1 para que o primeiro clique leve ao índice 0
-      let hasErrors = false; // Flag para verificar se há erros
-      let isInErrorReviewMode = false; // Flag para controlar se estamos navegando nos erros ou prontos para diagnóstico
+      let errorCountByTopic = {}; // Objeto para contar erros por tópico (APENAS QUESTÕES MARCADAS ERRADO)
+      let totalAnsweredQuestionsByTopic = {}; // Objeto para contar o total de questões RESPONDIDAS por tópico
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; // Flag para controlar se estamos navegando nos erros
+      let isShowingDiagnosis = false; // Flag para controlar se estamos na seção de diagnóstico
 
       const questions = [
         {
@@ -1075,7 +1077,7 @@
             "a) Unidades funcionais do RNA.",
             "b) Estruturas que formam os ribossomos.",
             "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
-            "d) Segmentos de DNA que codificam proteínas.",
+            "d) Segmentos de DNA que codificam proteína.",
           ],
           correctAnswer: "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
           comment:
@@ -1173,7 +1175,7 @@
             "a) Replicação",
             "b) Transcrição",
             "c) Tradução",
-            "d) Mutação",
+            "d) Mitose",
           ],
           correctAnswer: "c) Tradução",
           comment:
@@ -1198,6 +1200,7 @@
 
       function buildQuiz() {
         const output = [];
+
         questions.forEach((currentQuestion, questionNumber) => {
           const options = [];
           for (let i = 0; i < currentQuestion.options.length; i++) {
@@ -1209,7 +1212,6 @@
             );
           }
 
-          // Adiciona o atributo data-topic ao card da questão
           output.push(
             `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
               <div class="question">${currentQuestion.question}</div>
@@ -1223,15 +1225,16 @@
       }
 
       function showResults() {
-        wrongQuestionIndices = []; // Reseta a lista de erros
-        wrongQuestionTopics = new Set(); // Reseta os tópicos de erro
-        currentWrongQuestionIndex = -1; // Reseta para -1 para que o primeiro clique no botão leve ao índice 0
-        hasErrors = false; // Reseta a flag de erros
-        isInErrorReviewMode = false; // Sai do modo de revisão de erros
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; // Reseta a contagem de erros por tópico
+        totalAnsweredQuestionsByTopic = {}; // Reseta a contagem de questões respondidas por tópico
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
 
-        // Esconde a seção de diagnóstico no início da verificação
         errorDiagnosisSection.style.display = 'none';
-        topicsToReviewList.innerHTML = ''; // Limpa a lista de tópicos
+        topicsToReviewList.innerHTML = ''; 
 
         const answerContainers = quizContainer.querySelectorAll(".options");
         let correctAnswers = 0;
@@ -1242,7 +1245,7 @@
           const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
           const commentDiv = document.getElementById(`comment-${questionNumber}`);
 
-          // Limpa estados anteriores (se for clicado múltiplas vezes)
+          // Limpa estados anteriores
           const allOptions = answerContainer.querySelectorAll('.option');
           allOptions.forEach(option => {
             option.classList.remove('correct', 'incorrect');
@@ -1256,13 +1259,10 @@
           optionElements.forEach(option => {
             const scissorIcon = option.querySelector('.scissor-icon');
 
-            // Esconde a tesoura na opção que foi selecionada pelo usuário para não atrapalhar a visualização do gabarito
             if (option === userAnswerElement && scissorIcon) {
                 scissorIcon.classList.add('hidden');
             } 
-            // Já as outras tesouras (não selecionadas) devem estar visíveis para referência, o que foi garantido pelo reset acima
-
-            // Marca a resposta correta com a classe 'correct'
+            
             if (option.dataset.value === currentQuestion.correctAnswer) {
                 option.classList.add('correct');
                 if (commentDiv && currentQuestion.comment) {
@@ -1272,15 +1272,26 @@
             }
           });
 
-          // Verifica se a resposta do usuário está incorreta E foi marcada (userAnswerElement existe)
-          if (userAnswerElement && userAnswerValue !== currentQuestion.correctAnswer) {
-            userAnswerElement.classList.add('incorrect');
-            wrongQuestionIndices.push(questionNumber);
-            wrongQuestionTopics.add(currentQuestion.topic); // Adiciona o tópico do erro
-            hasErrors = true; // Define que há erros
-          } else if (userAnswerValue === currentQuestion.correctAnswer) {
-            correctAnswers++;
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { // Se o usuário marcou alguma alternativa
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
           }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
         });
 
         resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
@@ -1288,18 +1299,17 @@
         // Rola a página totalmente para baixo para exibir o resultado
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-        // Exibe o botão de navegação de erros se houver questões marcadas erradas
         if (hasErrors) {
             errorNavBtn.style.display = 'flex';
-            arrowIcon.textContent = '⬇️'; // Seta para baixo, indicando para rolar para o primeiro erro
-            buttonText.textContent = `Próximo Erro (1/${wrongQuestionIndices.length})`; // Exibe o contador
-            isInErrorReviewMode = true; // Entra no modo de revisão de erros
+            arrowIcon.textContent = '⬆️'; // Seta para cima inicialmente
+            buttonText.textContent = 'Diagnóstico de Erros'; // Texto claro para diagnóstico
+            isShowingErrors = false; // Não estamos navegando erro a erro inicialmente
+            isShowingDiagnosis = false; // Ainda não mostramos o diagnóstico
         } else {
-            errorNavBtn.style.display = 'none'; // Esconde se não houver erros marcados
+            errorNavBtn.style.display = 'none';
         }
       }
 
-      // Função para rolar para uma questão específica
       function scrollToQuestion(index) {
         const questionCard = document.getElementById(`question-${index}`);
         if (questionCard) {
@@ -1307,12 +1317,10 @@
         }
       }
       
-      // Função para rolar para a seção de diagnóstico
       function scrollToDiagnosis() {
           errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
-      // Event listener para o clique nas opções
       quizContainer.addEventListener("click", function (event) {
         const clickedElement = event.target;
         const optionElement = clickedElement.closest('.option');
@@ -1323,55 +1331,86 @@
             } 
             else {
                 const questionNumber = optionElement.dataset.question;
-                // Remove a classe 'selected' de outras opções na mesma questão
                 const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
                 currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
                 
-                // Adiciona a classe 'selected' à opção clicada
                 optionElement.classList.add("selected");
             }
         }
       });
 
-      // Event listener para o botão de navegação de erros/diagnóstico
       errorNavBtn.addEventListener("click", function() {
         if (!hasErrors) { // Se não há erros, o botão não deveria estar visível, mas por segurança
             errorNavBtn.style.display = 'none';
             return;
         }
 
-        if (isInErrorReviewMode) {
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            // Clicou no botão "Diagnóstico de Erros" (seta para cima) para iniciar a navegação ou ir para o diagnóstico
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; // Inicia o modo de navegação de erros
+                currentWrongQuestionIndex = 0; // Começa pelo primeiro erro
+                arrowIcon.textContent = '⬇️'; // Muda a seta para baixo para navegar pelos erros
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                // Não há erros para navegar, ir direto para o diagnóstico (embora hasErrors seja falso aqui)
+                // Isso é um fallback se hasErrors por algum motivo for true, mas wrongQuestionIndices estiver vazio
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; // Seta para cima (já está no final)
+                buttonText.textContent = 'Diagnóstico de Erros'; // Texto final
+                
+                // Preenche e exibe a seção de diagnóstico
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; // Garante que não é undefined
+                    
+                    if (totalAnsweredInTopic > 0) { // Evita divisão por zero
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; // Esconde o botão após ir para o diagnóstico final
+            }
+
+        } else if (isShowingErrors) { 
+            // Se estamos no modo de navegar pelos erros (botão é "Próximo Erro")
             currentWrongQuestionIndex++;
             if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
                 // Ainda há erros para revisar
                 scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
                 buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
             } else {
-                // Chegou ao fim dos erros, agora mostra o diagnóstico
-                isInErrorReviewMode = false; // Sai do modo de revisão de erros
-                arrowIcon.textContent = '⬇️'; // Seta para baixo para o diagnóstico
-                buttonText.textContent = 'Diagnóstico';
-                
+                // Todos os erros foram revisados, agora mostra o diagnóstico
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; // Seta para baixo para o diagnóstico (porque o diagnóstico está no final)
+                buttonText.textContent = 'Diagnóstico de Erros'; // Texto final do botão
+
                 // Preenche e exibe a seção de diagnóstico
-                topicsToReviewList.innerHTML = ''; // Limpa antes de preencher
-                if (wrongQuestionTopics.size > 0) {
-                    wrongQuestionTopics.forEach(topic => {
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
                         const li = document.createElement('li');
-                        li.textContent = topic;
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
                         topicsToReviewList.appendChild(li);
-                    });
-                    errorDiagnosisSection.style.display = 'block'; // Exibe a seção
-                    scrollToDiagnosis(); // Rola para ela
-                } else {
-                    errorDiagnosisSection.style.display = 'none'; // Esconde se não houver tópicos (não deve acontecer se hasErrors é true)
-                    errorNavBtn.style.display = 'none'; // Esconde o botão se não há tópicos a mostrar
+                    }
                 }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; // Esconde o botão após ir para o diagnóstico final
             }
-        } else {
-            // Se já não está no modo de revisão, significa que o botão agora é para ir para o diagnóstico
-            scrollToDiagnosis();
-            errorNavBtn.style.display = 'none'; // O botão some após ir para o diagnóstico
-        }
+        } 
+        // Se isShowingDiagnosis for true, não faz nada ao clicar no botão. Ele já deve ter desaparecido.
       });
 
       submitButton.addEventListener("click", showResults);
