@@ -46,7 +46,7 @@
       }
 
       .option {
-        display: flex;
+        display: flex; /* Para alinhar imagem e texto */
         align-items: center;
         margin-bottom: 10px;
         padding: 10px;
@@ -76,11 +76,6 @@
         border-color: #dc3545;
       }
 
-      .option input[type="radio"] {
-        margin-right: 10px;
-        accent-color: #007bff; /* Cor do radio button */
-      }
-
       .submit-btn {
         display: block;
         width: 100%;
@@ -108,23 +103,33 @@
       }
 
       .scissor-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 20px;
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
         cursor: pointer;
-        color: #6c757d;
       }
 
-      /* Removida a classe .hidden por padrão, a tesoura agora aparece sempre */
-      /* .scissor-icon.hidden {
+      .scissor-icon.hidden {
         display: none;
-      } */
+      }
 
       .struck-through {
         text-decoration: line-through;
         color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
       }
     </style>
   </head>
@@ -152,6 +157,8 @@
             "d) Plano mediano",
           ],
           correctAnswer: "c) Plano transverso (horizontal)",
+          comment:
+            "O plano transverso (horizontal) divide o corpo em metades superior e inferior, sendo fundamental para descrever a localização de estruturas ao longo do eixo vertical.",
         },
         {
           question:
@@ -163,6 +170,8 @@
             "d) Eixo transverso",
           ],
           correctAnswer: "a) Eixo sagital",
+          comment:
+            "O movimento de abdução (afastamento da linha média) ocorre no plano frontal (coronal) e é perpendicular ao eixo sagital.",
         },
         {
           question:
@@ -174,6 +183,8 @@
             "d) Plano mediano",
           ],
           correctAnswer: "c) Plano transverso (horizontal)",
+          comment:
+            "Movimentos de rotação, como a rotação do tronco, ocorrem principalmente no plano transverso (horizontal), em torno do eixo longitudinal.",
         },
         {
           question:
@@ -185,18 +196,24 @@
             "d) Plano mediano",
           ],
           correctAnswer: "a) Plano sagital",
+          comment:
+            "O plano sagital divide o corpo em metades direita e esquerda, sendo ideal para visualizar estruturas longitudinais como a medula espinhal em um corte lateral.",
         },
         {
           question:
             "5. Durante a realização de um procedimento cirúrgico, o cirurgião realiza uma incisão na pele do abdome, seguindo uma linha paralela à linha média do corpo. Qual termo anatômico descreve a localização dessa incisão em relação à linha média?",
           options: ["a) Medial", "b) Lateral", "c) Proximal", "d) Distal"],
           correctAnswer: "b) Lateral",
+          comment:
+            "O termo 'lateral' descreve uma estrutura que está mais afastada da linha média do corpo.",
         },
         {
           question:
             "6. Um radiologista descreve uma lesão no fêmur como estando localizada na porção mais próxima do tronco. Qual termo anatômico ele utilizaria para descrever essa localização?",
           options: ["a) Distal", "b) Proximal", "c) Superior", "d) Inferior"],
           correctAnswer: "b) Proximal",
+          comment:
+            "O termo 'proximal' descreve uma estrutura que está mais próxima da origem ou do ponto de fixação ao tronco do corpo.",
         },
         {
           question:
@@ -208,6 +225,8 @@
             "d) Inferior",
           ],
           correctAnswer: "b) Posterior",
+          comment:
+            "O termo 'posterior' (ou dorsal) descreve a parte de trás do corpo ou de uma estrutura.",
         },
         {
           question:
@@ -219,6 +238,8 @@
             "d) Lateralmente (para fora)",
           ],
           correctAnswer: "a) Anteriormente (para frente)",
+          comment:
+            "Na posição anatômica padrão, as palmas das mãos estão voltadas para frente (anteriormente).",
         },
         {
           question:
@@ -230,12 +251,16 @@
             "d) Plano oblíquo",
           ],
           correctAnswer: "a) Plano sagital",
+          comment:
+            "A flexão e extensão (como no cotovelo) são movimentos que ocorrem principalmente no plano sagital, em torno de um eixo transverso.",
         },
         {
           question:
             "10. Qual termo anatômico descreve uma estrutura localizada mais próxima da superfície do corpo?",
           options: ["a) Profundo", "b) Superficial", "c) Médio", "d) Interno"],
           correctAnswer: "b) Superficial",
+          comment:
+            "O termo 'superficial' descreve uma estrutura que está mais próxima da superfície externa do corpo, em oposição a 'profundo'.",
         },
         {
           question:
@@ -247,6 +272,8 @@
             "d) Remover o excesso de água do tecido.",
           ],
           correctAnswer: "b) Preservar a estrutura celular e tecidual.",
+          comment:
+            "A fixação é o primeiro passo e visa manter a arquitetura celular e tecidual o mais próximo possível do estado vivo, impedindo a degradação.",
         },
         {
           question:
@@ -258,6 +285,8 @@
             "d) Preservar a estrutura celular e tecidual.",
           ],
           correctAnswer: "a) Remover o excesso de água do tecido.",
+          comment:
+            "A desidratação, geralmente com concentrações crescentes de álcool, remove a água do tecido para permitir a infiltração de parafina, que é hidrofóbica.",
         },
         {
           question:
@@ -269,6 +298,8 @@
             "d) Remover o excesso de água do tecido.",
           ],
           correctAnswer: "c) Realçar estruturas celulares específicas.",
+          comment:
+            "A coloração (ex: Hematoxilina e Eosina) permite visualizar diferentes componentes celulares e teciduais, que seriam transparentes sem ela, facilitando a identificação microscópica.",
         },
         {
           question: "14. Qual a função da objetiva em um microscópio óptico?",
@@ -279,6 +310,8 @@
             "d) Controlar a quantidade de luz que atinge a amostra.",
           ],
           correctAnswer: "b) Ampliar a imagem da amostra.",
+          comment:
+            "As objetivas são as lentes localizadas próximas à amostra e são responsáveis pela primeira e maior ampliação da imagem, sendo a mais crítica para a resolução.",
         },
         {
           question: "15. Qual a função da ocular em um microscópio óptico?",
@@ -289,6 +322,8 @@
             "d) Controlar a quantidade de luz que atinge a amostra.",
           ],
           correctAnswer: "b) Ampliar a imagem da amostra.",
+          comment:
+            "A ocular (ou lente ocular) é a lente onde o observador coloca o olho, e sua função é ampliar a imagem já ampliada pela objetiva, formando a imagem final que é vista.",
         },
         {
           question: "16. Qual a função do condensador em um microscópio óptico?",
@@ -299,6 +334,8 @@
             "d) Controlar a quantidade de luz que atinge a amostra.",
           ],
           correctAnswer: "d) Controlar a quantidade de luz que atinge a amostra.",
+          comment:
+            "O condensador está localizado abaixo da platina e sua função é coletar e focar os raios de luz do iluminador sobre a amostra, otimizando a iluminação para visualização.",
         },
         {
           question:
@@ -310,6 +347,8 @@
             "d) Neutra.",
           ],
           correctAnswer: "a) Hipertônica.",
+          comment:
+            "Em uma solução hipertônica, a maior concentração de soluto fora da célula faz com que a água saia da célula por osmose, levando à sua desidratação (murchamento).",
         },
         {
           question:
@@ -321,6 +360,8 @@
             "d) Neutra.",
           ],
           correctAnswer: "b) Isotônica.",
+          comment:
+            "Em uma solução isotônica, a concentração de solutos é equilibrada, resultando em um movimento líquido de água nulo através da membrana celular, mantendo o volume da célula.",
         },
         {
           question:
@@ -332,6 +373,8 @@
             "d) Neutra.",
           ],
           correctAnswer: "c) Hipotônica.",
+          comment:
+            "Em uma solução hipotônica, a menor concentração de soluto fora da célula faz com que a água entre na célula por osmose, levando ao seu inchaço e possível lise (estouro).",
         },
         {
           question:
@@ -343,6 +386,8 @@
             "d) A célula se divide rapidamente.",
           ],
           correctAnswer: "b) A célula murcha.",
+          comment:
+            "Em um meio hipertônico, a água se move para fora da célula por osmose, causando a perda de volume e o murchamento celular.",
         },
         {
           question:
@@ -354,6 +399,8 @@
             "d) Prevenir calos e bolhas nas mãos.",
           ],
           correctAnswer: "b) Reduzir o risco de contaminação das mãos e a transmissão de microrganismos.",
+          comment:
+            "A NR 32 enfatiza o uso de luvas como barreira de proteção para prevenir a exposição a agentes biológicos e químicos, protegendo tanto o profissional quanto o paciente.",
         },
         {
           question:
@@ -365,6 +412,8 @@
             "d) Controlar a qualidade dos produtos utilizados nos hospitais.",
           ],
           correctAnswer: "b) Reduzir os riscos de acidentes e doenças ocupacionais.",
+          comment:
+            "O objetivo primordial da NR 32 é a segurança e saúde dos trabalhadores, minimizando a exposição a riscos inerentes aos serviços de saúde e prevenindo doenças e acidentes do trabalho.",
         },
         {
           question: "23. Qual o significado da sigla EPI, conforme a NR 32?",
@@ -375,6 +424,8 @@
             "d) Equipamento Padrão de Higiene",
           ],
           correctAnswer: "c) Equipamento de Proteção Individual",
+          comment:
+            "EPI significa Equipamento de Proteção Individual, que são dispositivos ou produtos de uso pessoal destinados a proteger o trabalhador de riscos.",
         },
         {
           question:
@@ -386,6 +437,8 @@
             "d) A responsabilidade do descarte é exclusiva da empresa coletora.",
           ],
           correctAnswer: "b) Devem ser separados e descartados imediatamente após o uso, em recipientes apropriados.",
+          comment:
+            "A NR 32 exige a segregação e o descarte correto dos Resíduos de Serviços de Saúde (RSS) em recipientes específicos e em tempo hábil para evitar contaminação e proliferação de vetores.",
         },
         {
           question:
@@ -397,6 +450,8 @@
             "d) Aumentar a durabilidade das luvas.",
           ],
           correctAnswer: "b) Prevenir a transmissão de microrganismos.",
+          comment:
+            "A higienização das mãos é a medida individual mais eficaz para prevenir a transmissão de infecções relacionadas à assistência à saúde (IRAS) e proteger os profissionais.",
         },
         {
           question:
@@ -408,6 +463,8 @@
             "d) Apenas a proibição de comer em áreas de trabalho.",
           ],
           correctAnswer: "c) Medidas de controle de engenharia, administrativas e de higiene.",
+          comment:
+            "A NR 32 adota uma abordagem multifacetada para riscos biológicos, incluindo controles de engenharia (ex: isolamento de áreas), administrativos (ex: treinamentos, protocolos) e de higiene (ex: lavagem das mãos, EPIs).",
         },
         {
           question:
@@ -419,6 +476,8 @@
             "d) O armazenamento de produtos químicos não precisa de regras específicas.",
           ],
           correctAnswer: "c) Os trabalhadores devem ser informados sobre os riscos e medidas de prevenção.",
+          comment:
+            "A NR 32 exige que os trabalhadores sejam devidamente informados sobre os produtos químicos que manipulam, seus riscos e as medidas de segurança e emergência.",
         },
         {
           question:
@@ -430,6 +489,8 @@
             "d) Determinar o salário dos trabalhadores.",
           ],
           correctAnswer: "b) Monitorar a saúde dos trabalhadores e prevenir doenças ocupacionais.",
+          comment:
+            "O PCMSO é um programa obrigatório que visa rastrear e diagnosticar precocemente agravos à saúde relacionados ao trabalho, monitorando a saúde dos funcionários.",
         },
         {
           question:
@@ -441,6 +502,8 @@
             "d) A proteção é responsabilidade exclusiva do médico radiologista.",
           ],
           correctAnswer: "b) Todas as áreas com risco radiológico devem ser sinalizadas.",
+          comment:
+            "A sinalização adequada das áreas com risco radiológico é uma exigência da NR 32 para alertar e proteger trabalhadores e pacientes da exposição indevida à radiação.",
         },
         {
           question:
@@ -452,6 +515,8 @@
             "d) Distribuir benefícios aos funcionários.",
           ],
           correctAnswer: "b) Promover a saúde e segurança dos trabalhadores.",
+          comment:
+            "A CIPA atua na prevenção de acidentes e doenças decorrentes do trabalho, buscando a compatibilidade permanente entre o trabalho, a saúde e a segurança.",
         },
         {
           question:
@@ -463,6 +528,8 @@
             "d) A incineração é o único método de descarte permitido.",
           ],
           correctAnswer: "c) Os resíduos devem ser separados e descartados em recipientes apropriados.",
+          comment:
+            "A correta segregação dos resíduos de serviços de saúde em recipientes específicos é crucial para o manejo seguro e para prevenir a disseminação de patógenos.",
         },
         {
           question:
@@ -474,6 +541,8 @@
             "d) Diminuir a visibilidade dos funcionários.",
           ],
           correctAnswer: "b) Reduzir o risco de exposição a agentes nocivos à saúde.",
+          comment:
+            "Os EPIs são a principal barreira de proteção individual contra os diversos riscos presentes nos ambientes de saúde, como biológicos, químicos e físicos.",
         },
         {
           question:
@@ -485,6 +554,8 @@
             "d) Transportar oxigênio.",
           ],
           correctAnswer: "c) Armazenar e transmitir informações genéticas.",
+          comment:
+            "O DNA é o repositório da informação genética em quase todos os organismos, contendo as instruções para o desenvolvimento, funcionamento e reprodução.",
         },
         {
           question:
@@ -496,6 +567,8 @@
             "d) Mutação",
           ],
           correctAnswer: "c) Replicação",
+          comment:
+            "A replicação do DNA é o processo pelo qual uma molécula de DNA é copiada para produzir duas moléculas idênticas de DNA, essencial para a divisão celular.",
         },
         {
           question:
@@ -507,6 +580,8 @@
             "d) Adenina, Guanina, Uracila, Timina",
           ],
           correctAnswer: "c) Adenina, Guanina, Citosina, Timina",
+          comment:
+            "As bases nitrogenadas do DNA são Adenina (A), Guanina (G), Citosina (C) e Timina (T). A Uracila (U) substitui a Timina no RNA.",
         },
         {
           question:
@@ -518,6 +593,8 @@
             "d) Timina",
           ],
           correctAnswer: "d) Timina",
+          comment:
+            "No RNA, a base nitrogenada Timina (T) é substituída pela Uracila (U).",
         },
         {
           question:
@@ -529,6 +606,8 @@
             "d) Mutação",
           ],
           correctAnswer: "c) Transcrição",
+          comment:
+            "A transcrição é o processo de sintetizar uma molécula de RNA usando uma fita de DNA como molde, transferindo a informação genética do DNA para o RNA.",
         },
         {
           question:
@@ -540,6 +619,8 @@
             "d) Complexo de Golgi",
           ],
           correctAnswer: "c) Ribossomos (no citoplasma ou RER)",
+          comment:
+            "A tradução ocorre nos ribossomos, que podem estar livres no citoplasma ou associados ao Retículo Endoplasmático Rugoso (RER).",
         },
         {
           question:
@@ -551,6 +632,8 @@
             "d) Regular a expressão gênica.",
           ],
           correctAnswer: "c) Levar a informação genética do DNA para o ribossomo.",
+          comment:
+            "O mRNA carrega a sequência de códons, que são as instruções para a montagem dos aminoácidos na ordem correta para formar a proteína.",
         },
         {
           question:
@@ -562,6 +645,8 @@
             "d) Ligação glicosídica",
           ],
           correctAnswer: "c) Ligação peptídica",
+          comment:
+            "Os aminoácidos são unidos por ligações peptídicas durante a síntese de proteínas, formando uma cadeia polipeptídica.",
         },
         {
           question:
@@ -573,6 +658,8 @@
             "d) Mutação",
           ],
           correctAnswer: "d) Mutação",
+          comment:
+            "Mutação é qualquer alteração na sequência de DNA, que pode ser causada por erros na replicação ou por danos ao DNA.",
         },
         {
           question:
@@ -584,6 +671,8 @@
             "d) Helicase",
           ],
           correctAnswer: "c) DNA polimerase",
+          comment:
+            "A DNA polimerase é a enzima chave na replicação do DNA, catalisando a adição de nucleotídeos à nova fita em crescimento.",
         },
         {
           question:
@@ -595,6 +684,8 @@
             "d) Corrigir erros na replicação.",
           ],
           correctAnswer: "c) Abrir a dupla hélice de DNA.",
+          comment:
+            "A helicase 'desenrola' e separa as duas fitas da dupla hélice do DNA, rompendo as ligações de hidrogênio entre as bases, para que a replicação possa ocorrer.",
         },
         {
           question:
@@ -606,6 +697,8 @@
             "d) Regular a expressão gênica.",
           ],
           correctAnswer: "c) Transportar aminoácidos específicos para o ribossomo.",
+          comment:
+            "O tRNA atua como um 'adaptador', lendo o códon no mRNA e trazendo o aminoácido correspondente para ser adicionado à cadeia polipeptídica em crescimento.",
         },
         {
           question:
@@ -617,6 +710,8 @@
             "d) Um segmento de DNA que não codifica proteína.",
           ],
           correctAnswer: "b) Uma sequência de três nucleotídeos no mRNA que especifica um aminoácido.",
+          comment:
+            "O códon é a unidade básica do código genético, sendo uma trinca de nucleotídeos no mRNA que 'codifica' um aminoácido específico ou um sinal de parada.",
         },
         {
           question:
@@ -628,6 +723,8 @@
             "d) Oxidação",
           ],
           correctAnswer: "b) Proteólise",
+          comment:
+            "Proteólise é o processo de quebra de proteínas em peptídeos menores ou aminoácidos por meio de enzimas chamadas proteases.",
         },
         {
           question: "47. O que é um gene?",
@@ -638,6 +735,8 @@
             "d) Uma estrutura presente apenas em células vegetais.",
           ],
           correctAnswer: "b) Um segmento de DNA que contém informações para produzir uma molécula funcional (como uma proteína ou RNA).",
+          comment:
+            "Um gene é a unidade fundamental da hereditariedade, consistindo em uma sequência de DNA que codifica uma característica ou função específica.",
         },
         {
           question:
@@ -649,6 +748,8 @@
             "d) Juntar os fragmentos de DNA.",
           ],
           correctAnswer: "b) Corrigir erros de pareamento de bases.",
+          comment:
+            "Além de sintetizar o DNA, a DNA polimerase possui atividade de revisão (proofreading), corrigindo a maioria dos erros de pareamento de bases durante a replicação, garantindo a fidelidade da cópia genética.",
         },
         {
           question:
@@ -660,6 +761,8 @@
             "d) Ambas as direções simultaneamente",
           ],
           correctAnswer: "b) 5' para 3'",
+          comment:
+            "Todas as DNA polimerases conhecidas sintetizam o DNA apenas na direção 5' para 3', adicionando nucleotídeos à extremidade 3'-OH da fita em crescimento.",
         },
         {
           question:
@@ -671,6 +774,8 @@
             "d) Metaboloma",
           ],
           correctAnswer: "c) Genoma",
+          comment:
+            "O genoma é o conjunto completo de material genético de um organismo, incluindo todos os genes e sequências não codificadoras de DNA.",
         },
         {
           question:
@@ -682,6 +787,8 @@
             "d) Helicases",
           ],
           correctAnswer: "c) Endonucleases de restrição",
+          comment:
+            "As endonucleases de restrição (ou enzimas de restrição) são ferramentas moleculares que reconhecem e clivam o DNA em sequências nucleotídicas específicas, sendo amplamente usadas em engenharia genética.",
         },
         {
           question:
@@ -693,6 +800,8 @@
             "d) Transportar o mRNA para o ribossomo.",
           ],
           correctAnswer: "b) Sinalizar o início da transcrição.",
+          comment:
+            "O promotor é uma sequência de DNA onde a RNA polimerase se liga para iniciar a transcrição de um gene.",
         },
         {
           question:
@@ -704,6 +813,8 @@
             "d) Nenhum deles é traduzido.",
           ],
           correctAnswer: "b) Os íntrons são removidos e os éxons são unidos (splicing).",
+          comment:
+            "Em eucariotos, o pré-mRNA passa por um processo chamado splicing, onde os íntrons (regiões não codificadoras) são excisados e os éxons (regiões codificadoras) são unidos para formar o mRNA maduro.",
         },
         {
           question:
@@ -715,6 +826,8 @@
             "d) Transportar substâncias.",
           ],
           correctAnswer: "c) Catalisar reações químicas.",
+          comment:
+            "Enzimas são proteínas que atuam como catalisadores biológicos, acelerando a velocidade das reações químicas sem serem consumidas no processo.",
         },
         {
           question:
@@ -726,6 +839,8 @@
             "d) Bacteriófagos",
           ],
           correctAnswer: "b) Eucariontes",
+          comment:
+            "Em células eucarióticas, o DNA está organizado em cromossomos e contido dentro de um núcleo delimitado por uma membrana nuclear. Em procariontes, o DNA está no citoplasma.",
         },
         {
           question:
@@ -737,6 +852,8 @@
             "d) Mitose",
           ],
           correctAnswer: "c) Transcrição",
+          comment:
+            "Transcrição é o processo pelo qual a informação genética do DNA é copiada para uma molécula de RNA.",
         },
         {
           question:
@@ -748,6 +865,8 @@
             "d) Catalisar a formação da ligação peptídica.",
           ],
           correctAnswer: "b) Ligar-se ao códon no mRNA.",
+          comment:
+            "O anticódon é uma sequência de três nucleotídeos no tRNA que se pareia complementarmente com um códon específico no mRNA durante a tradução.",
         },
         {
           question:
@@ -759,6 +878,8 @@
             "d) DNA -> Proteína -> RNA",
           ],
           correctAnswer: "a) DNA -> RNA -> Proteína",
+          comment:
+            "O dogma central da biologia molecular descreve o fluxo de informação genética nas células: do DNA para o RNA (transcrição) e do RNA para a proteína (tradução).",
         },
         {
           question:
@@ -770,6 +891,8 @@
             "d) Ligação fosfodiéster",
           ],
           correctAnswer: "c) Ligação de hidrogênio",
+          comment:
+            "As duas fitas da dupla hélice de DNA são mantidas unidas por ligações de hidrogênio fracas entre as bases nitrogenadas complementares (A com T, G com C).",
         },
         {
           question:
@@ -781,6 +904,8 @@
             "d) Sintetizar proteínas.",
           ],
           correctAnswer: "b) Alongar os telômeros, protegendo as extremidades dos cromossomos.",
+          comment:
+            "A telomerase é uma enzima que adiciona repetições teloméricas às extremidades dos cromossomos, protegendo o DNA contra a degradação e o encurtamento que ocorre a cada replicação.",
         },
         {
           question:
@@ -792,6 +917,8 @@
             "d) Segmentos de DNA que codificam proteínas.",
           ],
           correctAnswer: "c) Complexos de DNA enrolado em proteínas histonas, a unidade fundamental da cromatina.",
+          comment:
+            "Nucleossomos são as unidades básicas de empacotamento do DNA em eucariotos, consistindo em DNA enrolado em um 'core' de proteínas histonas, formando a cromatina.",
         },
         {
           question:
@@ -803,6 +930,8 @@
             "d) A temperatura ideal para a replicação.",
           ],
           correctAnswer: "a) A direção em que a molécula é lida ou sintetizada.",
+          comment:
+            "O sentido 5' para 3' refere-se à polaridade de uma fita de ácido nucleico, indicando a direção em que os nucleotídeos são adicionados durante a síntese (do carbono 5' de um nucleotídeo para o carbono 3' do próximo) e como a informação é lida.",
         },
         {
           question:
@@ -814,6 +943,8 @@
             "d) Todas as alternativas anteriores, dependendo do tipo de dano.",
           ],
           correctAnswer: "d) Todas as alternativas anteriores, dependendo do tipo de dano.",
+          comment:
+            "Várias enzimas participam do reparo do DNA. DNA ligase une quebras, topoisomerase relaxa superenrolamentos e RNA polimerase, embora primariamente para transcrição, está indiretamente envolvida em alguns mecanismos de reparo acoplados à transcrição.",
         },
         {
           question:
@@ -825,6 +956,8 @@
             "d) Ambos são fita simples.",
           ],
           correctAnswer: "b) O DNA é fita dupla e o RNA é fita simples.",
+          comment:
+            "O DNA é tipicamente uma molécula de fita dupla, enquanto o RNA é uma molécula de fita simples (embora possa formar estruturas secundárias complexas).",
         },
         {
           question:
@@ -836,6 +969,8 @@
             "d) Iniciar a replicação do DNA.",
           ],
           correctAnswer: "b) Produzir diferentes proteínas a partir de um único gene.",
+          comment:
+            "O splicing alternativo é um processo que permite que diferentes combinações de éxons sejam unidas a partir de um único transcrito de pré-mRNA, resultando na produção de múltiplas isoformas de proteínas de um único gene.",
         },
         {
           question:
@@ -847,6 +982,8 @@
             "d) Uma região do DNA que inicia a replicação.",
           ],
           correctAnswer: "b) Uma sequência não codificadora de RNA que é removida durante o splicing.",
+          comment:
+            "Íntrons são segmentos de DNA (e RNA transcrito) que não contêm informações para a síntese de proteínas e são removidos do pré-mRNA durante o splicing.",
         },
         {
           question:
@@ -858,6 +995,8 @@
             "d) Um tipo de mutação.",
           ],
           correctAnswer: "b) Uma sequência codificadora de RNA que permanece no mRNA maduro.",
+          comment:
+            "Éxons são as sequências codificadoras de um gene que são expressas e permanecem no mRNA maduro após o splicing, sendo traduzidas em proteínas.",
         },
         {
           question:
@@ -869,6 +1008,8 @@
             "d) Mutação",
           ],
           correctAnswer: "c) Tradução",
+          comment:
+            "Tradução é o processo em que a sequência de nucleotídeos no mRNA é decodificada pelos ribossomos para sintetizar uma cadeia de aminoácidos, formando uma proteína.",
         },
         {
           question:
@@ -880,6 +1021,8 @@
             "d) Significa que o código genético está se deteriorando.",
           ],
           correctAnswer: "b) Significa que diferentes códons podem especificar o mesmo aminoácido.",
+          comment:
+            "O código genético é degenerado (ou redundante) porque a maioria dos aminoácidos é especificada por mais de um códon, o que oferece uma certa proteção contra mutações pontuais.",
         },
       ];
 
@@ -889,10 +1032,9 @@
           const options = [];
           for (let i = 0; i < currentQuestion.options.length; i++) {
             options.push(
-              `<label class="option" data-question="${questionNumber}">
-                <input type="radio" name="question${questionNumber}" value="${currentQuestion.options[i]}">
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
                 ${currentQuestion.options[i]}
-                <span class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">✂️</span>
               </label>`
             );
           }
@@ -901,6 +1043,7 @@
             `<div class="card">
               <div class="question">${currentQuestion.question}</div>
               <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
             </div>`
           );
         });
@@ -914,89 +1057,66 @@
 
         questions.forEach((currentQuestion, questionNumber) => {
           const answerContainer = answerContainers[questionNumber];
-          const selector = `input[name=question${questionNumber}]:checked`;
-          const userAnswerElement = (answerContainer.querySelector(selector) || {})
-            .value;
+          const userAnswerElement = answerContainer.querySelector('.option.selected'); 
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
 
           const optionElements = answerContainer.querySelectorAll('.option');
           optionElements.forEach(option => {
-            option.classList.remove('selected'); // Remove a seleção anterior
-            const radioInput = option.querySelector('input[type="radio"]');
             const scissorIcon = option.querySelector('.scissor-icon');
 
-            // Lógica para esconder a tesoura na opção selecionada APÓS o clique de submissão
-            if (radioInput && radioInput.checked) {
-                option.classList.add('selected'); // Adiciona a classe 'selected' ao selecionado
-                if (scissorIcon) scissorIcon.classList.add('hidden'); // Esconde a tesoura na opção selecionada
-            } else {
-                if (scissorIcon) scissorIcon.classList.remove('hidden'); // Mostra a tesoura nas outras opções
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } else if (scissorIcon) {
+                scissorIcon.classList.remove('hidden');
             }
 
-            // Exibe o gabarito e marca correto/incorreto
-            if (option.textContent.trim().includes(currentQuestion.correctAnswer)) {
+            // Destaca a resposta correta e exibe o comentário
+            if (option.dataset.value === currentQuestion.correctAnswer) {
                 option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
             } else {
-                option.classList.remove('correct'); // Remove se não for o gabarito
+                option.classList.remove('correct');
             }
 
-            if (userAnswerElement === currentQuestion.correctAnswer) {
-                if (option.textContent.trim().includes(currentQuestion.correctAnswer)) {
-                    option.classList.add('correct');
-                }
-            } else {
-                if (option.textContent.trim().includes(userAnswerElement) && userAnswerElement !== undefined) {
-                    option.classList.add('incorrect');
-                }
+            // Marca a resposta do usuário como 'incorrect' se for diferente do gabarito
+            if (userAnswerValue !== currentQuestion.correctAnswer && option === userAnswerElement) {
+                option.classList.add('incorrect');
+            } else if (option === userAnswerElement) {
+                option.classList.remove('incorrect');
             }
           });
 
-          if (userAnswerElement === currentQuestion.correctAnswer) {
+          if (userAnswerValue === currentQuestion.correctAnswer) {
             correctAnswers++;
           }
         });
 
         resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
         
-        // Rola a página até o final para exibir o resultado
         resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
       }
 
       quizContainer.addEventListener("click", function (event) {
         const clickedElement = event.target;
-        const optionElement = clickedElement.closest('.option'); // Encontra o div .option mais próximo
+        const optionElement = clickedElement.closest('.option');
 
         if (optionElement) {
-            // Se o clique foi diretamente na tesoura
             if (clickedElement.classList.contains("scissor-icon")) {
-                // Apenas alterna a classe 'struck-through'
                 optionElement.classList.toggle("struck-through");
             } 
-            // Se o clique foi em qualquer outra parte do bloco da alternativa (seleção do rádio)
             else {
                 const questionNumber = optionElement.dataset.question;
                 const selected = quizContainer.querySelector(
                     `.option[data-question=\"${questionNumber}\"].selected`
                 );
-                
-                // Remove a classe 'selected' da opção anteriormente selecionada (se houver)
                 if (selected) {
                     selected.classList.remove("selected");
-                    // Mostra a tesoura na opção que foi desmarcada
-                    const oldScissor = selected.querySelector('.scissor-icon');
-                    if (oldScissor) oldScissor.classList.remove('hidden');
                 }
-                
-                // Adiciona a classe 'selected' à nova opção clicada
                 optionElement.classList.add("selected");
-                // Esconde a tesoura na opção que foi selecionada
-                const newScissor = optionElement.querySelector('.scissor-icon');
-                if (newScissor) newScissor.classList.add('hidden');
-
-                // Garante que o radio button dentro da opção selecionada seja marcado
-                const radioInput = optionElement.querySelector('input[type="radio"]');
-                if (radioInput) {
-                    radioInput.checked = true;
-                }
             }
         }
       });
