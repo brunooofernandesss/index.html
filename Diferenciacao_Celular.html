@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado Módulo I - Diferenciação Celular</title>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário de Múltipla Escolha: Diferenciação Celular</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; // Array para armazenar os índices das questões marcadas erradas
+      let errorCountByTopic = {}; // Objeto para contar erros por tópico (APENAS QUESTÕES MARCADAS ERRADO)
+      let totalAnsweredQuestionsByTopic = {}; // Objeto para contar o total de questões RESPONDIDAS por tópico
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; // Flag para controlar se estamos navegando nos erros
+      let isShowingDiagnosis = false; // Flag para controlar se estamos na seção de diagnóstico
+
+      const questions = [
+        {
+          question:
+            "1. Qual o processo pelo qual células menos especializadas se transformam em células mais especializadas, adquirindo características e funções específicas?",
+          options: [
+            "a) Proliferação celular.",
+            "b) Apoptose.",
+            "c) Diferenciação celular.",
+            "d) Mitose.",
+          ],
+          correctAnswer: "c) Diferenciação celular.",
+          comment:
+            "A diferenciação celular é a base da formação de um organismo multicelular complexo. Células iniciam com um potencial amplo e, através da diferenciação, tornam-se células com funções e formas altamente especializadas, como neurônios, células musculares ou células da pele.",
+          topic: "Conceito de Diferenciação Celular",
+        },
+        {
+          question:
+            "2. Qual é a importância fundamental da especialização celular em um organismo multicelular?",
+          options: [
+            "a) Diminuir a complexidade do organismo.",
+            "b) Aumentar a capacidade de replicação do DNA.",
+            "c) Permitir a formação de diferentes tipos de tecidos e órgãos com funções específicas.",
+            "d) Reduzir o consumo de energia da célula.",
+          ],
+          correctAnswer: "c) Permitir a formação de diferentes tipos de tecidos e órgãos com funções específicas.",
+          comment:
+            "A especialização celular é o que permite a divisão de trabalho em um organismo multicelular. Cada tipo de célula, tecido e órgão é projetado para realizar tarefas específicas (ex: contração muscular, transmissão nervosa, proteção da pele), garantindo o funcionamento coordenado e eficiente do organismo.",
+          topic: "Importância da Especialização Celular",
+        },
+        {
+          question:
+            "3. Quais são as principais características das células-tronco?",
+          options: [
+            "a) Alta especialização e capacidade limitada de divisão.",
+            "b) Capacidade de se autorrenovar e de se diferenciar em vários tipos celulares.",
+            "c) Produção exclusiva de anticorpos.",
+            "d) Funções metabólicas reduzidas.",
+          ],
+          correctAnswer: "b) Capacidade de se autorrenovar e de se diferenciar em vários tipos celulares.",
+          comment:
+            "As células-tronco são definas por duas propriedades fundamentais: autorrenovação (capacidade de fazer cópias de si mesmas indefinidamente) e multipotência (capacidade de se diferenciar em uma ou mais, ou até todos, os tipos de células do corpo, dependendo de sua potência).",
+          topic: "Características das Células-Tronco",
+        },
+        {
+          question:
+            "4. Uma célula-tronco totipotente tem a capacidade de se diferenciar em:",
+          options: [
+            "a) Apenas células musculares.",
+            "b) Células de qualquer um dos três folhetos germinativos e também do trofoblasto.",
+            "c) Somente células do sistema nervoso.",
+            "d) Apenas células da linhagem sanguínea.",
+          ],
+          correctAnswer: "b) Células de qualquer um dos três folhetos germinativos e também do trofoblasto.",
+          comment:
+            "Células totipotentes são as mais versáteis, com a capacidade de gerar um organismo completo. O zigoto e as células iniciais da mórula são exemplos, podendo formar tanto os tecidos do embrião (endoderma, mesoderma, ectoderma) quanto os tecidos extraembrionários (como a placenta).",
+          topic: "Tipos de Potência: Totipotência",
+        },
+        {
+          question:
+            "5. Qual o termo que descreve a capacidade de uma célula-tronco se diferenciar em qualquer tipo de célula dos três folhetos germinativos (ectoderma, mesoderma, endoderma), mas não em tecidos extraembrionários?",
+          options: [
+            "a) Totipotente.",
+            "b) Pluripotente.",
+            "c) Multipotente.",
+            "d) Unipotente.",
+          ],
+          correctAnswer: "b) Pluripotente.",
+          comment:
+            "Células pluripotentes, como as células-tronco embrionárias (ESCs), podem gerar todos os tipos de células do corpo adulto, mas não podem formar um organismo completo porque são incapazes de gerar os tecidos extraembrionários, como a placenta.",
+          topic: "Tipos de Potência: Pluripotência",
+        },
+        {
+          question:
+            "6. Células-tronco hematopoiéticas, encontradas na medula óssea, podem se diferenciar em diversos tipos de células sanguíneas, mas não em células nervosas ou musculares. Que tipo de potência elas exemplificam?",
+          options: [
+            "a) Totipotente.",
+            "b) Pluripotente.",
+            "c) Multipotente.",
+            "d) Unipotente.",
+          ],
+          correctAnswer: "c) Multipotente.",
+          comment:
+            "Células multipotentes podem se diferenciar em múltiplos tipos de células, mas dentro de uma linhagem ou família de células específica. As células-tronco hematopoiéticas são um exemplo clássico, dando origem a todos os tipos de células do sangue (glóbulos vermelhos, glóbulos brancos, plaquetas).",
+          topic: "Tipos de Potência: Multipotência",
+        },
+        {
+          question:
+            "7. O que é uma célula-tronco unipotente?",
+          options: [
+            "a) Uma célula que pode se diferenciar em qualquer tipo de célula do corpo.",
+            "b) Uma célula que pode se diferenciar em vários tipos de células dentro de uma linhagem.",
+            "c) Uma célula que só pode se diferenciar em um único tipo de célula, embora mantenha a capacidade de autorrenovação.",
+            "d) Uma célula que perdeu sua capacidade de divisão.",
+          ],
+          correctAnswer: "c) Uma célula que só pode se diferenciar em um único tipo de célula, embora mantenha a capacidade de autorrenovação.",
+          comment:
+            "Células unipotentes são as menos versáteis das células-tronco. Elas podem se autorrenovar, mas só conseguem se diferenciar em um único tipo de célula, como as células-tronco da pele que formam apenas células da pele.",
+          topic: "Tipos de Potência: Unipotência",
+        },
+        {
+          question:
+            "8. Qual o principal fator que influencia a decisão de uma célula-tronco se diferenciar em um tipo celular específico?",
+          options: [
+            "a) O tamanho do núcleo da célula.",
+            "b) Sinais químicos e físicos do microambiente celular.",
+            "c) A quantidade de mitocôndrias.",
+            "d) A presença de ribossomos.",
+          ],
+          correctAnswer: "b) Sinais químicos e físicos do microambiente celular.",
+          comment:
+            "O microambiente celular, também conhecido como nicho de células-tronco, é crucial. Sinais químicos (fatores de crescimento, hormônios, citocinas) e sinais físicos (contato célula-célula, rigidez da matriz extracelular) direcionam a diferenciação celular.",
+          topic: "Regulação da Diferenciação Celular: Microambiente",
+        },
+        {
+          question:
+            "9. Durante o desenvolvimento embrionário, a formação dos três folhetos germinativos (ectoderma, mesoderma, endoderma) ocorre no processo de:",
+          options: [
+            "a) Fertilização.",
+            "b) Clivagem.",
+            "c) Gastrulação.",
+            "d) Organogênese.",
+          ],
+          correctAnswer: "c) Gastrulação.",
+          comment:
+            "A gastrulação é um estágio crucial no desenvolvimento embrionário, onde o blastocisto se reorganiza e forma os três folhetos germinativos primários, a partir dos quais todos os tecidos e órgãos do corpo se desenvolverão.",
+          topic: "Desenvolvimento Embrionário: Gastrulação",
+        },
+        {
+          question:
+            "10. O ectoderma embrionário dá origem a quais estruturas no organismo adulto?",
+          options: [
+            "a) Músculos e ossos.",
+            "b) Sistema nervoso e epiderme da pele.",
+            "c) Revestimento do trato digestório e glândulas.",
+            "d) Sangue e vasos sanguíneos.",
+          ],
+          correctAnswer: "b) Sistema nervoso e epiderme da pele.",
+          comment:
+            "O ectoderma é o folheto germinativo mais externo e forma estruturas como o sistema nervoso central e periférico, a epiderme, cabelo, unhas e esmalte dentário.",
+          topic: "Folhetos Germinativos: Ectoderma",
+        },
+        {
+          question:
+            "11. Qual folheto germinativo é responsável pela formação dos músculos, ossos e sistema circulatório?",
+          options: [
+            "a) Ectoderma.",
+            "b) Mesoderma.",
+            "c) Endoderma.",
+            "d) Blastômero.",
+          ],
+          correctAnswer: "b) Mesoderma.",
+          comment:
+            "O mesoderma, o folheto germinativo intermediário, é uma fonte de grande parte dos tecidos conectivos, músculos, ossos, sistema circulatório (coração, sangue, vasos), sistema urinário e sistema reprodutor.",
+          topic: "Folhetos Germinativos: Mesoderma",
+        },
+        {
+          question:
+            "12. O endoderma embrionário dá origem a quais estruturas no organismo adulto?",
+          options: [
+            "a) Cérebro e medula espinhal.",
+            "b) Tecido conjuntivo e cartilagem.",
+            "c) Revestimento do trato digestório e glândulas associadas (fígado, pâncreas).",
+            "d) Pelos e unhas.",
+          ],
+          correctAnswer: "c) Revestimento do trato digestório e glândulas associadas (fígado, pâncreas).",
+          comment:
+            "O endoderma, o folheto germinativo mais interno, forma o revestimento do trato gastrointestinal e respiratório, bem como órgãos como o fígado, pâncreas, tireoide e paratireoide.",
+          topic: "Folhetos Germinativos: Endoderma",
+        },
+        {
+          question:
+            "13. O que são os fatores de transcrição e qual seu papel na diferenciação celular?",
+          options: [
+            "a) Enzimas que degradam proteínas.",
+            "b) Moléculas que transportam oxigênio.",
+            "c) Proteínas que se ligam ao DNA e regulam a expressão gênica, direcionando a identidade celular.",
+            "d) Componentes da membrana plasmática.",
+          ],
+          correctAnswer: "c) Proteínas que se ligam ao DNA e regulam a expressão gênica, direcionando a identidade celular.",
+          comment:
+            "Fatores de transcrição são proteínas cruciais que controlam quais genes são \"ligados\" ou \"desligados\" em uma célula. Ao regular a expressão gênica, eles ditam o conjunto de proteínas que uma célula produz, o que, por sua vez, determina sua estrutura e função, ou seja, sua diferenciação.",
+          topic: "Fatores de Transcrição e Expressão Gênica",
+        },
+        {
+          question:
+            "14. A desdiferenciação é um processo em que uma célula especializada reverte para um estado menos diferenciado. Qual o principal objetivo desse processo em contextos de pesquisa ou regeneração?",
+          options: [
+            "a) Aumentar a especialização celular.",
+            "b) Gerar células-tronco induzidas (iPSCs) ou facilitar a reparação tecidual.",
+            "c) Diminuir o número de células no organismo.",
+            "d) Induzir a apoptose celular.",
+          ],
+          correctAnswer: "b) Gerar células-tronco induzidas (iPSCs) ou facilitar a reparação tecidual.",
+          comment:
+            "A desdiferenciação é um processo fascinante, especialmente no contexto das iPSCs (células-tronco de pluripotência induzida), onde células somáticas adultas são \"reprogramadas\" para um estado pluripotente. Em organismos, a desdiferenciação pode ocorrer para permitir a regeneração de tecidos danificados.",
+          topic: "Desdiferenciação e Reprogramação Celular",
+        },
+        {
+          question:
+            "15. Qual a importância do gradiente de morfógenos no desenvolvimento embrionário e na diferenciação celular?",
+          options: [
+            "a) Inibir a formação de novos tecidos.",
+            "b) Criar diferentes concentrações de moléculas sinalizadoras que instruem as células a adotarem diferentes destinos.",
+            "c) Aumentar a proliferação celular de forma descontrolada.",
+            "d) Reduzir a complexidade das vias de sinalização.",
+          ],
+          correctAnswer: "b) Criar diferentes concentrações de moléculas sinalizadoras que instruem as células a adotarem diferentes destinos.",
+          comment:
+            "Morfógenos são moléculas sinalizadoras que difundem a partir de uma fonte e formam um gradiente de concentração. Células em diferentes posições ao longo desse gradiente respondem de maneira diferente à concentração do morfógeno, resultando em padrões espaciais distintos de diferenciação e formação de estruturas.",
+          topic: "Gradientes de Morfógenos",
+        },
+        {
+          question:
+            "16. O que são células-tronco mesenquimais (MSCs) e qual a sua relevância terapêutica?",
+          options: [
+            "a) Células encontradas apenas no cérebro e que formam neurônios.",
+            "b) Células multipotentes encontradas em vários tecidos adultos, com potencial para regeneração e imunomodulação.",
+            "c) Células que causam câncer.",
+            "d) Células que armazenam gordura.",
+          ],
+          correctAnswer: "b) Células multipotentes encontradas em vários tecidos adultos, com potencial para regeneração e imunomodulação.",
+          comment:
+            "MSCs são células-tronco multipotentes isoladas de diversas fontes, como medula óssea, tecido adiposo e cordão umbilical. Elas têm a capacidade de se diferenciar em osteócitos, condrócitos, adipócitos, entre outros, e também possuem propriedades imunomoduladoras, tornando-as promissoras em terapias regenerativas e para doenças autoimunes.",
+          topic: "Células-Tronco Mesenquimais (MSCs)",
+        },
+        {
+          question:
+            "17. A organogênese é o processo de formação de órgãos a partir dos folhetos germinativos. O que pode causar malformações congênitas durante este período?",
+          options: [
+            "a) Dieta rica em nutrientes.",
+            "b) Exposição a teratógenos (agentes que causam malformações).",
+            "c) Atividade física excessiva da mãe.",
+            "d) Consumo de água purificada.",
+          ],
+          correctAnswer: "b) Exposição a teratógenos (agentes que causam malformações).",
+          comment:
+            "Teratógenos são agentes que podem causar defeitos congênitos ou malformações em um embrião ou feto. Exemplos incluem certos medicamentos, produtos químicos, infecções virais e radiação. A exposição durante a organogênese (período crítico do desenvolvimento) é particularmente perigosa.",
+          topic: "Organogênese e Teratógenos",
+        },
+        {
+          question:
+            "18. Qual o papel da matriz extracelular (MEC) na diferenciação celular?",
+          options: [
+            "a) Serve apenas como suporte estrutural inerte.",
+            "b) Atua como um arcabouço físico e bioquímico que influencia sinais de diferenciação.",
+            "c) É o local de produção de ATP.",
+            "d) Armazena informações genéticas.",
+          ],
+          correctAnswer: "b) Atua como um arcabouço físico e bioquímico que influencia sinais de diferenciação.",
+          comment:
+            "A MEC não é apenas um suporte. Ela interage com as células através de receptores de superfície (integrinas), e seus componentes (colágeno, fibronectina, laminina) fornecem sinais bioquímicos e mecânicos que influenciam a adesão, migração, proliferação e, crucialmente, a diferenciação celular.",
+          topic: "Matriz Extracelular (MEC)",
+        },
+        {
+          question:
+            "19. O que são células-tronco de pluripotência induzida (iPSCs)?",
+          options: [
+            "a) Células-tronco embrionárias obtidas de embriões fertilizados in vitro.",
+            "b) Células somáticas adultas que foram geneticamente reprogramadas para um estado pluripotente.",
+            "c) Células encontradas na medula óssea.",
+            "d) Células que formam apenas tecidos extraembrionários.",
+          ],
+          correctAnswer: "b) Células somáticas adultas que foram geneticamente reprogramadas para um estado pluripotente.",
+          comment:
+            "iPSCs são um avanço revolucionário. Elas são geradas a partir de células adultas comuns (como fibroblastos da pele) pela introdução de alguns fatores de transcrição específicos. Isso as torna pluripotentes, semelhantes às células-tronco embrionárias, mas sem as questões éticas associadas à obtenção de embriões.",
+          topic: "Células-Tronco de Pluripotência Induzida (iPSCs)",
+        },
+        {
+          question:
+            "20. A epigenética desempenha um papel crucial na diferenciação celular ao:",
+          options: [
+            "a) Alterar a sequência de nucleotídeos do DNA.",
+            "b) Controlar a expressão gênica sem alterar a sequência do DNA.",
+            "c) Duplicar o material genético.",
+            "d) Sintetizar novas proteínas.",
+          ],
+          correctAnswer: "b) Controlar a expressão gênica sem alterar a sequência do DNA.",
+          comment:
+            "A epigenética se refere a alterações herdáveis na expressão gênica que não envolvem mudanças na sequência de DNA. Isso inclui modificações de histonas e metilação do DNA, que influenciam quais genes são acessíveis para transcrição, sendo fundamental para o estabelecimento e manutenção da identidade celular durante a diferenciação.",
+          topic: "Epigenética e Diferenciação Celular",
+        },
+        {
+          question:
+            "21. Qual o processo pelo qual uma célula diferenciada mantém sua identidade e função ao longo do tempo?",
+          options: [
+            "a) Desdiferenciação.",
+            "b) Reprogramação.",
+            "c) Manutenção da diferenciação.",
+            "d) Mutação.",
+          ],
+          correctAnswer: "c) Manutenção da diferenciação.",
+          comment:
+            "Uma vez que uma célula se diferencia, ela geralmente mantém essa identidade de forma estável. Isso é essencial para a função e a homeostase dos tecidos e órgãos. Mecanismos epigenéticos e redes regulatórias de genes são cruciais para essa manutenção.",
+          topic: "Manutenção da Diferenciação Celular",
+        },
+        {
+          question:
+            "22. Em tecidos com alta taxa de renovação, como a pele ou o revestimento intestinal, a manutenção da população celular diferenciada depende principalmente de:",
+          options: [
+            "a) Células totalmente diferenciadas que se dividem rapidamente.",
+            "b) Células-tronco multipotentes ou unipotentes que se autorrenovam e se diferenciam.",
+            "c) Reversão de células maduras para um estado embrionário.",
+            "d) Diminuição da apoptose das células maduras.",
+          ],
+          correctAnswer: "b) Células-tronco multipotentes ou unipotentes que se autorrenovam e se diferenciam.",
+          comment:
+            "Tecidos que precisam de constante substituição de células (devido ao desgaste ou danos) dependem de uma população de células-tronco específicas do tecido. Essas células-tronco garantem a autorrenovação e a produção contínua de novas células diferenciadas para repor as perdidas.",
+          topic: "Renovação Tecidual e Células-Tronco Adultas",
+        },
+        {
+          question:
+            "23. Qual a principal vantagem do uso de iPSCs em pesquisa e terapia em comparação com células-tronco embrionárias (ESCs)?",
+          options: [
+            "a) São mais fáceis de obter em grandes quantidades.",
+            "b) Não levantam questões éticas controversas, pois são derivadas de células adultas.",
+            "c) Possuem maior capacidade de diferenciação.",
+            "d) São mais estáveis geneticamente.",
+          ],
+          correctAnswer: "b) Não levantam questões éticas controversas, pois são derivadas de células adultas.",
+          comment:
+            "A principal vantagem das iPSCs é que elas contornam as preocupações éticas relacionadas à destruição de embriões humanos, que são uma questão importante no uso de ESCs. Além disso, iPSCs podem ser geradas a partir de células do próprio paciente, reduzindo problemas de rejeição imunológica em terapias.",
+          topic: "Vantagens das iPSCs",
+        },
+        {
+          question:
+            "24. A formação de neurônios a partir de células progenitoras neurais é um exemplo de:",
+          options: [
+            "a) Desdiferenciação.",
+            "b) Reprogramação.",
+            "c) Diferenciação terminal.",
+            "d) Transdiferenciação.",
+          ],
+          correctAnswer: "c) Diferenciação terminal.",
+          comment:
+            "A diferenciação terminal é o processo pelo qual uma célula alcança seu estado final de especialização, perdendo a capacidade de se dividir ou se diferenciar em outros tipos celulares. Neurônios maduros são um exemplo clássico de células terminalmente diferenciadas.",
+          topic: "Diferenciação Terminal",
+        },
+        {
+          question:
+            "25. O que significa \"nicho de célula-tronco\" e por que ele é importante?",
+          options: [
+            "a) É um compartimento intracelular que armazena células-tronco.",
+            "b) É o microambiente específico dentro de um tecido que regula o comportamento das células-tronco.",
+            "c) É o gene que controla a pluripotência.",
+            "d) É o nome dado a células-tronco em estágio inicial.",
+          ],
+          correctAnswer: "b) É o microambiente específico dentro de um tecido que regula o comportamento das células-tronco.",
+          comment:
+            "O nicho de célula-tronco é um ambiente microambiental especializado que fornece os sinais regulatórios (moleculares e físicos) essenciais para manter as células-tronco em um estado não diferenciado e para orquestrar sua diferenciação quando necessário. Ele protege as células-tronco e controla sua proliferação e destino.",
+          topic: "Nicho de Células-Tronco",
+        },
+        {
+          question:
+            "26. Quais são os principais marcadores utilizados para identificar células-tronco embrionárias (ESCs)?",
+          options: [
+            "a) Genes de diferenciação, como actina.",
+            "b) Fatores de pluripotência, como Oct4, Sox2 e Nanog.",
+            "c) Receptores de hormônios esteroides.",
+            "d) Enzimas metabólicas.",
+          ],
+          correctAnswer: "b) Fatores de pluripotência, como Oct4, Sox2 e Nanog.",
+          comment:
+            "Oct4, Sox2 e Nanog são os \"fatores de Yamanaka\" e são considerados marcadores chave da pluripotência. A expressão desses fatores de transcrição é essencial para manter o estado pluripotente e desdiferenciado das ESCs e iPSCs.",
+          topic: "Marcadores de Pluripotência (ESCs)",
+        },
+        {
+          question:
+            "27. A transdiferenciação, ou conversão direta de uma célula em outra, é um processo que não envolve um estado de pluripotência. Qual a sua aplicação potencial na medicina?",
+          options: [
+            "a) Apenas para estudos básicos de biologia celular.",
+            "b) Regeneração de tecidos diretamente a partir de células do próprio paciente, sem estágio iPSC.",
+            "c) Produção de clones de animais.",
+            "d) Criar organismos geneticamente modificados.",
+          ],
+          correctAnswer: "b) Regeneração de tecidos diretamente a partir de células do próprio paciente, sem estágio iPSC.",
+          comment:
+            "A transdiferenciação é uma técnica promissora onde um tipo de célula diferenciada é diretamente convertido em outro tipo de célula diferenciada (ex: fibroblasto em neurônio) sem passar por um estágio pluripotente. Isso pode simplificar as terapias celulares, evitando a formação de teratomas associados às iPSCs.",
+          topic: "Transdiferenciação",
+        },
+        {
+          question:
+            "28. O que é senescência celular e como ela se relaciona com a diferenciação?",
+          options: [
+            "a) Um processo de divisão celular acelerada.",
+            "b) Um estado de parada de crescimento irreversível em células que se diferencia para prevenir a proliferação de células danificadas.",
+            "c) A capacidade de uma célula se diferenciar em múltiplos tipos.",
+            "d) A morte celular programada.",
+          ],
+          correctAnswer: "b) Um estado de parada de crescimento irreversível em células que se diferencia para prevenir a proliferação de células danificadas.",
+          comment:
+            "A senescência celular é um estado de parada de crescimento permanente e estabilizada, que pode ser induzida por estresse ou envelhecimento. Células senescentes mantêm-se metabolicamente ativas, mas não se dividem. Em alguns contextos, diferenciação terminal pode levar à senescência como um mecanismo de segurança para células danificadas ou envelhecidas, impedindo que proliferem de forma descontrolada.",
+          topic: "Senescência Celular",
+        },
+        {
+          question:
+            "29. Em que consiste a terapia celular e qual o seu objetivo principal?",
+          options: [
+            "a) Uso de medicamentos para curar doenças.",
+            "b) Transplante de células para restaurar tecidos ou funções danificadas.",
+            "c) Cirurgia para remover órgãos doentes.",
+            "d) Alteração da dieta do paciente.",
+          ],
+          correctAnswer: "b) Transplante de células para restaurar tecidos ou funções danificadas.",
+          comment:
+            "A terapia celular envolve o transplante de células (sejam elas células-tronco ou células diferenciadas) em um paciente para substituir, reparar ou melhorar a função de tecidos ou órgãos doentes ou danificados. É uma área promissora da medicina regenerativa.",
+          topic: "Terapia Celular",
+        },
+        {
+          question:
+            "30. Qual o principal desafio ético associado ao uso de células-tronco embrionárias (ESCs)?",
+          options: [
+            "a) Dificuldade em obtê-las.",
+            "b) O uso de embriões humanos, que levanta questões sobre o status do embrião.",
+            "c) Alto custo de pesquisa.",
+            "d) Incapacidade de diferenciação em laboratório.",
+          ],
+          correctAnswer: "b) O uso de embriões humanos, que levanta questões sobre o status do embrião.",
+          comment:
+            "A principal controvérsia ética das ESCs reside na sua obtenção, que geralmente envolve a destruição de embriões humanos, levando a debates sobre o início da vida e a moralidade da pesquisa.",
+          topic: "Ética em Células-Tronco Embrionárias",
+        },
+        {
+          question:
+            "31. O que são os fatores de crescimento e qual seu papel na diferenciação?",
+          options: [
+            "a) Proteínas que degradam células.",
+            "b) Moléculas sinalizadoras que promovem a proliferação, diferenciação e sobrevivência celular.",
+            "c) Carboidratos que fornecem energia.",
+            "d) Lipídios que formam a membrana celular.",
+          ],
+          correctAnswer: "b) Moléculas sinalizadoras que promovem a proliferação, diferenciação e sobrevivência celular.",
+          comment:
+            "Fatores de crescimento são proteínas sinalizadoras que se ligam a receptores de superfície celular, ativando vias de sinalização intracelular que regulam processos como crescimento celular, proliferação, diferenciação e migração, sendo essenciais para o desenvolvimento e homeostase tecidual.",
+          topic: "Fatores de Crescimento",
+        },
+        {
+          question:
+            "32. A indução da pluripotência para criar iPSCs normalmente envolve a introdução de quais genes-chave?",
+          options: [
+            "a) Genes de defesa imunológica.",
+            "b) Genes como Oct4, Sox2, Klf4 e c-Myc.",
+            "c) Genes para produção de energia.",
+            "d) Genes que regulam a apoptose.",
+          ],
+          correctAnswer: "b) Genes como Oct4, Sox2, Klf4 e c-Myc.",
+          comment:
+            "Os \"fatores de Yamanaka\" (Oct4, Sox2, Klf4 e c-Myc) são os quatro fatores de transcrição mais comumente utilizados para reprogramar células somáticas adultas em iPSCs. Sua expressão conjunta é capaz de reverter o estado de diferenciação celular para a pluripotência.",
+          topic: "Fatores de Yamanaka (iPSCs)",
+        },
+        {
+          question:
+            "33. Qual a relação entre câncer e diferenciação celular?",
+          options: [
+            "a) Células cancerosas são sempre altamente diferenciadas.",
+            "b) O câncer frequentemente envolve a perda ou desregulação da diferenciação celular.",
+            "c) A diferenciação celular sempre previne o câncer.",
+            "d) Células cancerosas não se dividem.",
+          ],
+          correctAnswer: "b) O câncer frequentemente envolve a perda ou desregulação da diferenciação celular.",
+          comment:
+            "Uma característica marcante das células cancerosas é a perda de controle sobre a proliferação e, frequentemente, a perda ou desregulação da diferenciação. Células tumorais podem apresentar um fenótipo indiferenciado ou menos diferenciado, o que as torna mais agressivas e menos responsivas aos sinais de controle do organismo.",
+          topic: "Câncer e Diferenciação",
+        },
+        {
+          question:
+            "34. Em que estágio do desenvolvimento embrionário humano são geralmente obtidas as células-tronco embrionárias (ESCs)?",
+          options: [
+            "a) Zigoto.",
+            "b) Mórula.",
+            "c) Blastocisto.",
+            "d) Gástrula.",
+          ],
+          correctAnswer: "c) Blastocisto.",
+          comment:
+            "As ESCs humanas são derivadas da massa celular interna (embrioblasto) de um blastocisto, um estágio de desenvolvimento embrionário que ocorre por volta do quinto dia após a fertilização.",
+          topic: "Obtenção de ESCs",
+        },
+        {
+          question:
+            "35. A hematopoiese, processo de formação das células sanguíneas, é um exemplo contínuo de:",
+          options: [
+            "a) Desdiferenciação celular.",
+            "b) Reprogramação celular.",
+            "c) Diferenciação e autorrenovação mediada por células-tronco multipotentes.",
+            "d) Formação de tecidos extraembrionários.",
+          ],
+          correctAnswer: "c) Diferenciação e autorrenovação mediada por células-tronco multipotentes.",
+          comment:
+            "A hematopoiese é um exemplo primordial de como células-tronco multipotentes (as células-tronco hematopoiéticas) se autorrenovam e se diferenciam continuamente para repor todos os tipos de células sanguíneas com suas diferentes funções e tempos de vida.",
+          topic: "Hematopoiese",
+        },
+        {
+          question:
+            "36. A plasticidade celular refere-se à capacidade de uma célula em mudar seu estado de diferenciação ou seu tipo. Em que contexto isso é particularmente relevante?",
+          options: [
+            "a) Apenas em organismos unicelulares.",
+            "b) Na regeneração tecidual e no desenvolvimento de novas terapias celulares.",
+            "c) Exclusivamente no metabolismo energético.",
+            "d) Na transmissão de sinais nervosos.",
+          ],
+          correctAnswer: "b) Na regeneração tecidual e no desenvolvimento de novas terapias celulares.",
+          comment:
+            "A plasticidade celular é a base de processos como a desdiferenciação e a transdiferenciação. Entender e manipular a plasticidade celular é crucial para a medicina regenerativa, pois permite explorar novas estratégias para reparar tecidos danificados ou doentes.",
+          topic: "Plasticidade Celular",
+        },
+        {
+          question:
+            "37. Qual o papel da sinalização Notch na diferenciação celular?",
+          options: [
+            "a) Promover a proliferação descontrolada.",
+            "b) Regular decisões de destino celular através de interações célula-célula.",
+            "c) Iniciar a apoptose celular.",
+            "d) Controlar a produção de energia.",
+          ],
+          correctAnswer: "b) Regular decisões de destino celular através de interações célula-célula.",
+          comment:
+            "A via de sinalização Notch é uma via de comunicação célula-célula altamente conservada e crucial para o desenvolvimento e homeostase de muitos tecidos. Ela desempenha um papel fundamental na determinação do destino celular, na diferenciação e na manutenção de células-tronco através de interações diretas entre células adjacentes.",
+          topic: "Sinalização Notch",
+        },
+        {
+          question:
+            "38. Receptores nucleares ativam vias de sinalização que resultam principalmente em:",
+          options: [
+            "a) Abertura de canais iônicos.",
+            "b) Modulação rápida da atividade enzimática.",
+            "c) Alterações na expressão gênica e respostas celulares de longo prazo.",
+            "d) Proliferação celular descontrolada.",
+          ],
+          correctAnswer: "c) Alterações na expressão gênica e respostas celulares de longo prazo.",
+          comment:
+            "Os receptores nucleares atuam como fatores de transcrição ativados por ligantes. Quando ativados, eles se ligam a sequências específicas de DNA em regiões promotoras de genes, modulando a expressão desses genes. Essa modulação na expressão gênica leva a alterações na síntese de proteínas e, consequentemente, em respostas celulares de longo prazo.",
+          topic: "Receptores Nucleares",
+        },
+        {
+          question:
+            "39. Os hormônios esteroides, como o cortisol, exercem seus efeitos biológicos ligando-se a qual tipo de receptor?",
+          options: [
+            "a) Canais Iônicos.",
+            "b) Receptores Acoplados à Proteína G.",
+            "c) Receptores Ligados a Quinases.",
+            "d) Receptores Nucleares.",
+          ],
+          correctAnswer: "d) Receptores Nucleares.",
+          comment:
+            "O cortisol é um hormônio esteroide lipossolúvel. Ele atravessa a membrana plasmática e se liga a receptores de glicocorticoides (um tipo de receptor nuclear) no citoplasma. O complexo hormônio-receptor então se transloca para o núcleo, onde regula a transcrição gênica para mediar as respostas do estresse.",
+          topic: "Hormônios Esteroides e Receptores",
+        },
+        {
+          question:
+            "40. A diferenciação celular de uma célula-tronco mesenquimal em uma célula óssea é um exemplo de qual tipo de potência?",
+          options: [
+            "a) Totipotente.",
+            "b) Pluripotente.",
+            "c) Multipotente.",
+            "d) Unipotente.",
+          ],
+          correctAnswer: "c) Multipotente.",
+          comment:
+            "Células-tronco mesenquimais são multipotentes. Elas podem se diferenciar em vários tipos de células dentro de uma linhagem, como células ósseas (osteócitos), cartilagem (condrócitos), gordura (adipócitos) e músculo.",
+          topic: "Diferenciação de Células Mesenquimais",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; // Reseta a contagem de erros por tópico
+        totalAnsweredQuestionsByTopic = {}; // Reseta a contagem de questões respondidas por tópico
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } 
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { // Se o usuário marcou alguma alternativa
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; // Seta para cima inicialmente
+            buttonText.textContent = 'Diagnóstico de Erros'; // Texto claro para diagnóstico
+            isShowingErrors = false; // Não estamos navegando erro a erro inicialmente
+            isShowingDiagnosis = false; // Ainda não mostramos o diagnóstico
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { // Se não há erros, o botão não deveria estar visível, mas por segurança
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            // Clicou no botão "Diagnóstico de Erros" (seta para cima) para iniciar a navegação ou ir para o diagnóstico
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; // Inicia o modo de navegação de erros
+                currentWrongQuestionIndex = 0; // Começa pelo primeiro erro
+                arrowIcon.textContent = '⬇️'; // Muda a seta para baixo para navegar pelos erros
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                // Não há erros para navegar, ir direto para o diagnóstico (embora hasErrors seja falso aqui)
+                // Isso é um fallback se hasErrors por algum motivo for true, mas wrongQuestionIndices estiver vazio
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; // Seta para cima (já está no final)
+                buttonText.textContent = 'Diagnóstico de Erros'; // Texto final
+                
+                // Preenche e exibe a seção de diagnóstico
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; // Garante que não é undefined
+                    
+                    if (totalAnsweredInTopic > 0) { // Evita divisão por zero
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; // Esconde o botão após ir para o diagnóstico final
+            }
+
+        } else if (isShowingErrors) { 
+            // Se estamos no modo de navegar pelos erros (botão é "Próximo Erro")
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                // Ainda há erros para revisar
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                // Todos os erros foram revisados, agora mostra o diagnóstico
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; // Seta para baixo para o diagnóstico (porque o diagnóstico está no final)
+                buttonText.textContent = 'Diagnóstico de Erros'; // Texto final do botão
+
+                // Preenche e exibe a seção de diagnóstico
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; // Esconde o botão após ir para o diagnóstico final
+            }
+        } 
+        // Se isShowingDiagnosis for true, não faz nada ao clicar no botão. Ele já deve ter desaparecido.
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
