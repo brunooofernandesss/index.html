@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Questionário de Múltipla Escolha: Sinapse Nervosa e Neurotransmissores</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        display: flex;
+        /* Para alinhar a tesoura e o texto */
+        align-items: center;
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background-color: #e0e7ff;
+      }
+
+      .option.correct {
+        background-color: #c6f6d5;
+        color: green;
+        font-weight: bold;
+        border-color: #38a169;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        color: red;
+        border-color: #e53e3e;
+      }
+
+      .option.struck-through {
+        text-decoration: line-through;
+        color: #888; /* Opcional: para que fique mais suave ao ser riscado */
+      }
+
+      .scissor-icon {
+        margin-right: 8px;
+        cursor: pointer;
+        opacity: 0.5; /* Transparência de 50% */
+        width: 16px;
+        /* Tamanho pequeno */
+        height: 16px;
+        /* Tamanho pequeno */
+        flex-shrink: 0;
+        /* Impede que a tesoura encolha */
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+        /* Esconde a tesoura */
+      }
+
+      .comment {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #4f46e5;
+        font-size: 0.9em;
+        color: #666;
+        display: none;
+        /* Escondido por padrão */
+      }
+
+      .comment.show {
+        display: block;
+        /* Visível quando 'show' é adicionado */
+      }
+
+      .button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: #3730a3;
+      }
+
+      #results {
+        margin-top: 30px;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        color: #333;
+      }
+
+      #error-diagnosis {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #fff3cd;
+        border-radius: 8px;
+        border: 1px solid #ffeeba;
+        color: #664d03;
+        display: none; /* Hidden by default */
+      }
+
+      #error-diagnosis h2 {
+        color: #664d03;
+        margin-top: 0;
+        text-align: center;
+      }
+
+      #error-diagnosis ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      #error-diagnosis li {
+        margin-bottom: 5px;
+      }
+
+      .topic {
+        display: none; /* Makes the topic invisible */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário de Múltipla Escolha: Sinapse Nervosa e Neurotransmissores</h1>
+      <div id="quiz"></div>
+      <button id="submit" class="button">Verificar Respostas</button>
+      <div id="results"></div>
+      <div id="error-diagnosis">
+        <h2>Diagnóstico de Erros: Tópicos para Revisão</h2>
+        <ul id="incorrect-topics"></ul>
+      </div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          question: "1. Qual é a primeira etapa na transmissão de um sinal em um neurônio, conforme o slide?",
+          options: [
+            "Geração de despolarização.",
+            "Ativação de canais iônicos voltagem-dependentes.",
+            "Estímulo.",
+            "Propagação da alteração (PA)."
+          ],
+          answer: 2,
+          comment: "A primeira etapa é o estímulo, que pode ser elétrico, químico ou mecânico, e que inicia a cadeia de eventos que levarão à transmissão do sinal.",
+          topic: "Estímulo Neural"
+        },
+        {
+          question: "2. O que acontece com o potencial de membrana em repouso de um neurônio após o recebimento de um estímulo?",
+          options: [
+            "Ele se torna mais negativo.",
+            "Sua polaridade é alterada.",
+            "Ele permanece inalterado.",
+            "Cessa a atividade elétrica."
+          ],
+          answer: 1,
+          comment: "Um estímulo suficientemente forte (acima do limiar) causa uma alteração na permeabilidade da membrana a íons, o que resulta na mudança da polaridade do potencial de membrana, levando à despolarização e à geração de um potencial de ação.",
+          topic: "Potencial de Membrana e Estímulo"
+        },
+        {
+          question: "3. Qual é a fase que ocorre imediatamente após a ativação de canais iônicos voltagem-dependentes?",
+          options: [
+            "Ativação dos botões terminais.",
+            "Propagação da alteração (PA) até as terminações do neurônio.",
+            "Geração de despolarização (potencial de ação).",
+            "Alteração da polaridade da célula."
+          ],
+          answer: 2,
+          comment: "A ativação dos canais iônicos voltagem-dependentes (principalmente os de Na⁺) permite o influxo de íons, que rapidamente despolariza a membrana e gera o potencial de ação.",
+          topic: "Canais Iônicos e Potencial de Ação"
+        },
+        {
+          question: "4. Na transmissão de sinais neurônio a neurônio, a informação flui predominantemente em qual direção dentro de um neurônio típico?",
+          options: [
+            "Do axônio para o dendrito.",
+            "Do corpo celular para o dendrito.",
+            "Do dendrito para o corpo celular, e depois para o axônio.",
+            "Do axônio para o corpo celular."
+          ],
+          answer: 2,
+          comment: "A informação geralmente chega aos dendritos, é processada no corpo celular e então transmitida ao longo do axônio até os terminais sinápticos.",
+          topic: "Direção do Sinal Neural"
+        },
+        {
+          question: "5. O que ocorre na etapa de 'ativação dos botões terminais' em uma sinapse química?",
+          options: [
+            "Liberação de neurotransmissores.",
+            "Recepção do sinal pelo neurônio pós-sináptico.",
+            "Regeneração do potencial de ação.",
+            "Inativação de neurotransmissores."
+          ],
+          answer: 0,
+          comment: "A chegada do potencial de ação aos botões terminais causa a abertura de canais de Ca²⁺ dependentes de voltagem, e o influxo de Ca²⁺ é o gatilho para a liberação dos neurotransmissores na fenda sináptica por exocitose.",
+          topic: "Liberação de Neurotransmissores"
+        },
+        {
+          question: "6. Qual é a principal característica que distingue uma sinapse química de uma sinapse elétrica?",
+          options: [
+            "A velocidade de transmissão do sinal.",
+            "A presença de uma fenda sináptica e a liberação de neurotransmissores.",
+            "A ausência de canais iônicos.",
+            "A unidirecionalidade do sinal."
+          ],
+          answer: 1,
+          comment: "A principal diferença é a mediação do sinal por mensageiros químicos (neurotransmissores) liberados em um espaço (fenda sináptica), ao contrário do acoplamento direto da sinapse elétrica.",
+          topic: "Tipos de Sinapse"
+        },
+        {
+          question: "7. Quais são as três principais regiões anatômicas de um neurônio que o caracterizam como uma célula polarizada para a transmissão de sinais?",
+          options: [
+            "Núcleo, mitocôndria e retículo endoplasmático.",
+            "Dendritos, corpo celular (soma) e axônio.",
+            "Membrana plasmática, citoplasma e organelas.",
+            "Bainha de mielina, Nodos de Ranvier e terminais sinápticos."
+          ],
+          answer: 1,
+          comment: "Os dendritos recebem sinais, o corpo celular integra a informação e o axônio transmite o sinal a longas distâncias, ilustrando a polaridade funcional do neurônio.",
+          topic: "Anatomia do Neurônio"
+        },
+        {
+          question: "8. O que é a fenda sináptica?",
+          options: [
+            "Uma conexão física direta entre dois neurônios.",
+            "O espaço entre o neurônio pré-sináptico e o pós-sináptico.",
+            "A parte do neurônio pós-sináptico que libera neurotransmissores.",
+            "Uma organela responsável pela síntese de neurotransmissores."
+          ],
+          answer: 1,
+          comment: "A fenda sináptica é o pequeno espaço extracelular entre o terminal axônico do neurônio pré-sináptico e a membrana do neurônio pós-sináptico, onde os neurotransmissores são liberados e atuam.",
+          topic: "Fenda Sináptica"
+        },
+        {
+          question: "9. Qual é o evento que ocorre na membrana pré-sináptica que leva à liberação de neurotransmissores?",
+          options: [
+            "Repolarização da membrana.",
+            "Hiperpolarização da membrana.",
+            "Despolarização da membrana pelo potencial de ação.",
+            "Inativação de canais de Na⁺."
+          ],
+          answer: 2,
+          comment: "A chegada do potencial de ação despolariza a membrana pré-sináptica, ativando canais de Ca²⁺ dependentes de voltagem e iniciando a liberação de neurotransmissores.",
+          topic: "Mecanismo de Liberação de Neurotransmissores"
+        },
+        {
+          question: "10. O que acontece com os neurotransmissores após serem liberados na fenda sináptica para garantir o término do sinal?",
+          options: [
+            "Eles permanecem indefinidamente na fenda.",
+            "São degradados por enzimas ou recapturados pelo neurônio pré-sináptico ou células da glia.",
+            "Eles se ligam irreversivelmente aos receptores pós-sinápticos.",
+            "São transportados para o núcleo da célula pós-sináptica."
+          ],
+          answer: 1,
+          comment: "Para que a sinapse seja eficiente e permita múltiplos sinais, os neurotransmissores são rapidamente removidos da fenda por degradação enzimática (ex: acetilcolinesterase para acetilcolina) ou por recaptação (ex: para serotonina, dopamina).",
+          topic: "Término da Ação Neurotransmissora"
+        },
+        {
+          question: "11. Qual a função dos receptores na membrana pós-sináptica?",
+          options: [
+            "Sintetizar neurotransmissores.",
+            "Degradar neurotransmissores.",
+            "Ligar-se aos neurotransmissores e transduzir o sinal para a célula pós-sináptica.",
+            "Armazenar neurotransmissores."
+          ],
+          answer: 2,
+          comment: "Os receptores são proteínas especializadas na membrana pós-sináptica que reconhecem especificamente os neurotransmissores, ligam-se a eles e iniciam uma resposta na célula pós-sináptica, seja abrindo canais iônicos diretamente ou ativando vias de sinalização intracelulares.",
+          topic: "Receptores Pós-Sinápticos"
+        },
+        {
+          question: "12. A comunicação sináptica é essencial para qual função do sistema nervoso?",
+          options: [
+            "Armazenamento de ATP.",
+            "Transmissão, processamento e integração de informações.",
+            "Síntese de proteínas.",
+            "Regulação da temperatura corporal."
+          ],
+          answer: 1,
+          comment: "A sinapse é o ponto onde a informação é transmitida de um neurônio para outro, permitindo que o sistema nervoso processe e integre sinais, resultando em funções complexas como pensamento, movimento e percepção.",
+          topic: "Função da Sinapse"
+        },
+        {
+          question: "13. Qual o íon crucial para a liberação de neurotransmissores nos terminais pré-sinápticos?",
+          options: [
+            "Na⁺",
+            "K⁺",
+            "Ca²⁺",
+            "Cl⁻"
+          ],
+          answer: 2,
+          comment: "O influxo de cálcio (Ca²⁺) é o sinal para que as vesículas sinápticas liberem os neurotransmissores por exocitose.",
+          topic: "Papel do Cálcio na Sinapse"
+        },
+        {
+          question: "14. O que é um potencial pós-sináptico excitatório (PPSE)?",
+          options: [
+            "Uma hiperpolarização da membrana pós-sináptica.",
+            "Uma despolarização da membrana pós-sináptica que aproxima o neurônio do limiar para disparar um potencial de ação.",
+            "Uma repolarização rápida da membrana.",
+            "Um potencial de ação de 'tudo ou nada'."
+          ],
+          answer: 1,
+          comment: "O PPSE é uma despolarização local da membrana pós-sináptica, geralmente causada pela entrada de íons positivos (como Na⁺), que torna o neurônio mais propenso a disparar um potencial de ação.",
+          topic: "Potencial Pós-Sináptico Excitatório (PPSE)"
+        },
+        {
+          question: "15. O que é um potencial pós-sináptico inibitório (PPSI)?",
+          options: [
+            "Uma despolarização da membrana pós-sináptica.",
+            "Uma hiperpolarização da membrana pós-sináptica que afasta o neurônio do limiar para disparar um potencial de ação.",
+            "Uma fase de repolarização.",
+            "A inativação de canais de Na⁺."
+          ],
+          answer: 1,
+          comment: "O PPSI é uma hiperpolarização local ou uma estabilização do potencial de membrana em repouso, geralmente causada pela entrada de íons negativos (como Cl⁻) ou saída de íons positivos (K⁺), que torna o neurônio menos propenso a disparar um potencial de ação.",
+          topic: "Potencial Pós-Sináptico Inibitório (PPSI)"
+        },
+        {
+          question: "16. Como a soma espacial de potenciais sinápticos ocorre?",
+          options: [
+            "Pela ocorrência de múltiplos potenciais de ação em rápida sucessão no mesmo local.",
+            "Pela integração de múltiplos potenciais que chegam a diferentes locais da membrana pós-sináptica ao mesmo tempo.",
+            "Pela liberação de diferentes tipos de neurotransmissores.",
+            "Pela degradação enzimática dos neurotransmissores."
+          ],
+          answer: 1,
+          comment: "A soma espacial é a capacidade do neurônio pós-sináptico de integrar sinais (PPSEs e PPSIs) que chegam de diferentes sinapses localizadas em diferentes partes do dendrito ou corpo celular ao mesmo tempo.",
+          topic: "Soma Espacial"
+        },
+        {
+          question: "17. Como a soma temporal de potenciais sinápticos ocorre?",
+          options: [
+            "Pela integração de múltiplos potenciais que chegam a diferentes locais da membrana pós-sináptica ao mesmo tempo.",
+            "Pela ocorrência de múltiplos potenciais pós-sinápticos em rápida sucessão no mesmo local, somando seus efeitos.",
+            "Pela liberação de diferentes tipos de neurotransmissores.",
+            "Pela inativação de canais de K⁺."
+          ],
+          answer: 1,
+          comment: "A soma temporal é a integração de PPSEs ou PPSIs que ocorrem em rápida sucessão na mesma sinapse ou em sinapses próximas, somando seus efeitos para atingir o limiar ou promover a inibição.",
+          topic: "Soma Temporal"
+        },
+        {
+          question: "18. Qual é a principal via de transdução de sinal utilizada por receptores acoplados à proteína G?",
+          options: [
+            "Abertura direta de canais iônicos.",
+            "Ativação de enzimas que produzem segundos mensageiros.",
+            "Fosforilação direta de proteínas.",
+            "Intercalação no DNA."
+          ],
+          answer: 1,
+          comment: "Receptores acoplados à proteína G ativam proteínas G, que por sua vez ativam enzimas efetoras (como adenilil ciclase ou fosfolipase C) que produzem segundos mensageiros (como AMP cíclico ou IP₃/DAG), amplificando e diversificando o sinal intracelular.",
+          topic: "Receptores Acoplados à Proteína G"
+        },
+        {
+          question: "19. Qual a principal vantagem da transdução de sinal via segundos mensageiros em comparação com a abertura direta de canais iônicos?",
+          options: [
+            "É sempre mais rápida.",
+            "Mais lentos, mas podem ser mais duradouros e complexos.",
+            "Atinge apenas o núcleo da célula.",
+            "Não envolve íons."
+          ],
+          answer: 1,
+          comment: "A cascata de segundos mensageiros introduz um atraso, mas permite efeitos de sinalização mais prolongados e com maior diversidade de respostas celulares.",
+          topic: "Transdução de Sinal e Segundos Mensageiros"
+        },
+        {
+          question: "20. A acetilcolina é um neurotransmissor que pode ter efeitos excitatórios ou inibitórios dependendo de qual fator?",
+          options: [
+            "Da intensidade do estímulo.",
+            "Da concentração de íons Na⁺ extracelular.",
+            "Do tipo de receptor pós-sináptico ao qual se liga.",
+            "Do número de vesículas sinápticas liberadas."
+          ],
+          answer: 2,
+          comment: "A natureza do efeito (excitatório ou inibitório) de um neurotransmissor não depende do neurotransmissor em si, mas sim do tipo de receptor na célula pós-sináptica ao qual ele se liga. A acetilcolina, por exemplo, pode ser excitatória em junções neuromusculares esqueléticas (receptores nicotínicos) e inibitória no coração (receptores muscarínicos).",
+          topic: "Efeito do Neurotransmissor e Tipo de Receptor"
+        },
+        {
+          question: "21. Qual o nome dado às proteínas que se ligam aos neurotransmissores na membrana pós-sináptica e desencadeiam uma resposta celular?",
+          options: [
+            "Enzimas.",
+            "Transportadores.",
+            "Receptores.",
+            "Canais de vazamento."
+          ],
+          answer: 2,
+          comment: "Receptores são proteínas específicas na membrana pós-sináptica que reconhecem e se ligam a neurotransmissores, transduzindo o sinal para dentro da célula.",
+          topic: "Nomenclatura de Receptores"
+        },
+        {
+          question: "22. O que acontece com a membrana da vesícula sináptica após a liberação do neurotransmissor por exocitose?",
+          options: [
+            "É completamente destruída.",
+            "É reciclada para formar novas vesículas.",
+            "Permanece fundida com a membrana pré-sináptica.",
+            "É transportada para o corpo celular."
+          ],
+          answer: 1,
+          comment: "Após a fusão e liberação, a membrana da vesícula é recuperada por endocitose e reciclada para formar novas vesículas, um processo crucial para a sustentabilidade da transmissão sináptica.",
+          topic: "Reciclagem de Vesículas Sinápticas"
+        },
+        {
+          question: "23. Qual a importância da inativação de neurotransmissores na fenda sináptica?",
+          options: [
+            "Aumentar a duração do sinal.",
+            "Garantir que o sinal seja transmitido apenas uma vez.",
+            "Permitir a repetição de sinais e evitar a dessensibilização do receptor.",
+            "Acelerar a velocidade de condução do potencial de ação."
+          ],
+          answer: 2,
+          comment: "A rápida remoção ou inativação dos neurotransmissores da fenda sináptica é essencial para permitir que a sinapse responda a novos impulsos, evitando a estimulação excessiva ou a dessensibilização dos receptores.",
+          topic: "Inativação de Neurotransmissores"
+        },
+        {
+          question: "24. O que é a dessensibilização do receptor?",
+          options: [
+            "O aumento da afinidade do receptor pelo ligante.",
+            "A diminuição da resposta da célula a um estímulo contínuo ou repetido.",
+            "A ativação de um novo receptor.",
+            "A produção de mais receptores na superfície celular."
+          ],
+          answer: 1,
+          comment: "Dessensibilização é um mecanismo de adaptação onde a célula reduz sua resposta a um estímulo prolongado ou repetitivo, muitas vezes por meio da fosforilação do receptor, internalização ou diminuição da sua expressão.",
+          topic: "Dessensibilização de Receptores"
+        },
+        {
+          question: "25. Quais são os dois principais mecanismos de inativação de neurotransmissores na fenda sináptica?",
+          options: [
+            "Síntese e armazenamento.",
+            "Degradação enzimática e recaptação.",
+            "Exocitose e endocitose.",
+            "Ativação e inativação de canais."
+          ],
+          answer: 1,
+          comment: "A degradação enzimática (quebra do neurotransmissor) e a recaptação (transporte do neurotransmissor de volta para o terminal pré-sináptico ou células da glia) são os principais mecanismos para limpar a fenda sináptica.",
+          topic: "Mecanismos de Inativação"
+        },
+        {
+          question: "26. Onde são sintetizados a maioria dos neurotransmissores de pequenas moléculas (como acetilcolina, aminas biogênicas)?",
+          options: [
+            "No núcleo do neurônio.",
+            "No terminal pré-sináptico.",
+            "No corpo celular e transportados para o axônio.",
+            "Nas células da glia."
+          ],
+          answer: 1,
+          comment: "Neurotransmissores de pequenas moléculas são geralmente sintetizados localmente no terminal pré-sináptico a partir de precursores, utilizando enzimas presentes ali.",
+          topic: "Síntese de Neurotransmissores de Pequenas Moléculas"
+        },
+        {
+          question: "27. Onde são sintetizados os neuropeptídeos (neurotransmissores peptídicos)?",
+          options: [
+            "No terminal pré-sináptico.",
+            "No núcleo do neurônio.",
+            "No corpo celular (soma), no retículo endoplasmático e complexo de Golgi, e depois transportados para os terminais.",
+            "Na fenda sináptica."
+          ],
+          answer: 2,
+          comment: "Neuropeptídeos são proteínas, e como tal, sua síntese segue o processo de síntese proteica, ocorrendo no retículo endoplasmático e Complexo de Golgi do corpo celular, sendo depois empacotados em vesículas e transportados por transporte axonal para os terminais.",
+          topic: "Síntese de Neuropeptídeos"
+        },
+        {
+          question: "28. Qual a diferença fundamental na ação de um neurotransmissor que se liga a um canal iônico (ionotrópico) versus um que se liga a um receptor acoplado à proteína G (metabotrópico)?",
+          options: [
+            "O ionotrópico sempre causa inibição, e o metabotrópico, excitação.",
+            "O ionotrópico causa uma resposta rápida e direta (abertura de canal), enquanto o metabotrópico causa uma resposta mais lenta e indireta via segundos mensageiros.",
+            "O ionotrópico age no núcleo, e o metabotrópico na membrana.",
+            "O ionotrópico é apenas para sódio, e o metabotrópico para potássio."
+          ],
+          answer: 1,
+          comment: "Receptores ionotrópicos são canais iônicos ligante-dependentes que abrem diretamente após a ligação do neurotransmissor, gerando respostas rápidas. Receptores metabotrópicos ativam proteínas G e segundos mensageiros, resultando em respostas mais lentas, mas mais amplas e modulatórias.",
+          topic: "Receptores Ionotrópicos vs. Metabotrópicos"
+        },
+        {
+          question: "29. A inibição pré-sináptica envolve qual mecanismo?",
+          options: [
+            "Aumento da liberação de neurotransmissores pelo neurônio pré-sináptico.",
+            "Redução da liberação de neurotransmissores pelo neurônio pré-sináptico.",
+            "Hiperpolarização do neurônio pós-sináptico.",
+            "Aumento da sensibilidade dos receptores pós-sinápticos."
+          ],
+          answer: 1,
+          comment: "A inibição pré-sináptica é quando um terceiro neurônio (axônio-axônico) sinapsa no terminal pré-sináptico, diminuindo a quantidade de neurotransmissor liberado, e assim, reduzindo o efeito sobre o neurônio pós-sináptico.",
+          topic: "Inibição Pré-Sináptica"
+        },
+        {
+          question: "30. A inibição pós-sináptica envolve qual mecanismo?",
+          options: [
+            "Aumento da liberação de neurotransmissores pelo neurônio pré-sináptico.",
+            "Redução da liberação de neurotransmissores pelo neurônio pré-sináptico.",
+            "Hiperpolarização ou estabilização da membrana do neurônio pós-sináptico.",
+            "Aumento da sensibilidade dos receptores pós-sinápticos."
+          ],
+          answer: 2,
+          comment: "A inibição pós-sináptica é geralmente causada pela liberação de neurotransmissores inibitórios (como GABA ou glicina) que agem diretamente nos receptores do neurônio pós-sináptico, causando um PPSI e dificultando a geração de um potencial de ação.",
+          topic: "Inibição Pós-Sináptica"
+        },
+        {
+          question: "31. O que é acetilcolinesterase?",
+          options: [
+            "Um neurotransmissor.",
+            "Uma enzima que sintetiza acetilcolina.",
+            "Uma enzima que degrada acetilcolina na fenda sináptica.",
+            "Um receptor de acetilcolina."
+          ],
+          answer: 2,
+          comment: "A acetilcolinesterase é uma enzima crucial que hidrolisa rapidamente a acetilcolina na fenda sináptica, garantindo que o sinal não se prolongue excessivamente e permitindo uma nova transmissão.",
+          topic: "Acetilcolinesterase"
+        },
+        {
+          question: "32. Qual a importância da reciclagem de vesículas sinápticas?",
+          options: [
+            "Evitar a degradação de neurotransmissores.",
+            "Garantir um suprimento contínuo de neurotransmissores para liberação.",
+            "Remover receptores da membrana pós-sináptica.",
+            "Acelerar a velocidade de condução."
+          ],
+          answer: 1,
+          comment: "A reciclagem das membranas das vesículas sinápticas (endocitose seguida de re-enchimento) é vital para manter um estoque de vesículas prontas para liberar neurotransmissores, especialmente em sinapses de alta frequência.",
+          topic: "Reciclagem de Vesículas Sinápticas"
+        },
+        {
+          question: "33. Qual a relação entre o potencial de ação e a liberação de neurotransmissores?",
+          options: [
+            "O potencial de ação impede a liberação de neurotransmissores.",
+            "O potencial de ação causa a repolarização da membrana pré-sináptica, que por sua vez libera neurotransmissores.",
+            "O potencial de ação despolariza o terminal pré-sináptico, abrindo canais de Ca²⁺ e desencadeando a liberação.",
+            "A liberação de neurotransmissores gera o potencial de ação."
+          ],
+          answer: 2,
+          comment: "O potencial de ação é o evento elétrico que viaja pelo axônio. Ao chegar no terminal, sua despolarização abre canais de Ca²⁺ dependentes de voltagem, e o influxo de Ca²⁺ é o gatilho direto para a exocitose das vesículas contendo neurotransmissores.",
+          topic: "Potencial de Ação e Liberação de Neurotransmissores"
+        },
+        {
+          question: "34. Em qual parte do neurônio ocorre a integração dos sinais excitatórios e inibitórios que chegam de diversas sinapses?",
+          options: [
+            "Dendritos distais.",
+            "Terminal axônico.",
+            "Colina do axônio (axon hillock).",
+            "Nodos de Ranvier."
+          ],
+          answer: 2,
+          comment: "A colina do axônio é a região onde os PPSEs e PPSIs recebidos de todas as sinapses são somados e integrados. Se o limiar for atingido nesta região, um potencial de ação é gerado.",
+          topic: "Integração Sináptica (Axon Hillock)"
+        },
+        {
+          question: "35. O que são autoreceptores?",
+          options: [
+            "Receptores localizados na membrana pós-sináptica.",
+            "Receptores localizados no neurônio pré-sináptico que respondem ao próprio neurotransmissor liberado por aquele neurônio, geralmente regulando sua liberação.",
+            "Receptores que se ligam a hormônios.",
+            "Receptores que causam a inibição da recaptação."
+          ],
+          answer: 1,
+          comment: "Autoreceptores são receptores na membrana pré-sináptica que se ligam ao neurotransmissor que o próprio neurônio está liberando. Eles geralmente funcionam como um mecanismo de feedback negativo, diminuindo a síntese ou liberação futura do neurotransmissor.",
+          topic: "Autoreceptores"
+        },
+        {
+          question: "36. A cafeína exerce seus efeitos estimulantes por qual mecanismo primário relacionado à sinapse?",
+          options: [
+            "Aumentando a liberação de dopamina.",
+            "Bloqueando os receptores de adenosina, um neurotransmissor inibitório.",
+            "Inibindo a recaptação de serotonina.",
+            "Ativando diretamente os receptores de acetilcolina."
+          ],
+          answer: 1,
+          comment: "A cafeína é um antagonista dos receptores de adenosina. Ao bloquear a ação da adenosina (que geralmente causa sonolência e inibição neuronal), a cafeína aumenta a excitabilidade neuronal.",
+          topic: "Mecanismo de Ação da Cafeína"
+        },
+        {
+          question: "37. Qual a principal diferença entre um neurotransmissor e um neuromodulador?",
+          options: [
+            "Neurotransmissores agem apenas em sinapses elétricas.",
+            "Neurotransmissores causam respostas rápidas e diretas (PPSE/PPSI), enquanto neuromoduladores têm efeitos mais amplos e modulatórios, podendo influenciar a abertura de canais ou outras vias de sinalização celular.",
+            "Neurotransmissores são sintetizados no corpo celular, neuromoduladores nos terminais.",
+            "Neuromoduladores são sempre inibitórios."
+          ],
+          answer: 1,
+          comment: "Neurotransmissores classicamente causam PPSEs ou PPSIs rápidos via canais iônicos. Neuromoduladores (geralmente peptídeos ou aminas) têm ações mais lentas e difusas, modificando a excitabilidade neuronal ou a eficácia sináptica em um período mais longo, frequentemente via receptores metabotrópicos.",
+          topic: "Neurotransmissor vs. Neuromodulador"
+        },
+        {
+          question: "38. Qual a importância da sinapse neuromuscular?",
+          options: [
+            "Controlar a respiração pulmonar.",
+            "Permitir a comunicação entre neurônios no cérebro.",
+            "Transmitir o sinal nervoso para a contração muscular.",
+            "Sintetizar novos neurônios."
+          ],
+          answer: 2,
+          comment: "A sinapse neuromuscular é a junção especializada entre um neurônio motor e uma fibra muscular, onde o neurotransmissor acetilcolina é liberado para desencadear a contração do músculo esquelético.",
+          topic: "Sinapse Neuromuscular"
+        },
+        {
+          question: "39. Toxinas como a do botulismo (Botox) agem na sinapse de que forma?",
+          options: [
+            "Aumentando a liberação de acetilcolina.",
+            "Bloqueando a liberação de acetilcolina, causando paralisia muscular.",
+            "Ativando os receptores de acetilcolina.",
+            "Degradando a acetilcolina na fenda."
+          ],
+          answer: 1,
+          comment: "A toxina botulínica age clivando proteínas SNARE nos terminais nervosos colinérgicos, impedindo a fusão das vesículas e, consequentemente, o bloqueio da liberação de acetilcolina, o que leva à paralisia flácida dos músculos.",
+          topic: "Toxina Botulínica e Sinapse"
+        },
+        {
+          question: "40. Qual o efeito da liberação de GABA (ácido gama-aminobutírico) na maioria das sinapses centrais?",
+          options: [
+            "Excitatório, causando despolarização.",
+            "Inibitório, causando hiperpolarização ou estabilização do potencial de membrana.",
+            "Aumento da liberação de outros neurotransmissores.",
+            "Degradação de receptores pós-sinápticos."
+          ],
+          answer: 1,
+          comment: "O GABA é o principal neurotransmissor inibitório do sistema nervoso central. Ele se liga a receptores GABA (principalmente GABA$_{A}$, que são canais de Cl⁻) e causa a entrada de Cl⁻ na célula, hiperpolarizando ou estabilizando o potencial de membrana e dificultando a geração de um potencial de ação.",
+          topic: "GABA e Inibição Sináptica"
+        }
+      ];
+
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorDiagnosisContainer = document.getElementById("error-diagnosis");
+      const incorrectTopicsList = document.getElementById("incorrect-topics");
+
+      function buildQuiz() {
+        questions.forEach((questionData, questionIndex) => {
+          const card = document.createElement("div");
+          card.classList.add("card");
+
+          const questionDiv = document.createElement("div");
+          questionDiv.classList.add("question");
+          questionDiv.textContent = questionData.question;
+          card.appendChild(questionDiv);
+
+          const optionsDiv = document.createElement("div");
+          optionsDiv.classList.add("options");
+          questionData.options.forEach((option, optionIndex) => {
+            const optionElement = document.createElement("div");
+            optionElement.classList.add("option");
+            optionElement.dataset.question = questionIndex;
+            optionElement.dataset.option = optionIndex;
+            optionElement.innerHTML = `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' class='w-6 h-6'%3E%3Cpath d='M7.72 10.53a.75.75 0 0 0 1.06 0l1.97-1.97 1.97 1.97a.75.75 0 0 0 1.06 0L17.28 7.22a.75.75 0 0 0-1.06-1.06L12 9.44 7.78 5.22a.75.75 0 0 0-1.06 1.06l4.22 4.22Z'/%3E%3Cpath d='M19.5 5.25a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 5.25v.657a2.25 2.25 0 0 0 1.116 1.986l2.022.956c.367.173.65.409.846.684.196.275.298.6.298.95H9.75c.197 0 .381.04.551.108.17.069.32.164.45.28l.19.189a.75.75 0 0 0 1.06 0l.19-.189c.13-.116.28-.211.45-.28a.998.998 0 0 1 .551-.108h.204c.002-.35-.101-.676-.298-.95a2.02 2.02 0 0 0-.846-.684l-2.022-.956A2.25 2.25 0 0 0 4.5 6.907V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5A2.25 2.25 0 0 0 19.5 19.5V5.25Z'/%3E%3C/svg%3E" class="scissor-icon hidden"> ${option}`;
+            optionsDiv.appendChild(optionElement);
+          });
+          card.appendChild(optionsDiv);
+
+          const commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment");
+          commentDiv.innerHTML = `<strong>Gabarito:</strong> Opção ${String.fromCharCode(97 + questionData.answer).toUpperCase()}<br><strong>Comentário:</strong> ${questionData.comment}`;
+          card.appendChild(commentDiv);
+
+          const topicDiv = document.createElement("div");
+          topicDiv.classList.add("topic");
+          topicDiv.textContent = questionData.topic;
+          card.appendChild(topicDiv);
+
+          quizContainer.appendChild(card);
+        });
+      }
+
+      function showResults() {
+        let correctAnswers = 0;
+        const incorrectQuestions = [];
+        incorrectTopicsList.innerHTML = ""; // Clear previous errors
+
+        questions.forEach((questionData, questionIndex) => {
+          const selectedOption = quizContainer.querySelector(
+            `.option[data-question="${questionIndex}"].selected`
+          );
+          const commentDiv = quizContainer.children[questionIndex].querySelector(".comment");
+          commentDiv.classList.add("show"); // Show comment for all questions
+
+          if (selectedOption) {
+            const userAnswer = parseInt(selectedOption.dataset.option);
+            const correctAnswer = questionData.answer;
+
+            // Remove previous feedback classes
+            const allOptions = quizContainer.querySelectorAll(
+              `.option[data-question="${questionIndex}"]`
+            );
+            allOptions.forEach(opt => {
+              opt.classList.remove("correct", "incorrect", "selected");
+              opt.querySelector(".scissor-icon").classList.add("hidden"); // Hide scissors
+            });
+
+            // Mark correct and incorrect answers
+            if (userAnswer === correctAnswer) {
+              selectedOption.classList.add("correct");
+            } else {
+              selectedOption.classList.add("incorrect");
+              incorrectQuestions.push(questionData);
+
+              // Highlight the correct answer if the user was wrong
+              const correctOptionElement = quizContainer.querySelector(
+                `.option[data-question="${questionIndex}"][data-option="${correctAnswer}"]`
+              );
+              if (correctOptionElement) {
+                correctOptionElement.classList.add("correct");
+              }
+            }
+          } else {
+            // If no option was selected, it's considered incorrect
+            incorrectQuestions.push(questionData);
+            const allOptions = quizContainer.querySelectorAll(
+              `.option[data-question="${questionIndex}"]`
+            );
+            allOptions.forEach(opt => {
+              opt.classList.remove("correct", "incorrect", "selected");
+              opt.querySelector(".scissor-icon").classList.add("hidden"); // Hide scissors
+            });
+            const correctOptionElement = quizContainer.querySelector(
+              `.option[data-question="${questionIndex}"][data-option="${questionData.answer}"]`
+            );
+            if (correctOptionElement) {
+              correctOptionElement.classList.add("correct");
+            }
+          }
+        });
+
+        // Count correct answers based on actual correct selections
+        questions.forEach((questionData, questionIndex) => {
+            const selectedOption = quizContainer.querySelector(
+                `.option[data-question="${questionIndex}"].selected`
+            );
+            if (selectedOption && parseInt(selectedOption.dataset.option) === questionData.answer) {
+                correctAnswers++;
+            }
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Show incorrect topics if there are errors
+        if (incorrectQuestions.length > 0) {
+            const uniqueTopics = [...new Set(incorrectQuestions.map(q => q.topic))];
+            uniqueTopics.forEach(topic => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `- ${topic}`;
+                incorrectTopicsList.appendChild(listItem);
+            });
+            errorDiagnosisContainer.style.display = "block";
+        } else {
+            errorDiagnosisContainer.style.display = "none";
+        }
+
+        // Rola a página até o final para exibir o resultado
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option'); // Encontra o div .option mais próximo
+
+        if (optionElement) {
+            // Se o clique foi diretamente na tesoura e ela não está escondida
+            if (clickedElement.classList.contains("scissor-icon") && !clickedElement.classList.contains("hidden")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            // Se o clique foi em qualquer outra parte do bloco da alternativa
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const selected = quizContainer.querySelector(
+                    `.option[data-question=\"${questionNumber}\"].selected`
+                );
+                if (selected) selected.classList.remove("selected");
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
