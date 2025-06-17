@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado Módulo I - Histologia do Sistema Urinário</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário de Múltipla Escolha: Fisiologia Respiratória</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; 
+      let errorCountByTopic = {}; 
+      let totalAnsweredQuestionsByTopic = {}; 
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; 
+      let isShowingDiagnosis = false; 
+
+      const questions = [
+        {
+          question:
+            "1. Qual é a definição de mecânica respiratória, conforme apresentado nos slides?",
+          options: [
+            "a) O estudo apenas das trocas gasosas nos alvéolos.",
+            "b) A análise dos processos químicos do transporte de gases no sangue.",
+            "c) O estudo dos processos físicos e fisiológicos envolvidos na respiração, incluindo ventilação pulmonar e trocas gasosas.",
+            "d) A descrição anatômica das vias aéreas superiores.",
+          ],
+          correctAnswer: "c) O estudo dos processos físicos e fisiológicos envolvidos na respiração, incluindo ventilação pulmonar e trocas gasosas.",
+          comment:
+            "A mecânica respiratória é um campo abrangente que estuda tanto a movimentação do ar (ventilação) quanto a troca de gases entre os pulmões e o sangue (hematose), englobando aspectos físicos e fisiológicos. ",
+          topic: "Mecânica Respiratória: Definição",
+        },
+        {
+          question:
+            "2. As vias aéreas inferiores, conforme a classificação apresentada, incluem:",
+          options: [
+            "a) Nariz, faringe e laringe.",
+            "b) Traqueia, brônquios, bronquíolos e alvéolos.",
+            "c) Boca, esôfago e estômago.",
+            "d) Seios paranasais e ductos nasais.",
+          ],
+          correctAnswer: "b) Traqueia, brônquios, bronquíolos e alvéolos.",
+          comment:
+            "As vias aéreas inferiores são a parte do sistema respiratório que se estende da traqueia até os alvéolos, onde ocorrem as trocas gasosas essenciais. ",
+          topic: "Vias Aéreas: Classificação",
+        },
+        {
+          question:
+            "3. Qual é o principal músculo responsável pela inspiração em repouso?",
+          options: [
+            "a) Músculos intercostais internos.",
+            "b) Músculos abdominais.",
+            "c) Diafragma.",
+            "d) Músculos do pescoço.",
+          ],
+          correctAnswer: "c) Diafragma.",
+          comment:
+            "O diafragma é o músculo fundamental da inspiração em repouso. Sua contração aumenta o volume da cavidade torácica, puxando o ar para os pulmões. ",
+          topic: "Músculos da Respiração: Inspiração",
+        },
+        {
+          question:
+            "4. A pressão intrapleural (Ppl) é sempre __________ em relação à pressão intra-alveolar (Palv).",
+          options: [
+            "a) positiva",
+            "b) negativa",
+            "c) igual",
+            "d) variável, podendo ser positiva ou negativa",
+          ],
+          correctAnswer: "b) negativa",
+          comment:
+            "A pressão intrapleural é sempre negativa em relação à pressão intra-alveolar. Essa diferença de pressão, a pressão transpulmonar, é o que mantém os pulmões expandidos e aderidos à parede torácica. ",
+          topic: "Pressões Pulmonares: Intrapleural",
+        },
+        {
+          question:
+            "5. De acordo com a Lei de Boyle, se o volume de um gás aumenta, sua pressão:",
+          options: [
+            "a) Aumenta.",
+            "b) Diminui.",
+            "c) Permanece constante.",
+            "d) Torna-se zero.",
+          ],
+          correctAnswer: "b) Diminui.",
+          comment:
+            "A Lei de Boyle estabelece uma relação inversa entre volume e pressão de um gás a temperatura constante. Para a respiração, o aumento do volume torácico diminui a pressão intrapulmonar, permitindo a entrada de ar. ",
+          topic: "Lei de Boyle e Respiração",
+        },
+        {
+          question:
+            "6. A inspiração é um processo ______, enquanto a expiração em repouso é um processo ______. ",
+          options: [
+            "a) passivo; ativo",
+            "b) ativo; passivo",
+            "c) ativo; ativo",
+            "d) passivo; passivo",
+          ],
+          correctAnswer: "b) ativo; passivo",
+          comment:
+            "A inspiração requer a contração muscular (ativo), principalmente do diafragma. A expiração em repouso ocorre pelo relaxamento desses músculos e pela retração elástica dos pulmões (passivo). ",
+          topic: "Inspiração e Expiração: Processos",
+        },
+        {
+          question:
+            "7. Qual é o volume de ar inspirado ou expirado em uma respiração normal em repouso, conforme os slides?",
+          options: [
+            "a) Volume Residual (VR).",
+            "b) Volume de Reserva Inspiratória (VRI).",
+            "c) Volume Corrente (VC).",
+            "d) Capacidade Vital (CV).",
+          ],
+          correctAnswer: "c) Volume Corrente (VC).",
+          comment:
+            "O Volume Corrente (VC) representa o volume de ar que entra e sai dos pulmões durante uma respiração tranquila e normal. ",
+          topic: "Volumes Pulmonares: Volume Corrente",
+        },
+        {
+          question:
+            "8. A Capacidade Vital (CV) é a soma de quais volumes pulmonares?",
+          options: [
+            "a) VR + VC.",
+            "b) VRI + VRE.",
+            "c) VC + VRI + VRE.",
+            "d) CPT - VR.",
+          ],
+          correctAnswer: "c) VC + VRI + VRE.",
+          comment:
+            "A Capacidade Vital é o volume máximo de ar que pode ser exalado após uma inspiração máxima, representando a soma do Volume Corrente, Volume de Reserva Inspiratória e Volume de Reserva Expiratória. ",
+          topic: "Capacidades Pulmonares: Capacidade Vital",
+        },
+        {
+          question:
+            "9. A complacência pulmonar refere-se à:",
+          options: [
+            "a) Resistência das vias aéreas ao fluxo de ar.",
+            "b) Distensibilidade dos pulmões.",
+            "c) Capacidade de troca gasosa nos alvéolos.",
+            "d) Quantidade de ar que permanece nos pulmões após a expiração.",
+          ],
+          correctAnswer: "b) Distensibilidade dos pulmões.",
+          comment:
+            "A complacência pulmonar é a medida da facilidade com que os pulmões podem ser esticados e expandidos. Ela é afetada por doenças como fibrose (diminui) e enfisema (aumenta). ",
+          topic: "Complacência Pulmonar",
+        },
+        {
+          question:
+            "10. Em qual das seguintes condições a resistência das vias aéreas tende a aumentar significativamente?",
+          options: [
+            "a) Exercício físico leve.",
+            "b) Enfisema pulmonar.",
+            "c) Asma.",
+            "d) Respiração normal em repouso.",
+          ],
+          correctAnswer: "c) Asma.",
+          comment:
+            "Na asma, a inflamação e o broncoespasmo causam estreitamento das vias aéreas, aumentando drasticamente a resistência ao fluxo de ar. ",
+          topic: "Resistência das Vias Aéreas: Asma",
+        },
+        {
+          question:
+            "11. Qual das seguintes afirmações sobre o enfisema pulmonar está correta, segundo os slides?",
+          options: [
+            "a) Causa inflamação crônica das vias aéreas e aumento da produção de muco.",
+            "b) Caracteriza-se pela destruição dos alvéolos, reduzindo a elasticidade pulmonar.",
+            "c) É uma doença aguda que se manifesta apenas em crises.",
+            "d) Aumenta a complacência pulmonar, facilitando a expiração.",
+          ],
+          correctAnswer: "b) Caracteriza-se pela destruição dos alvéolos, reduzindo a elasticidade pulmonar.",
+          comment:
+            "O enfisema é uma doença crônica caracterizada pela destruição progressiva das paredes alveolares, levando à perda de elasticidade e dificuldade na expiração. ",
+          topic: "Doenças Respiratórias: Enfisema",
+        },
+        {
+          question:
+            "12. A hematose é o processo de:",
+          options: [
+            "a) Transporte de nutrientes para as células.",
+            "b) Troca de gases entre os pulmões e o sangue.",
+            "c) Produção de células sanguíneas.",
+            "d) Filtração de resíduos nos rins.",
+          ],
+          correctAnswer: "b) Troca de gases entre os pulmões e o sangue.",
+          comment:
+            "Hematose é o termo que descreve a troca gasosa, onde o oxigênio passa dos alvéolos para o sangue e o dióxido de carbono do sangue para os alvéolos. ",
+          topic: "Hematose: Definição",
+        },
+        {
+          question:
+            "13. A difusão alvéolo-capilar é governada pela Lei de Fick, que afirma que a difusão é:",
+          options: [
+            "a) Inversamente proporcional à área de superfície.",
+            "b) Diretamente proporcional à espessura da membrana.",
+            "c) Proporcional à área e ao gradiente de pressão, e inversamente proporcional à espessura da membrana.",
+            "d) Independente do gradiente de pressão.",
+          ],
+          correctAnswer: "c) Proporcional à área e ao gradiente de pressão, e inversamente proporcional à espessura da membrana.",
+          comment:
+            "A Lei de Fick descreve a eficiência da difusão gasosa. Uma área de superfície maior e um maior gradiente de pressão favorecem a difusão, enquanto uma membrana mais espessa a dificulta. ",
+          topic: "Difusão Gasosa: Lei de Fick",
+        },
+        {
+          question:
+            "14. Qual fator NÃO influencia diretamente a eficiência da hematose?",
+          options: [
+            "a) Diferença de pressão parcial dos gases.",
+            "b) Espessura da membrana alvéolo-capilar.",
+            "c) Cor dos olhos do indivíduo.",
+            "d) Relação ventilação-perfusão (V/Q).",
+          ],
+          correctAnswer: "c) Cor dos olhos do indivíduo.",
+          comment:
+            "A cor dos olhos não tem qualquer relação com a eficiência da hematose. Os outros fatores listados são cruciais para a troca gasosa adequada. ",
+          topic: "Fatores que Afetam a Hematose",
+        },
+        {
+          question:
+            "15. Aproximadamente quantos por cento do oxigênio é transportado ligado à hemoglobina no sangue?",
+          options: [
+            "a) 7%",
+            "b) 23%",
+            "c) 50%",
+            "d) 98%",
+          ],
+          correctAnswer: "d) 98%",
+          comment:
+            "A vasta maioria do oxigênio transportado no sangue está ligada à hemoglobina, que é a proteína presente nas hemácias (glóbulos vermelhos). ",
+          topic: "Transporte de Oxigênio: Hemoglobina",
+        },
+        {
+          question:
+            "16. O que acontece com a curva de dissociação da hemoglobina para a direita?",
+          options: [
+            "a) Diminui a liberação de O₂ para os tecidos.",
+            "b) Facilita a captação de O₂ nos pulmões.",
+            "c) Aumenta a liberação de O₂ para os tecidos.",
+            "d) Não tem efeito sobre a liberação de O₂.",
+          ],
+          correctAnswer: "c) Aumenta a liberação de O₂ para os tecidos.",
+          comment:
+            "Um deslocamento da curva para a direita indica que a hemoglobina está liberando oxigênio mais facilmente para os tecidos, o que ocorre em condições como aumento de CO₂, acidose, aumento de temperatura e 2,3-BPG. ",
+          topic: "Curva de Dissociação da Hemoglobina",
+        },
+        {
+          question:
+            "17. Qual é a principal diferença entre SpO₂ e pO₂?",
+          options: [
+            "a) SpO₂ mede a pressão do oxigênio dissolvido no plasma, enquanto pO₂ mede a porcentagem de hemoglobina saturada.",
+            "b) SpO₂ mede a porcentagem de hemoglobina saturada de oxigênio, enquanto pO₂ mede a pressão do oxigênio dissolvido no plasma.",
+            "c) Ambas medem a mesma coisa, mas em unidades diferentes.",
+            "d) SpO₂ é uma medida invasiva, e pO₂ é não invasiva.",
+          ],
+          correctAnswer: "b) SpO₂ mede a porcentagem de hemoglobina saturada de oxigênio, enquanto pO₂ mede a pressão do oxigênio dissolvido no plasma.",
+          comment:
+            "SpO₂ é uma medida de saturação (percentual de Hb ligada ao O₂), geralmente obtida por oxímetro de pulso. pO₂ é a pressão parcial do oxigênio dissolvido, obtida por gasometria arterial e refletindo o oxigênio disponível para difusão. ",
+          topic: "SpO₂ vs pO₂",
+        },
+        {
+          question:
+            "18. Qual é a forma mais comum de transporte de dióxido de carbono (CO₂) no sangue?",
+          options: [
+            "a) Dissolvido no plasma.",
+            "b) Ligado à hemoglobina (carbamino-Hb).",
+            "c) Convertido em íon bicarbonato (HCO₃⁻).",
+            "d) Ligado à albumina.",
+          ],
+          correctAnswer: "c) Convertido em íon bicarbonato (HCO₃⁻).",
+          comment:
+            "Cerca de 70% do CO₂ é transportado na forma de íon bicarbonato (HCO₃⁻), um processo facilitado pela anidrase carbônica dentro dos glóbulos vermelhos. ",
+          topic: "Transporte de CO₂",
+        },
+        {
+          question:
+            "19. Qual enzima é crucial para a conversão de CO₂ em bicarbonato dentro dos glóbulos vermelhos?",
+          options: [
+            "a) Amilase.",
+            "b) Anidrase carbônica.",
+            "c) Pepsina.",
+            "d) Lipase.",
+          ],
+          correctAnswer: "b) Anidrase carbônica.",
+          comment:
+            "A anidrase carbônica catalisa rapidamente a reação de CO₂ com água para formar ácido carbônico, que então se dissocia em bicarbonato e íons hidrogênio, facilitando o transporte de CO₂. ",
+          topic: "Transporte de CO₂: Enzimas",
+        },
+        {
+          question:
+            "20. Onde estão localizados os quimiorreceptores centrais, responsáveis por monitorar a PCO₂ e o pH do LCR?",
+          options: [
+            "a) Nos corpos carotídeos.",
+            "b) No arco aórtico.",
+            "c) No bulbo (medula oblonga).",
+            "d) Nos pulmões.",
+          ],
+          correctAnswer: "c) No bulbo (medula oblonga).",
+          comment:
+            "Os quimiorreceptores centrais estão localizados no bulbo (medula oblonga) do tronco encefálico e são altamente sensíveis a alterações na PCO₂ e pH do líquido cefalorraquidiano. ",
+          topic: "Controle da Respiração: Quimiorreceptores Centrais",
+        },
+        {
+          question:
+            "21. Os quimiorreceptores periféricos, localizados nos corpos aórtico e carotídeo, são primariamente sensíveis a qual alteração no sangue arterial?",
+          options: [
+            "a) Aumento da glicose.",
+            "b) Diminuição da pressão parcial de oxigênio (PO₂).",
+            "c) Aumento da temperatura corporal.",
+            "d) Diminuição do potássio.",
+          ],
+          correctAnswer: "b) Diminuição da pressão parcial de oxigênio (PO₂).",
+          comment:
+            "Embora sensíveis a PCO₂ e pH, a principal função dos quimiorreceptores periféricos é detectar e responder rapidamente a quedas significativas na PO₂ (hipóxia). ",
+          topic: "Controle da Respiração: Quimiorreceptores Periféricos",
+        },
+        {
+          question:
+            "22. Qual dos seguintes efeitos é causado pela retenção de CO₂ (hipercapnia) em pacientes com DPOC?",
+          options: [
+            "a) Aumento do pH sanguíneo (alcalose).",
+            "b) Diminuição da frequência respiratória.",
+            "c) Acidose respiratória.",
+            "d) Aumento da consciência.",
+          ],
+          correctAnswer: "c) Acidose respiratória.",
+          comment:
+            "A retenção de CO₂ leva à formação de ácido carbônico, diminuindo o pH sanguíneo e resultando em acidose respiratória. ",
+          topic: "Distúrbios Respiratórios: Hipercapnia na DPOC",
+        },
+        {
+          question:
+            "23. No contexto da aclimatação à altitude, qual hormônio é estimulado a ser produzido pelos rins em resposta à hipóxia?",
+          options: [
+            "a) Insulina.",
+            "b) Glucagon.",
+            "c) Eritropoietina (EPO).",
+            "d) Adrenalina.",
+          ],
+          correctAnswer: "c) Eritropoietina (EPO).",
+          comment:
+            "Em resposta à hipóxia em altitude, os rins aumentam a produção de eritropoietina (EPO), que estimula a medula óssea a produzir mais glóbulos vermelhos, aumentando a capacidade de transporte de oxigênio. ",
+          topic: "Aclimatação à Altitude: EPO",
+        },
+        {
+          question:
+            "24. O Reflexo de Hering-Breuer tem como principal função:",
+          options: [
+            "a) Estimular a inspiração profunda.",
+            "b) Evitar a hiperinsuflação pulmonar.",
+            "c) Aumentar a produção de muco.",
+            "d) Promover o broncoespasmo.",
+          ],
+          correctAnswer: "b) Evitar a hiperinsuflação pulmonar.",
+          comment:
+            "O Reflexo de Hering-Breuer é um mecanismo protetor que inibe a inspiração quando os pulmões estão excessivamente distendidos, prevenindo danos por hiperinsuflação. ",
+          topic: "Reflexos Respiratórios: Hering-Breuer",
+        },
+        {
+          question:
+            "25. Em casos de edema pulmonar, a hematose é comprometida principalmente devido a:",
+          options: [
+            "a) Diminuição da área de superfície para troca gasosa.",
+            "b) Aumento da espessura da membrana alvéolo-capilar.",
+            "c) Diminuição da complacência pulmonar.",
+            "d) Obstrução das vias aéreas.",
+          ],
+          correctAnswer: "b) Aumento da espessura da membrana alvéolo-capilar.",
+          comment:
+            "O edema pulmonar causa acúmulo de líquido nos alvéolos, o que aumenta a distância que os gases precisam percorrer para atravessar a membrana alvéolo-capilar, prejudicando a difusão. ",
+          topic: "Edema Pulmonar: Impacto na Hematose",
+        },
+        {
+          question:
+            "26. Qual das seguintes afirmações sobre a asma está correta?",
+          options: [
+            "a) É uma doença que causa destruição dos alvéolos.",
+            "b) Os sintomas incluem chiado, aperto no peito e tosse.",
+            "c) Não tem tratamento e é progressiva.",
+            "d) É uma infecção bacteriana do pulmão.",
+          ],
+          correctAnswer: "b) Os sintomas incluem chiado, aperto no peito e tosse.",
+          comment:
+            "A asma é uma doença inflamatória crônica das vias aéreas que causa sintomas como chiado, aperto no peito, tosse e falta de ar, geralmente em resposta a gatilhos. ",
+          topic: "Doenças Respiratórias: Asma",
+        },
+        {
+          question:
+            "27. Na DPOC, a retenção de CO₂ é comum devido à:",
+          options: [
+            "a) Aumento da taxa metabólica.",
+            "b) Obstrução crônica das vias aéreas que dificulta a eliminação do CO₂.",
+            "c) Aumento da complacência pulmonar.",
+            "d) Deficiência de oxigênio na atmosfera.",
+          ],
+          correctAnswer: "b) Obstrução crônica das vias aéreas que dificulta a eliminação do CO₂.",
+          comment:
+            "A DPOC, por causar obstrução persistente das vias aéreas, impede a eliminação eficiente do CO₂ durante a expiração, levando à sua retenção e hipercapnia. ",
+          topic: "Doenças Respiratórias: DPOC e Retenção de CO₂",
+        },
+        {
+          question:
+            "28. Os músculos intercostais externos atuam principalmente na:",
+          options: [
+            "a) Expiração forçada.",
+            "b) Inspiração.",
+            "c) Regulação do pH sanguíneo.",
+            "d) Transporte de oxigênio.",
+          ],
+          correctAnswer: "b) Inspiração.",
+          comment:
+            "Os músculos intercostais externos, juntamente com o diafragma, contraem-se para elevar as costelas e o esterno, aumentando o volume torácico e auxiliando na inspiração. ",
+          topic: "Músculos da Respiração: Intercostais Externos",
+        },
+        {
+          question:
+            "29. A Pressão Transpulmonar (Ptp) é essencial para:",
+          options: [
+            "a) Manter o equilíbrio ácido-base do sangue.",
+            "b) Promover a troca gasosa nos alvéolos.",
+            "c) Manter os pulmões expandidos.",
+            "d) Controlar a frequência cardíaca.",
+          ],
+          correctAnswer: "c) Manter os pulmões expandidos.",
+          comment:
+            "A Ptp (Palv−Ppl) representa a força que estira os pulmões e os mantém abertos, contrapondo-se à tendência de colapso devido à sua elasticidade. ",
+          topic: "Pressões Pulmonares: Pressão Transpulmonar",
+        },
+        {
+          question:
+            "30. Qual das seguintes opções é uma função das vias aéreas, conforme mencionado nos slides?",
+          options: [
+            "a) Produção de hormônios.",
+            "b) Filtragem do ar.",
+            "c) Digestão de alimentos.",
+            "d) Bombeamento de sangue.",
+          ],
+          correctAnswer: "b) Filtragem do ar.",
+          comment:
+            "Além de conduzir o ar, as vias aéreas superiores e inferiores possuem mecanismos (como cílios e muco) para filtrar partículas e microrganismos, umidificar e aquecer o ar antes que ele chegue aos alvéolos. ",
+          topic: "Funções das Vias Aéreas",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; 
+        totalAnsweredQuestionsByTopic = {}; 
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } 
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { 
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; 
+            buttonText.textContent = 'Diagnóstico de Erros'; 
+            isShowingErrors = false; 
+            isShowingDiagnosis = false; 
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { 
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; 
+                currentWrongQuestionIndex = 0; 
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+                
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; 
+                    
+                    if (totalAnsweredInTopic > 0) { 
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+
+        } else if (isShowingErrors) { 
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+        } 
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>

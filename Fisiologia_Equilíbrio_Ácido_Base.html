@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado Módulo I - Fisiologia do Equilíbrio Ácido-Base</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Questionário de Múltipla Escolha: Equilíbrio Ácido-Base</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; 
+      let errorCountByTopic = {}; 
+      let totalAnsweredQuestionsByTopic = {}; 
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; 
+      let isShowingDiagnosis = false; 
+
+      const questions = [
+        {
+          question:
+            "1. O equilíbrio ácido-básico refere-se à manutenção de um pH adequado nos fluidos corporais. Qual é a faixa de pH fisiológico normal do sangue, segundo os slides?",
+          options: [
+            "a) 6,80 a 7,20",
+            "b) 7,00 a 7,00",
+            "c) 7,35 a 7,45",
+            "d) 7,45 a 7,55",
+          ],
+          correctAnswer: "c) 7,35 a 7,45",
+          comment:
+            "O Slide 1, 'Introdução ao pH Sanguíneo', afirma claramente que o pH fisiológico normal do sangue varia entre 7,35 a 7,45.",
+          topic: "pH Sanguíneo Normal",
+        },
+        {
+          question:
+            "2. Uma solução com pH igual a 7 é considerada:",
+          options: [
+            "a) Ácida.",
+            "b) Básica (alcalina).",
+            "c) Neutra.",
+            "d) Altamente concentrada em H⁺.",
+          ],
+          correctAnswer: "c) Neutra.",
+          comment:
+            "O Slide 2, 'Conceito de pH e Escala', explica que o pH 7 representa um ponto neutro na escala, onde as concentrações de H⁺ e OH⁻ são iguais.",
+          topic: "Escala de pH",
+        },
+        {
+          question:
+            "3. Na escala de pH, uma solução com pH abaixo de 7 indica:",
+          options: [
+            "a) Maior concentração de OH⁻.",
+            "b) Menor acidez.",
+            "c) Solução alcalina.",
+            "d) Maior concentração de H⁺.",
+          ],
+          correctAnswer: "d) Maior concentração de H⁺.",
+          comment:
+            "O Slide 2 detalha que um pH abaixo de 7 significa que a concentração de íons hidrogênio (H⁺) é maior, tornando a solução ácida.",
+          topic: "Acidez e pH",
+        },
+        {
+          question:
+            "4. Qual é o papel principal dos 'Sistemas Tampão' no corpo?",
+          options: [
+            "a) Produzir ácidos para o metabolismo.",
+            "b) Aumentar a acidez do sangue rapidamente.",
+            "c) Minimizar as variações de pH dos fluidos corporais, absorvendo ou liberando H⁺.",
+            "d) Excretar CO₂ pelos rins.",
+          ],
+          correctAnswer: "c) Minimizar as variações de pH dos fluidos corporais, absorvendo ou liberando H⁺.",
+          comment:
+            "Os sistemas tampão são a primeira linha de defesa contra as alterações de pH, agindo rapidamente para neutralizar ácidos ou bases e manter o pH dentro da faixa fisiológica. Isso está no Slide 3.",
+          topic: "Sistemas Tampão",
+        },
+        {
+          question:
+            "5. O 'Sistema Tampão Bicarbonato' é o mais importante no líquido extracelular e envolve qual par de substâncias?",
+          options: [
+            "a) Proteínas e fosfatos.",
+            "b) Ácido carbônico (H₂CO₃) e íons bicarbonato (HCO₃⁻).",
+            "c) Amônia (NH₃) e íons amônio (NH₄⁺).",
+            "d) Sódio (Na⁺) e Cloreto (Cl⁻).",
+          ],
+          correctAnswer: "b) Ácido carbônico (H₂CO₃) e íons bicarbonato (HCO₃⁻).",
+          comment:
+            "O Slide 4 destaca o sistema bicarbonato-ácido carbônico como o tampão mais significativo no LEC, devido à sua alta concentração e à capacidade de ser regulado pelos pulmões (CO₂) e rins (HCO₃⁻).",
+          topic: "Tampão Bicarbonato",
+        },
+        {
+          question:
+            "6. O 'Sistema Respiratório' atua na regulação do pH, controlando a eliminação de qual componente?",
+          options: [
+            "a) Bicarbonato (HCO₃⁻).",
+            "b) Íons Hidrogênio (H⁺).",
+            "c) Dióxido de Carbono (CO₂).",
+            "d) Fosfatos (HPO₄²⁻).",
+          ],
+          correctAnswer: "c) Dióxido de Carbono (CO₂).",
+          comment:
+            "O Slide 5 explica que o sistema respiratório regula o pH ajustando a taxa de ventilação para eliminar ou reter CO₂. CO₂ dissolvido forma ácido carbônico (H₂CO₃), que influencia diretamente o pH.",
+          topic: "Regulação Respiratória do pH",
+        },
+        {
+          question:
+            "7. Um aumento da frequência e profundidade respiratória (hiperventilação) causa qual efeito no pH sanguíneo?",
+          options: [
+            "a) Acidose respiratória (diminuição do pH).",
+            "b) Alcalose respiratória (aumento do pH).",
+            "c) Acidose metabólica.",
+            "d) pH inalterado.",
+          ],
+          correctAnswer: "b) Alcalose respiratória (aumento do pH).",
+          comment:
+            "A hiperventilação expulsa CO₂ do corpo, diminuindo a concentração de ácido carbônico e elevando o pH sanguíneo, conforme o Slide 5.",
+          topic: "Hiperventilação e pH",
+        },
+        {
+          question:
+            "8. Os 'Rins' (Sistema Renal) são a linha de defesa mais potente e lenta no controle do pH. Eles podem excretar ou reabsorver qual substância para ajustar o equilíbrio ácido-base?",
+          options: [
+            "a) CO₂.",
+            "b) Oxigênio.",
+            "c) Bicarbonato (HCO₃⁻) e íons hidrogênio (H⁺).",
+            "d) Sódio.",
+          ],
+          correctAnswer: "c) Bicarbonato (HCO₃⁻) e íons hidrogênio (H⁺).",
+          comment:
+            "Os rins, conforme o Slide 6, são os principais reguladores de longo prazo do pH, controlando a excreção de H⁺ e a reabsorção/geração de HCO₃⁻. Eles podem compensar distúrbios respiratórios e metabólicos.",
+          topic: "Regulação Renal do pH",
+        },
+        {
+          question:
+            "9. Qual das seguintes condições leva a uma 'Acidose Respiratória'?",
+          options: [
+            "a) Hiperventilação.",
+            "b) Vômito excessivo.",
+            "c) Hipoventilação (retenção de CO₂).",
+            "d) Diarreia severa.",
+          ],
+          correctAnswer: "c) Hipoventilação (retenção de CO₂).",
+          comment:
+            "O Slide 7 explica que a hipoventilação (ventilação insuficiente) resulta no acúmulo de CO₂ no sangue, o que leva à formação de mais ácido carbônico e, consequentemente, à acidose respiratória.",
+          topic: "Acidose Respiratória",
+        },
+        {
+          question:
+            "10. Um paciente com pH sanguíneo de 7,20 e PaCO₂ de 60 mmHg provavelmente apresenta:",
+          options: [
+            "a) Alcalose respiratória.",
+            "b) Acidose respiratória.",
+            "c) Alcalose metabólica.",
+            "d) Acidose metabólica.",
+          ],
+          correctAnswer: "b) Acidose respiratória.",
+          comment:
+            "Um pH abaixo de 7,35 (acidose) e uma PaCO₂ acima de 45 mmHg (excesso de CO₂/ácido carbônico) indicam acidose respiratória, conforme os parâmetros no Slide 9.",
+          topic: "Interpretação da Gasometria: Acidose Respiratória",
+        },
+        {
+          question:
+            "11. Qual condição pode levar a uma 'Alcalose Respiratória'?",
+          options: [
+            "a) DPOC (Doença Pulmonar Obstrutiva Crônica).",
+            "b) Ansiedade ou ataque de pânico (hiperventilação).",
+            "c) Uso de antiácidos.",
+            "d) Insuficiência renal.",
+          ],
+          correctAnswer: "b) Ansiedade ou ataque de pânico (hiperventilação).",
+          comment:
+            "O Slide 7 cita a hiperventilação (respirar muito rápido e/ou profundamente, como em um ataque de pânico) como causa principal de alcalose respiratória, devido à eliminação excessiva de CO₂.",
+          topic: "Alcalose Respiratória",
+        },
+        {
+          question:
+            "12. Qual distúrbio ácido-básico é causado por acúmulo de ácidos não voláteis ou perda excessiva de bicarbonato?",
+          options: [
+            "a) Acidose respiratória.",
+            "b) Alcalose respiratória.",
+            "c) Acidose metabólica.",
+            "d) Alcalose metabólica.",
+          ],
+          correctAnswer: "c) Acidose metabólica.",
+          comment:
+            "O Slide 8 descreve a acidose metabólica como resultado do aumento de ácidos no corpo (ex: cetoacidose, acidose lática) ou da perda de base (ex: diarreia severa).",
+          topic: "Acidose Metabólica",
+        },
+        {
+          question:
+            "13. Diarreia severa pode causar qual desequilíbrio ácido-básico?",
+          options: [
+            "a) Alcalose respiratória.",
+            "b) Acidose respiratória.",
+            "c) Acidose metabólica.",
+            "d) Alcalose metabólica.",
+          ],
+          correctAnswer: "c) Acidose metabólica.",
+          comment:
+            "A diarreia causa perda de bicarbonato do trato gastrointestinal, levando a uma diminuição do HCO₃⁻ no sangue e, consequentemente, a uma acidose metabólica, conforme o Slide 8.",
+          topic: "Causas de Acidose Metabólica",
+        },
+        {
+          question:
+            "14. Vômitos prolongados ou uso excessivo de antiácidos ricos em bicarbonato podem levar a qual distúrbio?",
+          options: [
+            "a) Acidose respiratória.",
+            "b) Acidose metabólica.",
+            "c) Alcalose metabólica.",
+            "d) Alcalose respiratória.",
+          ],
+          correctAnswer: "c) Alcalose metabólica.",
+          comment:
+            "Vômitos severos levam à perda de ácido gástrico (HCl), resultando em um aumento relativo do bicarbonato no sangue. O uso de antiácidos com bicarbonato também adiciona base ao sistema, causando alcalose metabólica (Slide 8).",
+          topic: "Alcalose Metabólica",
+        },
+        {
+          question:
+            "15. Um pH sanguíneo acima de 7,45 e uma PaCO₂ abaixo de 35 mmHg sugerem:",
+          options: [
+            "a) Acidose respiratória.",
+            "b) Alcalose respiratória.",
+            "c) Acidose metabólica.",
+            "d) Alcalose metabólica.",
+          ],
+          correctAnswer: "b) Alcalose respiratória.",
+          comment:
+            "pH elevado (acima de 7,45) e PaCO₂ baixa (abaixo de 35 mmHg) são as características de alcalose respiratória, conforme a tabela de interpretação no Slide 9.",
+          topic: "Interpretação da Gasometria: Alcalose Respiratória",
+        },
+        {
+          question:
+            "16. Qual das seguintes é uma função da hemoglobina no sistema tampão sanguíneo, além do transporte de oxigênio?",
+          options: [
+            "a) Produção de ácido lático.",
+            "b) Transporte de bicarbonato dos rins.",
+            "c) Atuar como tampão proteico, ligando H⁺.",
+            "d) Regular a ventilação pulmonar.",
+          ],
+          correctAnswer: "c) Atuar como tampão proteico, ligando H⁺.",
+          comment:
+            "A hemoglobina possui grupos amino e carboxila que podem aceitar ou liberar H⁺, agindo como um tampão importante no sangue, especialmente dentro dos glóbulos vermelhos.",
+          topic: "Tampão Hemoglobina",
+        },
+        {
+          question:
+            "17. Para compensar uma acidose metabólica, o sistema respiratório irá:",
+          options: [
+            "a) Diminuir a frequência respiratória para reter CO₂.",
+            "b) Aumentar a frequência e profundidade respiratória para eliminar CO₂.",
+            "c) Não fazer nenhuma alteração na respiração.",
+            "d) Aumentar a excreção de bicarbonato.",
+          ],
+          correctAnswer: "b) Aumentar a frequência e profundidade respiratória para eliminar CO₂.",
+          comment:
+            "Na acidose metabólica, o corpo compensa hiperventilando para expulsar CO₂, o que diminui a quantidade de ácido carbônico e ajuda a elevar o pH em direção ao normal, conforme o Slide 10.",
+          topic: "Compensação Respiratória",
+        },
+        {
+          question:
+            "18. Para compensar uma alcalose respiratória, o sistema renal irá:",
+          options: [
+            "a) Aumentar a reabsorção de bicarbonato.",
+            "b) Diminuir a excreção de H⁺.",
+            "c) Diminuir a reabsorção de bicarbonato e aumentar a excreção de H⁺.",
+            "d) Aumentar a produção de CO₂.",
+          ],
+          correctAnswer: "c) Diminuir a reabsorção de bicarbonato e aumentar a excreção de H⁺.",
+          comment:
+            "Em alcalose respiratória (excesso de eliminação de CO₂), os rins compensam retendo mais H⁺ e excretando mais bicarbonato para acidificar o sangue e normalizar o pH.",
+          topic: "Compensação Renal",
+        },
+        {
+          question:
+            "19. O que significa uma 'compensação total' em um distúrbio ácido-básico?",
+          options: [
+            "a) O pH ainda está anormal, mas a PaCO₂ ou o HCO₃⁻ estão alterados.",
+            "b) O pH, PaCO₂ e HCO₃⁻ estão todos normais.",
+            "c) O pH está de volta à faixa normal, mas a PaCO₂ e o HCO₃⁻ ainda estão alterados, indicando que houve compensação.",
+            "d) O distúrbio primário foi corrigido.",
+          ],
+          correctAnswer: "c) O pH está de volta à faixa normal, mas a PaCO₂ e o HCO₃⁻ ainda estão alterados, indicando que houve compensação.",
+          comment:
+            "Uma compensação total significa que os mecanismos compensatórios foram bem-sucedidos em restaurar o pH para a faixa normal, mesmo que o distúrbio primário persista e os outros parâmetros (PaCO₂ ou HCO₃⁻) estejam alterados, como explicado no Slide 10.",
+          topic: "Compensação Total",
+        },
+        {
+          question:
+            "20. Qual distúrbio é indicado por um pH abaixo de 7,35, PaCO₂ normal e HCO₃⁻ baixo?",
+          options: [
+            "a) Acidose respiratória não compensada.",
+            "b) Acidose metabólica não compensada.",
+            "c) Alcalose respiratória compensada.",
+            "d) Alcalose metabólica não compensada.",
+          ],
+          correctAnswer: "b) Acidose metabólica não compensada.",
+          comment:
+            "Um pH ácido com PaCO₂ normal e bicarbonato baixo aponta para uma acidose metabólica primária ainda sem compensação respiratória significativa.",
+          topic: "Interpretação da Gasometria: Acidose Metabólica",
+        },
+        {
+          question:
+            "21. Qual distúrbio é indicado por um pH acima de 7,45, PaCO₂ normal e HCO₃⁻ alto?",
+          options: [
+            "a) Acidose respiratória não compensada.",
+            "b) Acidose metabólica não compensada.",
+            "c) Alcalose respiratória não compensada.",
+            "d) Alcalose metabólica não compensada.",
+          ],
+          correctAnswer: "d) Alcalose metabólica não compensada.",
+          comment:
+            "Um pH alcalino com PaCO₂ normal e bicarbonato alto indica uma alcalose metabólica primária sem compensação respiratória.",
+          topic: "Interpretação da Gasometria: Alcalose Metabólica",
+        },
+        {
+          question:
+            "22. Cetoácidos são exemplos de qual tipo de ácidos que se acumulam na acidose metabólica?",
+          options: [
+            "a) Voláteis.",
+            "b) Fixos (não voláteis).",
+            "c) Fortes.",
+            "d) Fracos.",
+          ],
+          correctAnswer: "b) Fixos (não voláteis).",
+          comment:
+            "Cetoácidos, ácido lático e outros ácidos orgânicos são ácidos 'fixos' ou 'não voláteis', pois não podem ser eliminados pela respiração, exigindo o tamponamento e a excreção renal, como discutido no contexto da acidose metabólica.",
+          topic: "Tipos de Ácidos",
+        },
+        {
+          question:
+            "23. O que acontece com a ligação do oxigênio à hemoglobina em um ambiente de acidose (pH baixo)?",
+          options: [
+            "a) Aumenta (afinidade maior).",
+            "b) Diminui (efeito Bohr).",
+            "c) Permanece inalterada.",
+            "d) É completamente inibida.",
+          ],
+          correctAnswer: "b) Diminui (efeito Bohr).",
+          comment:
+            "O efeito Bohr (mencionado implicitamente na relação entre pH e transporte de O₂) descreve como um ambiente mais ácido (pH baixo) diminui a afinidade da hemoglobina pelo oxigênio, facilitando sua liberação para os tecidos, uma adaptação útil em tecidos metabolicamente ativos (que produzem mais H⁺ e CO₂).",
+          topic: "Efeito Bohr",
+        },
+        {
+          question:
+            "24. A avaliação do equilíbrio ácido-básico é feita principalmente por qual exame laboratorial?",
+          options: [
+            "a) Hemograma completo.",
+            "b) Eletrólitos séricos.",
+            "c) Gasometria arterial.",
+            "d) Urinálise.",
+          ],
+          correctAnswer: "c) Gasometria arterial.",
+          comment:
+            "A gasometria arterial (pH, PaCO₂, HCO₃⁻) é o exame padrão ouro para avaliar o equilíbrio ácido-básico, fornecendo informações diretas sobre o estado de acidemia ou alcalemia e os componentes respiratórios e metabólicos.",
+          topic: "Gasometria Arterial",
+        },
+        {
+          question:
+            "25. A hipoventilação crônica em pacientes com DPOC pode levar a qual distúrbio ácido-básico primário?",
+          options: [
+            "a) Alcalose respiratória.",
+            "b) Acidose respiratória.",
+            "c) Alcalose metabólica.",
+            "d) Acidose metabólica.",
+          ],
+          correctAnswer: "b) Acidose respiratória.",
+          comment:
+            "Pacientes com DPOC frequentemente têm hipoventilação crônica, o que resulta em retenção de CO₂ e consequente acidose respiratória crônica, que pode ser compensada renalmente.",
+          topic: "DPOC e Equilíbrio Ácido-Base",
+        },
+        {
+          question:
+            "26. Qual é o papel dos íons fosfato (HPO₄²⁻ e H₂PO₄⁻) como sistema tampão, especialmente nos túbulos renais?",
+          options: [
+            "a) Aumentar a acidez da urina.",
+            "b) Ligar-se a proteínas para aumentar o pH.",
+            "c) Atuar como tampão importante no líquido intracelular e na urina, ajudando a excretar H⁺.",
+            "d) Estimular a produção de CO₂.",
+          ],
+          correctAnswer: "c) Atuar como tampão importante no líquido intracelular e na urina, ajudando a excretar H⁺.",
+          comment:
+            "Os fosfatos são um sistema tampão significativo no LIC e nos túbulos renais, onde ajudam a tamponar o excesso de H⁺ antes que seja excretado na urina, conforme o Slide 4.",
+          topic: "Tampão Fosfato",
+        },
+        {
+          question:
+            "27. A 'Anion Gap' (Lacuna Aniônica) é utilizada para ajudar a diagnosticar causas de qual distúrbio ácido-básico?",
+          options: [
+            "a) Alcalose respiratória.",
+            "b) Alcalose metabólica.",
+            "c) Acidose metabólica.",
+            "d) Acidose respiratória.",
+          ],
+          correctAnswer: "c) Acidose metabólica.",
+          comment:
+            "A 'anion gap' é uma ferramenta diagnóstica usada para diferenciar as causas de acidose metabólica, avaliando a presença de ânions não medidos.",
+          topic: "Anion Gap",
+        },
+        {
+          question:
+            "28. Em uma cetoacidose diabética (CAD), qual é o distúrbio ácido-básico primário e como o corpo tenta compensar?",
+          options: [
+            "a) Alcalose respiratória; compensa com hipoventilação.",
+            "b) Acidose metabólica; compensa com hiperventilação (respiração de Kussmaul).",
+            "c) Acidose respiratória; compensa com excreção renal de H⁺.",
+            "d) Alcalose metabólica; compensa com acidificação da urina.",
+          ],
+          correctAnswer: "b) Acidose metabólica; compensa com hiperventilação (respiração de Kussmaul).",
+          comment:
+            "A CAD é uma causa clássica de acidose metabólica (pelo acúmulo de cetoácidos). O corpo tenta compensar com hiperventilação profunda e rápida (respiração de Kussmaul) para eliminar CO₂.",
+          topic: "Cetoacidose Diabética",
+        },
+        {
+          question:
+            "29. Qual é o pH limítrofe abaixo do qual a vida não é geralmente compatível, conforme o Slide 1?",
+          options: [
+            "a) Abaixo de 7,35.",
+            "b) Abaixo de 7,20.",
+            "c) Abaixo de 7,00.",
+            "d) Abaixo de 6,80.",
+          ],
+          correctAnswer: "d) Abaixo de 6,80.",
+          comment:
+            "O Slide 1 enfatiza que o pH sanguíneo abaixo de 6,80 ou acima de 7,80 é geralmente incompatível com a vida, destacando a estreita faixa de pH normal para a sobrevivência.",
+          topic: "pH Limites de Vida",
+        },
+        {
+          question:
+            "30. A regulação do pH pelos rins envolve principalmente a reabsorção de bicarbonato filtrado e a secreção de qual íon?",
+          options: [
+            "a) Sódio (Na⁺).",
+            "b) Potássio (K⁺).",
+            "c) Cloreto (Cl⁻).",
+            "d) Íons Hidrogênio (H⁺).",
+          ],
+          correctAnswer: "d) Íons Hidrogênio (H⁺).",
+          comment:
+            "Os rins regulam o pH reabsorvendo quase todo o bicarbonato filtrado e secretando ativamente íons hidrogênio para a urina, utilizando diversos mecanismos de transporte tubular.",
+          topic: "Mecanismos Renais de pH",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; 
+        totalAnsweredQuestionsByTopic = {}; 
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.add('hidden'); // Esconder tesouras inicialmente
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } else if (scissorIcon) {
+                scissorIcon.classList.remove('hidden'); // Mostrar tesoura para opções não selecionadas
+            }
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { 
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; 
+            buttonText.textContent = 'Diagnóstico de Erros'; 
+            isShowingErrors = false; 
+            isShowingDiagnosis = false; 
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { 
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; 
+                currentWrongQuestionIndex = 0; 
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+                
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; 
+                    
+                    if (totalAnsweredInTopic > 0) { 
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+
+        } else if (isShowingErrors) { 
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+        } 
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
