@@ -76,6 +76,59 @@
             font-size: 0.9em;
         }
 
+        /* Estilos para o popup de alerta */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .alert-box {
+            background-color: #ff8c00; /* Laranja */
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .alert-box h2 {
+            margin-top: 0;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .alert-box p {
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        .alert-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8em;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+            transition: color 0.2s;
+        }
+
+        .alert-close:hover {
+            color: #eeeeee;
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.8em;
@@ -85,10 +138,34 @@
                 font-size: 1em;
                 padding: 15px;
             }
+
+            .alert-box {
+                padding: 20px;
+            }
+
+            .alert-box h2 {
+                font-size: 1.5em;
+            }
+
+            .alert-box p {
+                font-size: 0.9em;
+            }
+
+            .alert-close {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="alert-overlay" id="alertOverlay">
+        <div class="alert-box">
+            <span class="alert-close" id="alertClose">&times;</span>
+            <h2>Aviso</h2>
+            <p>Essa página foi desenvolvida por mim, Bruno Fernandes Damasceno, com o intuito de ajudar colegas de faculdade e profissão a terem um complemento na faculdade. Declaro que não tenho finalidade lucrativa nessa página e que os questionários são feitos com base na ementa do curso. Utilizo bancos de dados de questões como o USP, UNIFAL, Universidade do Michigan, Uneb, etc. Também utilizo inteligências artificiais para formularem as questões. Caso detectem erros, vocês podem livremente me contactar para que eu possa corrigir.</p>
+        </div>
+    </div>
+
     <header>
         <h1>Simulados de Medicina Unip</h1>
     </header>
@@ -202,5 +279,12 @@
     <footer>
         <p>&copy; 2025 Simulados de Medicina Unip. Todos os direitos reservados.</p>
     </footer>
+
+    <script>
+        // Script para fechar o alerta
+        document.getElementById('alertClose').addEventListener('click', function() {
+            document.getElementById('alertOverlay').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
