@@ -120,6 +120,8 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            /* Por padrão, o alerta pode estar escondido e ser exibido via JS */
+            display: none; /* Inicia oculto e JS decide se mostra */
         }
 
         .alert-box {
@@ -329,11 +331,6 @@
     </footer>
 
     <script>
-        // Script para fechar o alerta
-        document.getElementById('alertClose').addEventListener('click', function() {
-            document.getElementById('alertOverlay').style.display = 'none';
-        });
-
         // Função para normalizar o texto (ignorar acentos, maiúsculas/minúsculas e 'ç'/'c')
         function normalizeText(text) {
             text = text.toLowerCase(); // Converte para minúsculas
@@ -342,6 +339,23 @@
             text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
             return text;
         }
+
+        // Script para o alerta aparecer apenas uma vez
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertOverlay = document.getElementById('alertOverlay');
+            const alertCloseBtn = document.getElementById('alertClose');
+            const hasAlertBeenShown = localStorage.getItem('alertShown');
+
+            if (!hasAlertBeenShown) {
+                alertOverlay.style.display = 'flex'; // Exibe o alerta se ainda não foi mostrado
+            }
+
+            alertCloseBtn.addEventListener('click', function() {
+                alertOverlay.style.display = 'none'; // Esconde o alerta
+                localStorage.setItem('alertShown', 'true'); // Salva no localStorage que o alerta já foi exibido
+            });
+        });
+
 
         // Script para a barra de pesquisa
         document.getElementById('searchInput').addEventListener('keyup', function() {
