@@ -331,12 +331,14 @@
     </footer>
 
     <script>
-        // Função para normalizar o texto (ignorar acentos, maiúsculas/minúsculas e 'ç'/'c')
+        // Função para normalizar o texto (ignorar acentos, maiúsculas/minúsculas, 'ç'/'c' e zeros à esquerda em números)
         function normalizeText(text) {
             text = text.toLowerCase(); // Converte para minúsculas
             text = text.replace(/ç/g, 'c'); // Substitui 'ç' por 'c'
             // Remove acentos (diacríticos)
             text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            // Remove zeros à esquerda de sequências numéricas que são palavras completas ou precedidas por não-dígitos
+            text = text.replace(/\b0+(\d+)/g, '$1');
             return text;
         }
 
