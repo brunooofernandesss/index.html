@@ -24,13 +24,45 @@
 
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
         h1 {
             font-size: 2.5em;
             color: #2c3e50;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 1000px; /* Alinha com a largura do container dos cards */
+            margin: 0 auto 30px auto; /* Centraliza o container da busca e adiciona margem inferior */
+            display: flex;
+            justify-content: flex-end; /* Alinha a barra de pesquisa à direita */
+            padding-right: 20px; /* Padding para alinhar com o card mais à direita, compensando o padding do body */
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 350px; /* Tornando a barra de pesquisa menor */
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ccc;
+            border-radius: 25px;
+            font-size: 1.1em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .container {
@@ -154,6 +186,15 @@
             .alert-close {
                 font-size: 1.5em;
             }
+
+            .search-container {
+                padding-right: 0; /* Remove padding for smaller screens if it causes issues */
+                justify-content: center; /* Center the search bar on small screens */
+            }
+
+            .search-bar {
+                max-width: 90%; /* Adjust width for small screens */
+            }
         }
     </style>
 </head>
@@ -169,86 +210,93 @@
     <header>
         <h1>Simulados de Medicina Unip</h1>
     </header>
-         <div class="container">
-             <div class="card">
+
+    <div class="search-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar simulados por título...">
+        </div>
+    </div>
+
+    <div class="container" id="cardsContainer">
+        <div class="card">
             <a href="Fisiologia_Respiratoria.html">Módulo 3: Fisiologia Respiratória</a>
         </div>
-            <div class="card">
+        <div class="card">
             <a href="Fisiologia_controle_da_ventilacao.html">Módulo 3: Fisiologia do Controle da Ventilação</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Fisiologia_Controle_Ingestao_Excrecaoo_Liquidos.html">Módulo 3: Fisiologia do Controle da Ingestão e Excreção de Líquidos</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Fisiologia_Controle_Temperatura_Corporal.html">Módulo 3:Fisiologia do Controle da Temperatura Corporal</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Fisiologia_Equilíbrio_Ácido_Base.html">Módulo 3: Fisiologia do Equilíbrio Ácido-Base</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sistema_Urinario.html">Módulo 3: Sistema Urinário</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sinapse02.html">Módulo 3: Sinapse 02</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sinapse01.html">Módulo 3: Sinapse 01</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Potencial_Eletrico.html">Módulo 3: Potencial Elétrico</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Comunicacao_Celular02.html">Módulo 3: Diferenciação Celular 02</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Diferenciacao_Celular.html">Módulo 3: Diferenciação Celular 01</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Comunicacao_Celular01.html">Módulo 3: Comunicação Celular 02</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Comunicacao_Celular01.html">Módulo 3: Comunicação Celular 01</a>
         </div>
-            <div class="card">
+        <div class="card">
             <a href="Etica_e_Direito_Medico_Publicidade.html">Direito e Ética Médica: Publicidade Médica (Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Interação_Comunitária(SOAP_e_PTS).html">Interação Comunitária: PTS e SOAP. (Correção no chatGPT ou outra IA)(Segundo Trimestre)</a>
         </div>
-              <div class="card">
+        <div class="card">
             <a href="Metodologia_da_Pesquisa(Ética_em_Pesquisa).html">Metodologia da Pesquisa 05(Ética em Pesquisa)(Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Habilidades_Clicas_Torax.html">Habilidades Clínicas, Exame Físico(Tórax)(Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Habilidades_Clicas_Pressao.html">Habilidades Clínicas, Exame Físico(Pressão)(Segundo Trimestre)</a>
         </div>
-            <div class="card">
+        <div class="card">
             <a href="Metodologia_da_Pesquisa_04.html">Metodologia da Pesquisa 04 (Revisão Sistemática)(Segundo Trimestre)</a>
         </div>
-            <div class="card">
+        <div class="card">
             <a href="Metodologia_da_Pesquisa_03.html">Metodologia da Pesquisa 03 (Variáveis Dependentes e Independentes)(Segundo Trimestre)</a>
         </div>
-            <div class="card">
+        <div class="card">
             <a href="Metodologia_da_Pesquisa_02.html">Metodologia da Pesquisa 02(Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Interacao_Comunitaria02.html">Interação Comunitária 02 (Nível Fácil)(Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sistema_Cardiovascular.html">Módulo 3: Sistema Cardiovascular 01 (Nível Fácil)(Segundo Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sistema_Nervoso_02.html">Módulo 3: Histologia do Sistema Nervoso 02</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Sistema_Nervoso_01.html">Módulo 3:Histologia do Sistema Nervoso 01</a>
         </div>
         <div class="card">
             <a href="Metodologia_da_Pesquisa.html">Metodologia da Pesquisa(Primeiro Trimestre)</a>
         </div>
-             <div class="card">
+        <div class="card">
             <a href="Monitoria_Interacao_Comunitaria01.html">Exercícios 01 da Monitoria de Interação Comunitária(Segundo Trimestre)</a>
         </div>
         <div class="card">
@@ -270,9 +318,9 @@
             <a href="Tecido_Ósseo.html">Módulo 2:Tecido Ósseo</a>
         </div>
         <div class="card">
-            <a href="01un_Interação_Comunitaria.html">Interação Comunitária (Primeiro Bimestre)</a>
+            <a href="01un_Interacao_Comunitaria.html">Interação Comunitária (Primeiro Bimestre)</a>
         </div>
-              <div class="card">
+        <div class="card">
             <a href="Modulo01.html">Simulado Módulo 01</a>
         </div>
     </div>
@@ -284,6 +332,30 @@
         // Script para fechar o alerta
         document.getElementById('alertClose').addEventListener('click', function() {
             document.getElementById('alertOverlay').style.display = 'none';
+        });
+
+        // Função para normalizar o texto (ignorar acentos, maiúsculas/minúsculas e 'ç'/'c')
+        function normalizeText(text) {
+            text = text.toLowerCase(); // Converte para minúsculas
+            text = text.replace(/ç/g, 'c'); // Substitui 'ç' por 'c'
+            // Remove acentos (diacríticos)
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            return text;
+        }
+
+        // Script para a barra de pesquisa
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = normalizeText(this.value); // Normaliza o texto digitado
+            let cards = document.querySelectorAll('.container .card');
+
+            cards.forEach(card => {
+                let title = normalizeText(card.querySelector('a').textContent); // Normaliza o título do card
+                if (title.includes(filter)) {
+                    card.style.display = ''; // Mostra o card
+                } else {
+                    card.style.display = 'none'; // Esconde o card
+                }
+            });
         });
     </script>
 </body>
