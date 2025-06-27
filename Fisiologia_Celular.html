@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado de Fisiologia Celular</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Simulado de Fisiologia Celular</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; 
+      let errorCountByTopic = {}; 
+      let totalAnsweredQuestionsByTopic = {}; 
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; 
+      let isShowingDiagnosis = false; 
+
+      const questions = [
+        {
+          question:
+            "1. Qual das seguintes características define a célula eucariótica, distinguindo-a de outros tipos celulares?",
+          options: [
+            "a) Ausência de ribossomos para síntese proteica.",
+            "b) Presença de um núcleo delimitado por uma membrana nuclear, contendo o material genético.",
+            "c) Material genético disperso no citoplasma.",
+            "d) Inexistência de organelas especializadas.",
+            "e) Dependência exclusiva de difusão para o transporte de todas as substâncias.",
+          ],
+          correctAnswer: "b) Presença de um núcleo delimitado por uma membrana nuclear, contendo o material genético.",
+          comment:
+            "A principal característica que define uma célula eucariótica é a presença de um núcleo bem definido, envolto por uma membrana nuclear, onde o material genético (DNA) é armazenado. As outras opções descrevem características de células procarióticas (c) ou são incorretas para células eucarióticas (a, d, e).",
+          topic: "Célula Eucariótica: Definição e Estrutura",
+        },
+        {
+          question:
+            "2. Onde se localiza a maior parte do DNA de uma célula eucariótica e qual sua função primordial nesse local?",
+          options: [
+            "a) Mitocôndrias, responsável pela produção de ATP.",
+            "b) Retículo Endoplasmático, responsável pela síntese de proteínas.",
+            "c) Citoplasma, responsável pelas reações metabólicas.",
+            "d) Núcleo, onde o DNA é organizado em cromossomos e armazena enzimas para sua transcrição.",
+            "e) Lisossomos, responsável pela degradação de macromoléculas.",
+          ],
+          correctAnswer: "d) Núcleo, onde o DNA é organizado em cromossomos e armazena enzimas para sua transcrição.",
+          comment:
+            "Conforme o PDF, o núcleo é o centro de controle da célula eucariótica e contém a maior parte do DNA. Nesse local, o DNA é organizado em cromossomos e o núcleo também armazena enzimas cruciais para a transcrição do DNA, que é o primeiro passo para a expressão gênica.",
+          topic: "Núcleo e Material Genético",
+        },
+        {
+          question:
+            "3. A Figura 1 do PDF, 'Estrutura da célula eucariótica', apresenta várias organelas. Qual das seguintes opções descreve corretamente uma função atribuída a uma organela mostrada nessa figura?",
+          options: [
+            "a) Aparelho de Golgi: principal local de síntese de lipídios e desintoxicação.",
+            "b) Mitocôndria: sítio de armazenamento de enzimas digestivas para reciclagem celular.",
+            "c) Retículo Endoplasmático Rugoso (RER): síntese de proteínas de exportação e de membrana.",
+            "d) Núcleo: responsável pela produção de ATP através da respiração celular.",
+            "e) Ribossomos: local de empacotamento e envio de proteínas.",
+          ],
+          correctAnswer: "c) Retículo Endoplasmático Rugoso (RER): síntese de proteínas de exportação e de membrana.",
+          comment:
+            "O Retículo Endoplasmático Rugoso (RER) é caracterizado pela presença de ribossomos em sua superfície e é o local onde ocorre a síntese e o dobramento inicial de proteínas que serão secretadas, inseridas em membranas ou entregues a outras organelas como o Golgi e os lisossomos.\n* a) A síntese de lipídios e desintoxicação são funções do Retículo Endoplasmático Liso (REL), não do Golgi.\n* b) A mitocôndria é a 'usina de energia' da célula; os lisossomos contêm enzimas digestivas.\n* d) A produção de ATP pela respiração celular ocorre nas mitocôndrias, não no núcleo.\n* e) O empacotamento e envio de proteínas são funções do Aparelho de Golgi, enquanto os ribossomos são o sítio da síntese proteica.",
+          topic: "Organelas Celulares: Funções Específicas",
+        },
+        {
+          question:
+            "4. Qual organela é conhecida como a 'usina de energia' da célula eucariótica, sendo responsável pela respiração celular e produção de ATP?",
+          options: [
+            "a) Lisossomo",
+            "b) Aparelho de Golgi",
+            "c) Mitocôndria",
+            "d) Peroxissomo",
+            "e) Retículo Endoplasmático",
+          ],
+          correctAnswer: "c) Mitocôndria",
+          comment:
+            "O PDF descreve as Mitocôndrias como as 'usinas de energia' da célula, essenciais para a respiração celular e a geração de ATP, a principal moeda energética celular.",
+          topic: "Mitocôndrias e Produção de Energia",
+        },
+        {
+          question:
+            "5. As mitocôndrias possuem duas membranas. Qual a característica da membrana interna e qual a importância de sua estrutura?",
+          options: [
+            "a) É permeável a moléculas grandes, facilitando o transporte de ATP.",
+            "b) É altamente seletiva e impermeável, dobrada em cristas para aumentar a área de superfície para a produção de ATP.",
+            "c) É o principal local de síntese de lipídios e desintoxicação celular.",
+            "d) Contém porinas que permitem a passagem livre de íons e pequenas moléculas.",
+            "e) É o sítio de degradação de proteínas danificadas.",
+          ],
+          correctAnswer: "b) É altamente seletiva e impermeável, dobrada em cristas para aumentar a área de superfície para a produção de ATP.",
+          comment:
+            "A membrana interna da mitocôndria é descrita no PDF como altamente seletiva e impermeável. Suas dobras, chamadas cristas, aumentam significativamente a área de superfície, o que é crucial para acomodar as proteínas da cadeia de transporte de elétrons e a ATP sintase, maximizando a produção de ATP. A membrana externa contém porinas (d).",
+          topic: "Mitocôndrias: Estrutura e Membranas",
+        },
+        {
+          question:
+            "6. O Retículo Endoplasmático (RE) é um sistema de membranas com diferentes funções. Qual das seguintes afirmações sobre o RE é correta?",
+          options: [
+            "a) O Retículo Endoplasmático Liso (REL) é coberto por ribossomos e sintetiza proteínas.",
+            "b) O Retículo Endoplasmático Rugoso (RER) é o principal local de síntese de lipídios.",
+            "c) O retículo sarcoplasmático, uma forma especializada do RE, armazena e libera Ca2+ para a contração muscular.",
+            "d) Ambos RER e REL participam da degradação de macromoléculas na célula.",
+            "e) O RE é o principal sítio de empacotamento e envio de proteínas.",
+          ],
+          correctAnswer: "c) O retículo sarcoplasmático, uma forma especializada do RE, armazena e libera Ca2+ para a contração muscular.",
+          comment:
+            "O retículo sarcoplasmático é uma forma especializada do Retículo Endoplasmático Liso (REL) encontrada em células musculares e é fundamental na regulação dos níveis de cálcio iônico (Ca2+), essencial para a contração muscular.\n* a) O REL não possui ribossomos.\n* b) O RER sintetiza proteínas, enquanto o REL é o principal local de síntese de lipídios.\n* d) Os lisossomos são responsáveis pela degradação de macromoléculas.\n* e) O Aparelho de Golgi é o responsável pelo empacotamento e envio de proteínas.",
+          topic: "Retículo Endoplasmático: Tipos e Funções",
+        },
+        {
+          question:
+            "7. Os lisossomos são organelas celulares importantes para a manutenção da célula. Qual a sua função primordial?",
+          options: [
+            "a) Produção de ATP através da respiração celular.",
+            "b) Síntese e modificação de lipídios.",
+            "c) Atuar como sistema de 'reciclagem de lixo' da célula, contendo enzimas digestivas.",
+            "d) Empacotamento e envio de proteínas para seus destinos.",
+            "e) Regulação da expressão gênica no núcleo.",
+          ],
+          correctAnswer: "c) Atuar como sistema de 'reciclagem de lixo' da célula, contendo enzimas digestivas.",
+          comment:
+            "O PDF descreve os lisossomos como pequenas organelas membranosas que funcionam como o sistema de 'reciclagem de lixo' da célula, contendo hidrolases ácidas (enzimas digestivas) que quebram macromoléculas, materiais celulares danificados e patógenos.",
+          topic: "Lisossomos e Reciclagem Celular",
+        },
+        {
+          question:
+            "8. Qual organela é responsável por receber proteínas sintetizadas no RE, modificá-las, embalá-las em vesículas e enviá-las para seus destinos finais?",
+          options: [
+            "a) Ribossomos",
+            "b) Proteossomo",
+            "c) Aparelho de Golgi",
+            "d) Peroxissomo",
+            "e) Lisossomo",
+          ],
+          correctAnswer: "c) Aparelho de Golgi",
+          comment:
+            "O Aparelho de Golgi é a organela de 'embalagem e envio' para proteínas e lipídios. Ele recebe moléculas do RE, as modifica, classifica e empacota em vesículas para transporte para outras organelas, membrana plasmática ou secreção.",
+          topic: "Aparelho de Golgi: Processamento e Tráfego",
+        },
+        {
+          question:
+            "9. O citoesqueleto é uma rede de fibras proteicas com múltiplas funções. Qual dos seguintes NÃO é um componente do citoesqueleto mencionado no texto?",
+          options: [
+            "a) Microtúbulos",
+            "b) Filamentos intermediários",
+            "c) Microfilamentos",
+            "d) Proteossomos",
+            "e) Actina (como parte dos microfilamentos)",
+          ],
+          correctAnswer: "d) Proteossomos",
+          comment:
+            "O PDF lista microtúbulos, filamentos intermediários e microfilamentos (que são compostos de actina) como os componentes do citoesqueleto. Os proteossomos são responsáveis pela degradação de proteínas, sendo uma organela distinta do citoesqueleto.",
+          topic: "Citoesqueleto: Componentes",
+        },
+        {
+          question:
+            "10. Qual a principal função dos peroxissomos nas células, especialmente no fígado e rins?",
+          options: [
+            "a) Síntese de proteínas para secreção.",
+            "b) Degradação de ácidos graxos de cadeia longa e decomposição de peróxido de hidrogênio.",
+            "c) Armazenamento de Ca2+ para contração muscular.",
+            "d) Produção de ATP via cadeia de transporte de elétrons.",
+            "e) Empacotamento e modificação de proteínas e lipídios.",
+          ],
+          correctAnswer: "b) Degradação de ácidos graxos de cadeia longa e decomposição de peróxido de hidrogênio.",
+          comment:
+            "Os peroxissomos são organelas que contêm enzimas envolvidas na degradação de ácidos graxos de cadeia longa, na síntese de plasmalógenos e, crucialmente, na decomposição de peróxido de hidrogênio (H2O2), uma substância tóxica, utilizando a enzima catalase.",
+          topic: "Peroxissomos: Funções Metabólicas",
+        },
+        {
+          question:
+            "11. Qual a particularidade das hemácias (células vermelhas do sangue) que as torna especializadas no transporte de oxigênio e dióxido de carbono?",
+          options: [
+            "a) Presença de um núcleo grande e ativo para maior controle.",
+            "b) Abundância de mitocôndrias para produção de energia.",
+            "c) Ausência de núcleo e outras organelas, liberando espaço para a hemoglobina.",
+            "d) Capacidade de realizar fagocitose de patógenos.",
+            "e) Possuem um retículo endoplasmático muito desenvolvido.",
+          ],
+          correctAnswer: "c) Ausência de núcleo e outras organelas, liberando espaço para a hemoglobina.",
+          comment:
+            "O PDF destaca que as hemácias são uma exceção entre as células eucarióticas por não possuírem núcleo ou outras organelas. Essa ausência libera espaço significativo para a hemoglobina, a proteína responsável pelo transporte de oxigênio e dióxido de carbono.",
+          topic: "Hemácias: Adaptações Estruturais",
+        },
+        {
+          question:
+            "12. A membrana plasmática é uma bicamada lipídica. Além de fosfolipídios, quais outros componentes lipídicos são cruciais para sua estrutura e função?",
+          options: [
+            "a) Glicoproteínas e proteínas integrais.",
+            "b) Carboidratos e íons.",
+            "c) Glicolipídios e colesterol.",
+            "d) DNA e RNA.",
+            "e) Enzimas metabólicas e mensageiros secundários.",
+          ],
+          correctAnswer: "c) Glicolipídios e colesterol.",
+          comment:
+            "O PDF explica que a membrana plasmática é composta por uma bicamada lipídica de fosfolipídios, glicolipídios e colesterol. O colesterol, em particular, é vital para a fluidez e estabilidade da membrana.",
+          topic: "Membrana Plasmática: Composição",
+        },
+        {
+          question:
+            "13. Qual das seguintes NÃO é uma função atribuída à membrana plasmática no PDF?",
+          options: [
+            "a) Transporte seletivo de substâncias.",
+            "b) Reconhecimento e comunicação celular.",
+            "c) Síntese de proteínas para exportação.",
+            "d) Organização tecidual e adesão celular.",
+            "e) Determinação da forma celular (interagindo com o citoesqueleto).",
+          ],
+          correctAnswer: "c) Síntese de proteínas para exportação.",
+          comment:
+            "A síntese de proteínas para exportação ocorre no Retículo Endoplasmático Rugoso (RER) e é processada pelo Aparelho de Golgi. A membrana plasmática está envolvida no transporte seletivo, reconhecimento, comunicação, adesão e na forma celular, mas não na síntese de proteínas.",
+          topic: "Membrana Plasmática: Funções",
+        },
+        {
+          question:
+            "14. A Figura 2, 'Estrutura da membrana plasmática', ilustra o modelo do mosaico fluido. Que componente dessa membrana é crucial para sua fluidez e estabilidade?",
+          options: [
+            "a) Proteínas globulares.",
+            "b) Cadeias de carboidratos.",
+            "c) Colesterol.",
+            "d) Glicoproteínas.",
+            "e) Proteínas periféricas.",
+          ],
+          correctAnswer: "c) Colesterol.",
+          comment:
+            "O PDF menciona especificamente que o colesterol contribui para a fluidez e estabilidade da membrana plasmática, sendo um componente lipídico vital na bicamada.",
+          topic: "Membrana Plasmática: Colesterol",
+        },
+        {
+          question:
+            "15. Qual o tipo de transporte através da membrana plasmática que ocorre a favor de um gradiente de concentração, sem gasto direto de energia e com a ajuda de proteínas de transporte?",
+          options: [
+            "a) Difusão simples.",
+            "b) Transporte ativo primário.",
+            "c) Osmose.",
+            "d) Difusão facilitada.",
+            "e) Endocitose.",
+          ],
+          correctAnswer: "d) Difusão facilitada.",
+          comment:
+            "A difusão facilitada é um tipo de transporte passivo (sem gasto de energia) que ocorre a favor do gradiente de concentração, mas requer a ajuda de proteínas de transporte (canais ou carreadores) para substâncias que não podem atravessar a bicamada lipídica diretamente. A difusão simples não utiliza proteínas.",
+          topic: "Transporte Passivo: Difusão Facilitada",
+        },
+        {
+          question:
+            "16. A tonicidade de uma solução é crucial em contextos biológicos e médicos. O que acontece com uma célula animal (ex: hemácia) quando colocada em uma solução hipotônica?",
+          options: [
+            "a) Permanece inalterada, pois a entrada e saída de água se equilibram.",
+            "b) Perde água e encolhe (crenação).",
+            "c) Ganha água, incha e pode estourar (lise).",
+            "d) A concentração de solutos dentro e fora da célula se iguala imediatamente.",
+            "e) Ativa bombas de transporte ativo para expelir o excesso de água.",
+          ],
+          correctAnswer: "c) Ganha água, incha e pode estourar (lise).",
+          comment:
+            "Uma solução hipotônica possui menor concentração de solutos não penetrantes fora da célula. Isso faz com que a água se mova por osmose para dentro da célula, que incha e, no caso de células animais sem parede celular rígida, pode estourar (lise).",
+          topic: "Tonicidade e Osmose",
+        },
+        {
+          question:
+            "17. Qual o processo de transporte que move substâncias contra um gradiente de concentração, exigindo gasto de energia (ATP) e a participação de proteínas específicas chamadas bombas?",
+          options: [
+            "a) Difusão facilitada.",
+            "b) Osmose.",
+            "c) Transporte ativo.",
+            "d) Difusão simples.",
+            "e) Pinocitose.",
+          ],
+          correctAnswer: "c) Transporte ativo.",
+          comment:
+            "O transporte ativo é definido pelo movimento de substâncias contra seu gradiente de concentração, o que requer energia (geralmente na forma de ATP) e é mediado por proteínas de transporte específicas conhecidas como bombas.",
+          topic: "Transporte Ativo",
+        },
+        {
+          question:
+            "18. A doença de Kwashiorkor, mencionada no texto, é um exemplo de desnutrição que causa edema. Qual o mecanismo fisiológico por trás desse edema, relacionado à pressão osmótica?",
+          options: [
+            "a) Aumento da pressão hidrostática nos capilares.",
+            "b) Diminuição da pressão osmótica das proteínas (oncótica) no plasma sanguíneo.",
+            "c) Aumento da concentração de eletrólitos no plasma.",
+            "d) Falha na bomba de sódio e potássio.",
+            "e) Aumento da permeabilidade da membrana celular.",
+          ],
+          correctAnswer: "b) Diminuição da pressão osmótica das proteínas (oncótica) no plasma sanguíneo.",
+          comment:
+            "O PDF explica que a doença de Kwashiorkor leva a edema devido à diminuição da pressão oncótica, que é a pressão osmótica exercida pelas proteínas no plasma sanguíneo. Com menos proteínas no plasma, a água tende a se mover para o espaço intersticial, causando inchaço.",
+          topic: "Pressão Oncótica e Distúrbios",
+        },
+        {
+          question:
+            "19. A Figura 3, 'Transporte passivo e ativo da célula', ilustra que no transporte ativo, as moléculas se movem de qual direção em relação ao gradiente de concentração?",
+          options: [
+            "a) De alta para baixa concentração, sem gasto de energia.",
+            "b) De baixa para alta concentração, com gasto de energia.",
+            "c) Em qualquer direção, dependendo da necessidade da célula.",
+            "d) Apenas água se move.",
+            "e) De alta para baixa concentração, utilizando proteínas canal.",
+          ],
+          correctAnswer: "b) De baixa para alta concentração, com gasto de energia.",
+          comment:
+            "A Figura 3 e o texto explicam que no transporte ativo as moléculas se movem *contra* o gradiente de concentração (de baixa para alta), um processo que exige gasto de energia (ATP).",
+          topic: "Transporte Ativo vs. Passivo",
+        },
+        {
+          question:
+            "20. Qual o processo de transporte vesicular que a célula utiliza para engolfar substâncias, formando uma vesícula que se dobra para dentro?",
+          options: [
+            "a) Exocitose.",
+            "b) Difusão simples.",
+            "c) Pinocitose.",
+            "d) Endocitose.",
+            "e) Osmose.",
+          ],
+          correctAnswer: "d) Endocitose.",
+          comment:
+            "Endocitose é o processo geral pelo qual a célula ingere moléculas ou partículas do ambiente externo, formando uma vesícula que se dobra para dentro da membrana plasmática. Pinocitose (c) é um *tipo* de endocitose para líquidos.",
+          topic: "Transporte Vesicular: Endocitose",
+        },
+        {
+          question:
+            "21. A fagocitose é um tipo de endocitose caracterizada pela ingestão de:",
+          options: [
+            "a) Apenas líquidos e moléculas dissolvidas.",
+            "b) Moléculas específicas ligadas a receptores.",
+            "c) Grandes partículas, como bactérias ou detritos celulares.",
+            "d) Íons através de canais de membrana.",
+            "e) Moléculas de água através de aquaporinas.",
+          ],
+          correctAnswer: "c) Grandes partículas, como bactérias ou detritos celulares.",
+          comment:
+            "A fagocitose é o processo de endocitose que envolve a ingestão de grandes partículas, como microrganismos (bactérias) ou fragmentos celulares, e é realizada por células especializadas como os macrófagos.",
+          topic: "Endocitose: Fagocitose",
+        },
+        {
+          question:
+            "22. A Figura 4, 'Processo de endocitose', mostra a membrana celular se invaginando. Qual é a etapa final desse processo ilustrado?",
+          options: [
+            "a) Liberação do conteúdo para fora da célula.",
+            "b) Formação de uma vesícula contendo as partículas que se move para o citoplasma.",
+            "c) Fusão da vesícula com o retículo endoplasmático.",
+            "d) Inserção de receptores na membrana.",
+            "e) Dissociação do ligante do receptor.",
+          ],
+          correctAnswer: "b) Formação de uma vesícula contendo as partículas que se move para o citoplasma.",
+          comment:
+            "A Figura 4 ilustra a formação de uma vesícula por invaginação da membrana, que então se desprende e se move para o citoplasma, levando as partículas para dentro da célula.",
+          topic: "Endocitose: Mecanismo Ilustrado",
+        },
+        {
+          question:
+            "23. Qual o processo de transporte vesicular pelo qual a célula expele moléculas ou partículas para o ambiente externo, fundindo uma vesícula com a membrana plasmática?",
+          options: [
+            "a) Endocitose mediada por receptor.",
+            "b) Pinocitose.",
+            "c) Fagocitose.",
+            "d) Exocitose.",
+            "e) Difusão facilitada.",
+          ],
+          correctAnswer: "d) Exocitose.",
+          comment:
+            "Exocitose é o mecanismo oposto à endocitose, onde vesículas intracelulares contendo substâncias se fundem com a membrana plasmática para liberar seu conteúdo para fora da célula.",
+          topic: "Transporte Vesicular: Exocitose",
+        },
+        {
+          question:
+            "24. A Figura 5, 'Processo de exocitose', ilustra visualmente a liberação de conteúdo da célula. O que essa figura demonstra, em termos de vesículas e membrana?",
+          options: [
+            "a) A vesícula se dobra para dentro da célula.",
+            "b) A vesícula permanece imóvel no citoplasma.",
+            "c) A vesícula se funde com a membrana plasmática e libera seu conteúdo para fora.",
+            "d) A vesícula absorve conteúdo do exterior.",
+            "e) Ocorre a formação de uma nova membrana.",
+          ],
+          correctAnswer: "c) A vesícula se funde com a membrana plasmática e libera seu conteúdo para fora.",
+          comment:
+            "A Figura 5, representando a exocitose, mostra uma vesícula se movendo em direção à membrana plasmática, fundindo-se com ela e liberando seu conteúdo para o ambiente extracelular.",
+          topic: "Exocitose: Mecanismo Ilustrado",
+        },
+        {
+          question:
+            "25. Na comunicação celular, qual a diferença entre mensageiros primários e secundários?",
+          options: [
+            "a) Mensageiros primários são proteínas do citoesqueleto, enquanto os secundários são enzimas metabólicas.",
+            "b) Mensageiros primários propagam e amplificam o sinal, enquanto os secundários iniciam a transdução de sinal.",
+            "c) Mensageiros primários são ligantes que se ligam a receptores, e os secundários propagam e amplificam o sinal dentro da célula.",
+            "d) Mensageiros primários atuam apenas em receptores intracelulares, e os secundários em receptores de membrana.",
+            "e) Mensageiros primários são apenas hormônios, enquanto os secundários são neurotransmissores.",
+          ],
+          correctAnswer: "c) Mensageiros primários são ligantes que se ligam a receptores, e os secundários propagam e amplificam o sinal dentro da célula.",
+          comment:
+            "O PDF define mensageiros primários como os ligantes que iniciam a transdução de sinal ao se ligarem a receptores, enquanto os mensageiros secundários são moléculas que propagam e amplificam o sinal dentro da célula.",
+          topic: "Comunicação Celular: Mensageiros",
+        },
+        {
+          question:
+            "26. A insulina é mencionada como um exemplo de mensageiro primário que sinaliza para aumentar a captação de glicose. Essa ação está diretamente relacionada à modificação de qual tipo de componente celular?",
+          options: [
+            "a) Proteínas do citoesqueleto.",
+            "b) Enzimas regulatórias genéticas.",
+            "c) Enzimas metabólicas.",
+            "d) Receptores intracelulares.",
+            "e) Proteossomos.",
+          ],
+          correctAnswer: "c) Enzimas metabólicas.",
+          comment:
+            "O PDF afirma que as enzimas metabólicas são cruciais na comunicação celular, sendo modificadas em vias de sinalização para alterar o metabolismo celular, e cita a insulina como exemplo, que sinaliza para aumentar a captação de glicose.",
+          topic: "Sinalização Celular e Enzimas Metabólicas",
+        },
+        {
+          question:
+            "27. Qual tipo de comunicação celular envolve a liberação de sinais que afetam células *próximas*?",
+          options: [
+            "a) Autócrina.",
+            "b) Endócrina.",
+            "c) Sináptica.",
+            "d) Parácrina.",
+            "e) Contato direto.",
+          ],
+          correctAnswer: "d) Parácrina.",
+          comment:
+            "A comunicação parácrina é definida como aquela em que as células liberam sinais que afetam células adjacentes ou próximas, como a liberação de neurotransmissores em sinapses (que também é um tipo específico de parácrina).",
+          topic: "Tipos de Comunicação Celular: Parácrina",
+        },
+        {
+          question:
+            "28. Quando uma célula libera um sinal ao qual ela *mesma* responde, esse tipo de comunicação celular é denominado:",
+          options: [
+            "a) Parácrina.",
+            "b) Endócrina.",
+            "c) Sináptica.",
+            "d) Autócrina.",
+            "e) Contato direto.",
+          ],
+          correctAnswer: "d) Autócrina.",
+          comment:
+            "A comunicação autócrina ocorre quando uma célula secreta uma substância sinalizadora que atua sobre ela mesma, estimulando ou inibindo sua própria função.",
+          topic: "Tipos de Comunicação Celular: Autócrina",
+        },
+        {
+          question:
+            "29. A comunicação endócrina é caracterizada por:",
+          options: [
+            "a) Células se comunicando através de junções de gap.",
+            "b) Neurônios liberando neurotransmissores em uma fenda sináptica.",
+            "c) Células liberando hormônios na corrente sanguínea para afetar células distantes.",
+            "d) Uma célula liberando um sinal ao qual ela mesma responde.",
+            "e) Células liberando sinais que afetam células próximas.",
+          ],
+          correctAnswer: "c) Células liberando hormônios na corrente sanguínea para afetar células distantes.",
+          comment:
+            "No sistema endócrino, as células liberam hormônios (mensageiros químicos) que viajam pela corrente sanguínea e atuam em células-alvo localizadas em regiões distantes do corpo.",
+          topic: "Tipos de Comunicação Celular: Endócrina",
+        },
+        {
+          question:
+            "30. A Figura 6, 'Modos de comunicação celular', apresenta os diferentes tipos de comunicação. Qual tipo de comunicação celular não envolve a liberação de substâncias sinalizadoras no espaço extracelular, mas sim o contato físico entre as células?",
+          options: [
+            "a) Parácrina.",
+            "b) Autócrina.",
+            "c) Endócrina.",
+            "d) Contato direto.",
+            "e) Sináptica.",
+          ],
+          correctAnswer: "d) Contato direto.",
+          comment:
+            "O contato direto, como exemplificado pelas junções de gap, permite a comunicação célula a célula sem a necessidade de liberação de mensageiros no espaço extracelular. A imagem, embora pixelizada no PDF, representa esse contato direto.",
+          topic: "Tipos de Comunicação Celular: Contato Direto",
+        },
+        {
+          question:
+            "31. A Figura 7, 'Sinalização sináptica', ilustra um tipo específico de comunicação celular. Qual a principal característica da sinalização sináptica?",
+          options: [
+            "a) Liberação de hormônios na corrente sanguínea.",
+            "b) Células se comunicando por contato físico direto.",
+            "c) Neurônios liberando neurotransmissores em uma fenda sináptica para afetar o neurônio pós-sináptico.",
+            "d) Uma célula liberando um sinal que atua sobre si mesma.",
+            "e) Sinais químicos que afetam apenas células adjacentes.",
+          ],
+          correctAnswer: "c) Neurônios liberando neurotransmissores em uma fenda sináptica para afetar o neurônio pós-sináptico.",
+          comment:
+            "A sinalização sináptica é um tipo especializado de comunicação parácrina onde neurônios liberam neurotransmissores em uma fenda sináptica muito pequena, afetando especificamente o neurônio pós-sináptico.",
+          topic: "Tipos de Comunicação Celular: Sináptica",
+        },
+        {
+          question:
+            "32. Qual a principal diferença entre receptores de membrana e receptores intracelulares, em termos de localização e tipo de mensageiro que respondem?",
+          options: [
+            "a) Receptores de membrana respondem a hormônios esteroides, e intracelulares a proteínas.",
+            "b) Receptores de membrana estão na superfície e respondem a mensageiros primários; intracelulares estão dentro da célula e respondem a mensageiros lipossolúveis.",
+            "c) Receptores de membrana regulam a transcrição gênica, e intracelulares ativam proteínas G.",
+            "d) Receptores de membrana são sempre canais iônicos, e intracelulares são sempre enzimas.",
+            "e) Não há diferença significativa, ambos têm a mesma função e localização.",
+          ],
+          correctAnswer: "b) Receptores de membrana estão na superfície e respondem a mensageiros primários; intracelulares estão dentro da célula e respondem a mensageiros lipossolúveis.",
+          comment:
+            "Os receptores de membrana estão localizados na superfície celular e respondem a mensageiros primários (ligantes) que não conseguem atravessar a membrana. Já os receptores intracelulares estão dentro da célula e são ativados por mensageiros lipossolúveis (como hormônios esteroides e da tireoide) que podem atravessar a bicamada lipídica.",
+          topic: "Receptores Celulares: Tipos e Mecanismos",
+        },
+        {
+          question:
+            "33. A via do receptor nuclear é um tipo de transdução de sinal. Qual tipo de molécula ativadora (ligante) é característica dessa via?",
+          options: [
+            "a) Neurotransmissores de membrana.",
+            "b) Proteínas acopladas a proteína G.",
+            "c) Moléculas lipossolúveis, como hormônios esteroides e da tireoide.",
+            "d) Íons que abrem canais.",
+            "e) Peptídeos que se ligam a receptores de superfície.",
+          ],
+          correctAnswer: "c) Moléculas lipossolúveis, como hormônios esteroides e da tireoide.",
+          comment:
+            "Os receptores nucleares são ativados por moléculas lipossolúveis, como os hormônios esteroides e da tireoide, que podem atravessar a membrana plasmática para se ligar aos receptores localizados no citoplasma ou no núcleo.",
+          topic: "Transdução de Sinal: Receptores Nucleares",
+        },
+        {
+          question:
+            "34. O cortisol, um hormônio esteroide, atua através de um receptor intracelular específico. Após a ligação do cortisol, o que acontece com o complexo receptor-cortisol?",
+          options: [
+            "a) É degradado imediatamente pelos lisossomos.",
+            "b) Se move para a membrana plasmática para ativar uma proteína G.",
+            "c) Entra no núcleo, liga-se ao DNA e regula a transcrição de genes.",
+            "d) Causa a abertura de canais iônicos na membrana.",
+            "e) Ativa enzimas citoplasmáticas diretamente, sem ir para o núcleo.",
+          ],
+          correctAnswer: "c) Entra no núcleo, liga-se ao DNA e regula a transcrição de genes.",
+          comment:
+            "O cortisol, por ser lipossolúvel, atravessa a membrana e se liga ao receptor de glicocorticoides no citoplasma. Esse complexo então se transloca para o núcleo, onde se liga a regiões específicas do DNA e atua como um fator de transcrição, regulando a expressão gênica.",
+          topic: "Transdução de Sinal: Via do Cortisol",
+        },
+        {
+          question:
+            "35. A Figura 8, 'Ativação da Proteína G', embora pixelizada, representa um importante mecanismo de transdução de sinal. Qual a principal característica da via de sinalização que envolve proteínas G?",
+          options: [
+            "a) Envolve apenas a alteração direta da expressão gênica.",
+            "b) É ativada por mensageiros que se ligam a receptores de membrana, levando à ativação de uma proteína G e, subsequentemente, a efetores.",
+            "c) Exige que o ligante entre na célula para ativar o receptor.",
+            "d) É uma via exclusiva de neurotransmissores e não de hormônios.",
+            "e) Resulta em uma resposta celular lenta, sempre envolvendo síntese de novas proteínas.",
+          ],
+          correctAnswer: "b) É ativada por mensageiros que se ligam a receptores de membrana, levando à ativação de uma proteína G e, subsequentemente, a efetores.",
+          comment:
+            "Receptores acoplados à proteína G (GPCRs) são uma classe muito comum de receptores de membrana. Quando um ligante se liga ao GPCR, a proteína G associada é ativada (trocando GDP por GTP) e, então, suas subunidades podem ativar outras enzimas ou canais iônicos dentro da célula, desencadeando uma cascata de sinalização.",
+          topic: "Transdução de Sinal: Proteínas G",
+        },
+        {
+          question:
+            "36. O PDF menciona que a velocidade da resposta a um sinal celular pode variar. Qual tipo de sinalização tende a ser quase imediata, em comparação com a endócrina, que pode levar mais tempo?",
+          options: [
+            "a) Autócrina.",
+            "b) Parácrina.",
+            "c) Contato direto.",
+            "d) Sináptica.",
+            "e) Vesicular.",
+          ],
+          correctAnswer: "d) Sináptica.",
+          comment:
+            "A sinalização sináptica é caracterizada por sua rapidez. A liberação de neurotransmissores na fenda sináptica e sua ligação a receptores pós-sinápticos resultam em respostas celulares quase imediatas (milissegundos). A sinalização endócrina, que envolve o transporte de hormônios pela corrente sanguínea, é inerentemente mais lenta.",
+          topic: "Velocidade da Resposta Celular",
+        },
+        {
+          question:
+            "37. Qual das seguintes afirmações sobre as vias de transdução de sinal e a velocidade de resposta está correta, segundo o texto?",
+          options: [
+            "a) Vias que envolvem a síntese de novas proteínas geralmente resultam em respostas mais rápidas.",
+            "b) Vias que envolvem a modificação de proteínas existentes geralmente resultam em respostas mais rápidas.",
+            "c) A velocidade de resposta não depende da via de transdução de sinal.",
+            "d) Todas as vias de transdução de sinal têm a mesma velocidade de resposta.",
+            "e) A transdução de sinal é sempre um processo lento e gradual.",
+          ],
+          correctAnswer: "b) Vias que envolvem a modificação de proteínas existentes geralmente resultam em respostas mais rápidas.",
+          comment:
+            "O PDF afirma que 'as vias que envolvem a modificação de proteínas existentes geralmente resultam em respostas mais rápidas do que as vias que envolvem a síntese de novas proteínas'. Isso ocorre porque a modificação de proteínas já presentes é mais ágil do que a transcrição e tradução de novos genes.",
+          topic: "Transdução de Sinal: Velocidade da Resposta",
+        },
+        {
+          question:
+            "38. O Mapa Mental da Página 15 resume a Fisiologia Celular. Qual dos seguintes tópicos NÃO é uma das categorias principais destacadas neste mapa?",
+          options: [
+            "a) Membrana Plasmática.",
+            "b) Genética Molecular.",
+            "c) Transporte Celular.",
+            "d) Estrutura e Componentes Celulares.",
+            "e) Comunicação Celular e Receptores de Membrana.",
+          ],
+          correctAnswer: "b) Genética Molecular.",
+          comment:
+            "O Mapa Mental da Página 15 organiza os tópicos principais do documento, que incluem Membrana Plasmática, Transporte Celular, Estrutura e Componentes Celulares, Comunicação Celular e Receptores de Membrana, Vias de Transdução de Sinal e Introdução. Embora o DNA e genes sejam mencionados no contexto do núcleo e da regulação, 'Genética Molecular' como uma categoria principal não aparece explicitamente no mapa nesse nível de organização.",
+          topic: "Mapa Mental: Estrutura da Fisiologia Celular",
+        },
+        {
+          question:
+            "39. Qual das organelas listadas no Mapa Mental da Página 15 é responsável por atuar como sistema de 'reciclagem de lixo' da célula?",
+          options: [
+            "a) Mitocôndrias.",
+            "b) Núcleo.",
+            "c) Lisossomos.",
+            "d) Ribossomos.",
+            "e) Complexo de Golgi.",
+          ],
+          correctAnswer: "c) Lisossomos.",
+          comment:
+            "O mapa mental lista 'Lisossomos' sob 'Estrutura e Componentes Celulares', e o texto do PDF descreve os lisossomos como o sistema de 'reciclagem de lixo' da célula, contendo enzimas digestivas.",
+          topic: "Mapa Mental: Organelas e Funções",
+        },
+        {
+          question:
+            "40. A última página do PDF (Página 17) contém informações de copyright. Qual a plataforma de onde se origina o 'supermaterial' de Fisiologia Celular?",
+          options: [
+            "a) Garland Science.",
+            "b) W. H. Freeman.",
+            "c) Sinauer Associates.",
+            "d) Sanarflix.",
+            "e) Chat GPT 4.0.",
+          ],
+          correctAnswer: "d) Sanarflix.",
+          comment:
+            "A Página 1 do PDF, a capa, apresenta claramente o logo 'sanarflix' abaixo do título, indicando que o material é um 'supermaterial sanarflix'. A Página 17 reforça com o copyright da SanarFlix. As outras opções são editoras de livros ou a ferramenta de IA usada na escrita, não a plataforma de origem do material.",
+          topic: "Informações do Documento: Origem",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; 
+        totalAnsweredQuestionsByTopic = {}; 
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } 
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { 
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; 
+            buttonText.textContent = 'Diagnóstico de Erros'; 
+            isShowingErrors = false; 
+            isShowingDiagnosis = false; 
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { 
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; 
+                currentWrongQuestionIndex = 0; 
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+                
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; 
+                    
+                    if (totalAnsweredInTopic > 0) { 
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+
+        } else if (isShowingErrors) { 
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+        } 
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
