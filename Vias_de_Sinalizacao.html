@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado de Fisiologia Celular</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Simulado de Fisiologia Celular</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; 
+      let errorCountByTopic = {}; 
+      let totalAnsweredQuestionsByTopic = {}; 
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; 
+      let isShowingDiagnosis = false; 
+
+      const questions = [
+        {
+          question: "1. A comunicação celular é um processo vital para que as células possam interagir e responder a mudanças no ambiente. Como essa comunicação é transmitida, conforme o texto?",
+          options: [
+            "a) Apenas por sinais elétricos.",
+            "b) Somente por moléculas mensageiras que atuam a curtas distâncias.",
+            "c) Através de sinais químicos e elétricos transmitidos por moléculas mensageiras.",
+            "d) Exclusivamente por contato físico direto entre membranas.",
+          ],
+          correctAnswer: "c) Através de sinais químicos e elétricos transmitidos por moléculas mensageiras.",
+          comment: "O PDF afirma que as células se comunicam 'através de sinais químicos e elétricos que são transmitidos por moléculas mensageiras'. Essa interação permite uma resposta coordenada e amplificada ao ambiente.",
+          topic: "Comunicação Celular: Conceito Geral",
+        },
+        {
+          question: "2. Os receptores de membrana são proteínas especializadas localizadas na superfície celular. Qual é a sua função principal após reconhecerem e se ligarem a moléculas sinalizadoras específicas?",
+          options: [
+            "a) Degradar as moléculas sinalizadoras imediatamente.",
+            "b) Iniciar uma cascata de eventos intracelulares que resultam em uma resposta celular específica.",
+            "c) Atravessar a membrana e se ligar diretamente ao DNA.",
+            "d) Alterar a composição lipídica da membrana plasmática.",
+          ],
+          correctAnswer: "b) Iniciar uma cascata de eventos intracelulares que resultam em uma resposta celular específica.",
+          comment: "Conforme o PDF, uma vez ativados, os receptores de membrana 'iniciam uma cascata de eventos intracelulares que resultam em uma resposta celular específica'. Eles funcionam como o primeiro ponto de contato para a sinalização externa.",
+          topic: "Receptores de Membrana: Função",
+        },
+        {
+          question: "3. Para moléculas hidrofílicas que necessitam interagir com a célula, como elas geralmente se ligam aos receptores?",
+          options: [
+            "a) Entram por difusão simples.",
+            "b) Utilizam uma proteína carreadora para entrar por difusão.",
+            "c) Ligam-se a receptores na superfície celular.",
+            "d) Atravessam livremente a membrana plasmática.",
+          ],
+          correctAnswer: "c) Ligam-se a receptores na superfície celular.",
+          comment: "O texto especifica que os receptores de membrana são 'Principalmente para moléculas hidrofílicas', implicando que estas não atravessam a membrana facilmente e, portanto, se ligam na superfície. Moléculas hidrofóbicas, sim, podem entrar por difusão com a ajuda de proteínas carreadoras.",
+          topic: "Receptores de Membrana: Moléculas Hidrofílicas",
+        },
+        {
+          question: "4. Um dos tipos de receptores de membrana mencionados no documento são os receptores catalíticos. Qual a característica principal desses receptores?",
+          options: [
+            "a) Geram uma mudança conformacional que ativa ou desliga subunidades de Proteínas G.",
+            "b) Permitem que o sinal químico se transforme em elétrico.",
+            "c) Possuem uma exposição dos domínios enzimáticos.",
+            "d) Estão localizados exclusivamente no citosol.",
+          ],
+          correctAnswer: "c) Possuem uma exposição dos domínios enzimáticos.",
+          comment: "O PDF descreve os receptores catalíticos como aqueles em que 'há uma exposição dos domínios enzimáticos', indicando que eles têm atividade enzimática própria ou associada.",
+          topic: "Receptores Catalíticos",
+        },
+        {
+          question: "5. Em relação aos receptores intracelulares/nucleares, o que acontece após a ligação de seu respectivo ligante, como um hormônio?",
+          options: [
+            "a) Ocorre a ativação de canais iônicos na membrana.",
+            "b) Há uma inativação do complexo inibitório e a ligação do receptor com proteínas coativadoras, promovendo a transcrição gênica.",
+            "c) O complexo receptor-ligante é imediatamente degradado.",
+            "d) Ele se move para a superfície celular para recrutar outras proteínas.",
+          ],
+          correctAnswer: "b) Há uma inativação do complexo inibitório e a ligação do receptor com proteínas coativadoras, promovendo a transcrição gênica.",
+          comment: "O texto explica que para os receptores intracelulares/nucleares, 'quando há sua ligação há uma inativação do complexo inibitório (com proteínas inibitórias) e a ligação do receptor com proteínas coativadoras, promovendo a transcrição gênica'.",
+          topic: "Receptores Intracelulares/Nucleares",
+        },
+        {
+          question: "6. A Figura 1 do PDF ilustra três etapas principais da sinalização por receptor de membrana. Qual etapa é responsável pela transmissão e amplificação do sinal dentro da célula?",
+          options: [
+            "a) Recepção.",
+            "b) Transdução.",
+            "c) Resposta.",
+            "d) Ativação da Molécula Sinalizadora.",
+          ],
+          correctAnswer: "b) Transdução.",
+          comment: "A Figura 1 claramente mostra a etapa 2 como 'Transdução' e a descreve como 'Signal-Transduction Pathway', indicando a série de eventos que ocorrem dentro da célula após a recepção do sinal.",
+          topic: "Sinalização por Receptor de Membrana: Etapas",
+        },
+        {
+          question: "7. Mensageiros são moléculas sinalizadoras que transportam informações entre as células. Qual a diferença fundamental entre mensageiros primários e secundários?",
+          options: [
+            "a) Primários transmitem sinais dentro da célula; secundários interagem com receptores.",
+            "b) Primários interagem diretamente com receptores de membrana; secundários transmitem sinais dentro da célula.",
+            "c) Primários são sempre hormônios; secundários são sempre neurotransmissores.",
+            "d) Primários são responsáveis por respostas lentas; secundários por respostas rápidas.",
+          ],
+          correctAnswer: "b) Primários interagem diretamente com receptores de membrana; secundários transmitem sinais dentro da célula.",
+          comment: "O PDF estabelece que os mensageiros primários 'interagem diretamente com os receptores de membrana', enquanto os mensageiros secundários 'transmitem sinais dentro da célula'.",
+          topic: "Mensageiros: Primários e Secundários",
+        },
+        {
+          question: "8. No contexto da comunicação celular, qual tipo de comunicação envolve células liberando sinais que afetam células *adjacentes* ou *próximas*?",
+          options: [
+            "a) Autócrina.",
+            "b) Endócrina.",
+            "c) Sináptica.",
+            "d) Parácrina.",
+          ],
+          correctAnswer: "d) Parácrina.",
+          comment: "A comunicação parácrina é caracterizada por mensageiros que atingem e causam modificação em células próximas, conforme indicado na lista de tipos de comunicação e ilustrado na Figura 4.",
+          topic: "Comunicação Parácrina",
+        },
+        {
+          question: "9. Quando uma célula libera uma substância sinalizadora que atua sobre ela *mesma*, estimulando ou inibindo sua própria função, qual é o tipo de comunicação celular?",
+          options: [
+            "a) Parácrina.",
+            "b) Endócrina.",
+            "c) Sináptica.",
+            "d) Autócrina.",
+          ],
+          correctAnswer: "d) Autócrina.",
+          comment: "A comunicação autócrina ocorre quando uma célula responde ao seu próprio sinal, ou seja, ela 'atinge a si mesma'.",
+          topic: "Comunicação Autócrina",
+        },
+        {
+          question: "10. A comunicação endócrina é um dos modos de comunicação celular. Qual a principal característica da comunicação endócrina, de acordo com o PDF e a Figura 4?",
+          options: [
+            "a) Ocorre por contato direto entre células.",
+            "b) Envolve neurônios liberando neurotransmissores em uma fenda sináptica.",
+            "c) Células liberam hormônios na corrente sanguínea para afetar células distantes.",
+            "d) Sinais afetam apenas células adjacentes.",
+          ],
+          correctAnswer: "c) Células liberam hormônios na corrente sanguínea para afetar células distantes.",
+          comment: "A Figura 4 e o texto descrevem a comunicação endócrina como aquela em que 'Células liberam hormônios na corrente sanguínea' (Blood vessel) para atingir uma 'Target cell' distante.",
+          topic: "Comunicação Endócrina",
+        },
+        {
+          question: "11. A Figura 2 e a Figura 3 ilustram a sinalização sináptica. O que é liberado pelo neurônio pré-sináptico na fenda sináptica para afetar o neurônio pós-sináptico?",
+          options: [
+            "a) Hormônios.",
+            "b) Moléculas de DNA.",
+            "c) Neurotransmissores.",
+            "d) Proteínas de membrana.",
+          ],
+          correctAnswer: "c) Neurotransmissores.",
+          comment: "A Figura 3 explicitamente rotula 'Neurotransmitter' sendo liberado de um 'Neuron' para uma 'Synapse' em direção a uma 'Target cell', confirmando a liberação de neurotransmissores na sinalização sináptica.",
+          topic: "Sinalização Sináptica: Neurotransmissores",
+        },
+        {
+          question: "12. As vias de transdução de sinal são séries de reações moleculares que ocorrem dentro da célula. Qual a função essencial dessas vias, conforme o texto?",
+          options: [
+            "a) Iniciar a síntese de novas organelas.",
+            "b) Degradar o receptor de membrana.",
+            "c) Transmitir e amplificar o sinal, levando a uma resposta celular apropriada.",
+            "d) Regular a expressão gênica sem a necessidade de um receptor.",
+          ],
+          correctAnswer: "c) Transmitir e amplificar o sinal, levando a uma resposta celular apropriada.",
+          comment: "O PDF afirma que essas vias 'são essenciais para a transmissão e amplificação do sinal, levando a uma resposta celular apropriada'.",
+          topic: "Vias de Transdução de Sinal: Função",
+        },
+        {
+          question: "13. A Figura 5 ilustra a via da insulina. Qual é o principal efeito da ação da insulina demonstrado na figura?",
+          options: [
+            "a) Aumento da degradação de glicose.",
+            "b) Diminuição da captação de glicose pela célula.",
+            "c) Aumento da captação de glicose pela célula através da inserção de GLUT4.",
+            "d) Liberação de insulina para fora da célula.",
+          ],
+          correctAnswer: "c) Aumento da captação de glicose pela célula através da inserção de GLUT4.",
+          comment: "A Figura 5, intitulada 'Effect of Insulin on Glucose Uptake', mostra claramente que após a ligação da insulina ao receptor, as vesículas contendo GLUT4 são inseridas na membrana plasmática, permitindo a entrada de glicose na célula.",
+          topic: "Sinalização da Insulina",
+        },
+        {
+          question: "14. A Figura 6 descreve a ação de um hormônio não esteroide. Qual molécula é gerada a partir de ATP e atua como um segundo mensageiro nesta via?",
+          options: [
+            "a) GDP.",
+            "b) GTP.",
+            "c) cAMP.",
+            "d) Adenilil ciclase.",
+          ],
+          correctAnswer: "c) cAMP.",
+          comment: "A Figura 6 demonstra que a adenilil ciclase (Adenylyl cyclase) converte ATP em cAMP (Second messenger), que então desencadeia o efeito na função celular.",
+          topic: "Sinalização por Hormônios Não Esteroide: cAMP",
+        },
+        {
+          question: "15. O mapa mental na Página 9 organiza a 'Fisiologia Celular: Comunicação Celular' em categorias principais. Qual das seguintes opções é uma das categorias principais destacadas neste mapa?",
+          options: [
+            "a) Metabolismo de Carboidratos.",
+            "b) Genética Humana.",
+            "c) Receptores de membrana.",
+            "d) Divisão Celular.",
+          ],
+          correctAnswer: "c) Receptores de membrana.",
+          comment: "O 'MAPA MENTAL 1' na página 9 claramente lista 'Receptores de membrana' como uma das quatro categorias principais da fisiologia celular de comunicação.",
+          topic: "Mapa Mental: Categorias Principais",
+        },
+        {
+          question: "16. Ainda sobre o mapa mental, qual o termo usado para descrever as moléculas que transmitem e amplificam o sinal dentro da célula, conforme a categoria 'Mensageiros'?",
+          options: [
+            "a) Sinais químicos e elétricos.",
+            "b) Proteínas especializadas.",
+            "c) Mensageiros primários.",
+            "d) Mensageiros secundários.",
+          ],
+          correctAnswer: "d) Mensageiros secundários.",
+          comment: "Dentro da categoria 'Mensageiros' no mapa mental, os 'Mensageiros secundários' são associados à 'Transmissão e amplificação do sinal'.",
+          topic: "Mensageiros Secundários: Mapa Mental",
+        },
+        {
+          question: "17. Qual a plataforma de onde se origina o 'supermaterial' de Fisiologia Celular, conforme indicado na capa e informações de copyright do PDF?",
+          options: [
+            "a) Garland Science.",
+            "b) Elsevier Health Education.",
+            "c) Sanarflix.",
+            "d) Chat GPT 4.0.",
+          ],
+          correctAnswer: "c) Sanarflix.",
+          comment: "A capa do PDF claramente exibe o logo 'sanarflix', e a última página (Página 11) confirma o 'Copyright © SanarFlix'.",
+          topic: "Material Sanarflix: Origem",
+        },
+        {
+          question: "18. Além dos receptores de membrana catalíticos e de canais iônicos, qual outro tipo de receptor de membrana é capaz de gerar uma mudança conformacional em cascata, ativando ou desligando outras subunidades?",
+          options: [
+            "a) Receptores nucleares.",
+            "b) Receptores acoplados à Proteína G.",
+            "c) Receptores citosólicos.",
+            "d) Receptores de fatores de crescimento.",
+          ],
+          correctAnswer: "b) Receptores acoplados à Proteína G.",
+          comment: "O PDF menciona que a 'Proteína G (gera uma mudança conformacional que em cascata vai atingindo outras subunidades ativando-as ou desligando-as, dando continuidade a uma determinada via)'.",
+          topic: "Receptores Acoplados à Proteína G",
+        },
+        {
+          question: "19. A Figura 1 mostra o 'Extracellular Fluid' e o 'Cytoplasm'. Qual parte do receptor está imersa no 'Cytoplasm' para iniciar a cascata de transdução?",
+          options: [
+            "a) A Molécula Sinalizadora.",
+            "b) A parte extracelular do Receptor.",
+            "c) A parte intracelular do Receptor ou a Molécula de Retransmissão.",
+            "d) A Plasma Membrane.",
+          ],
+          correctAnswer: "c) A parte intracelular do Receptor ou a Molécula de Retransmissão.",
+          comment: "A Figura 1 ilustra que o receptor atravessa a membrana e sua porção intracelular, ou as 'Relay Molecules' que se ligam a ela, iniciam os eventos dentro do citoplasma na fase de transdução.",
+          topic: "Receptor de Membrana: Estrutura e Transdução",
+        },
+        {
+          question: "20. Na sinalização por contato direto (Contract-dependent), conforme ilustrado na Figura 4, o que permite a comunicação entre as células sinalizadora e alvo?",
+          options: [
+            "a) A liberação de um mediador no espaço extracelular.",
+            "b) A ligação de um hormônio na corrente sanguínea.",
+            "c) O contato físico direto entre uma molécula sinalizadora ligada à membrana de uma célula e o receptor de outra.",
+            "d) A liberação de neurotransmissores em uma fenda sináptica.",
+          ],
+          correctAnswer: "c) O contato físico direto entre uma molécula sinalizadora ligada à membrana de uma célula e o receptor de outra.",
+          comment: "A Figura 4 mostra o modo 'Contract-dependent', onde uma 'Membrane-bound signal molecule' (molécula sinalizadora ligada à membrana) da 'Signaling cell' (célula sinalizadora) interage diretamente com a 'Target cell' (célula alvo).",
+          topic: "Sinalização por Contato Direto",
+        },
+        {
+          question: "21. As vias de transdução de sinal são importantes para a transmissão e amplificação do sinal. Qual é o resultado final dessas vias em termos de resposta celular?",
+          options: [
+            "a) Formação de novas células.",
+            "b) Degradação de todas as proteínas celulares.",
+            "c) Uma resposta celular apropriada.",
+            "d) Inibição completa de todas as funções celulares.",
+          ],
+          correctAnswer: "c) Uma resposta celular apropriada.",
+          comment: "O texto afirma que as vias de transdução de sinal são essenciais para levar 'a uma resposta celular apropriada'.",
+          topic: "Vias de Transdução de Sinal: Resposta Celular",
+        },
+        {
+          question: "22. O que o termo 'supermaterial' na capa do PDF indica sobre o conteúdo fornecido pela Sanarflix?",
+          options: [
+            "a) Que o material é excessivamente longo e detalhado.",
+            "b) Que é um material de alta qualidade e abrangência, além do usual.",
+            "c) Que é um material básico e introdutório.",
+            "d) Que é um material com informações desatualizadas.",
+          ],
+          correctAnswer: "b) Que é um material de alta qualidade e abrangência, além do usual.",
+          comment: "Embora o termo não seja explicitamente definido, no contexto de plataformas educacionais, 'supermaterial' com o logo da Sanarflix na capa sugere um conteúdo premium, abrangente e de alta qualidade.",
+          topic: "Terminologia do Material: Sanarflix",
+        },
+        {
+          question: "23. O sumário do PDF é um recurso importante. Quantos tópicos principais (excluindo Referências) são abordados no documento, de acordo com o sumário?",
+          options: [
+            "a) 3.",
+            "b) 4.",
+            "c) 5.",
+            "d) 6.",
+          ],
+          correctAnswer: "c) 5.",
+          comment: "O sumário lista cinco tópicos numerados: '1. Comunicação celular', '2. Receptores de membrana', '3. Mensageiros.', '4. Vias de transdução de sinal', e '5. Conclusão'.",
+          topic: "Estrutura do PDF: Sumário",
+        },
+        {
+          question: "24. A autora do material, Natália de Oliveira Lima, utilizou qual ferramenta de inteligência artificial em parceria para a escrita do conteúdo?",
+          options: [
+            "a) Google Search.",
+            "b) Chat GPT 4.0.",
+            "c) Bing AI.",
+            "d) Bard.",
+          ],
+          correctAnswer: "b) Chat GPT 4.0.",
+          comment: "Na seção de referências, a página 10 afirma que o material foi 'Escrito por Natália de Oliveira Lima em parceria com inteligência artificial via chat GPT 4.0'.",
+          topic: "Autoria do Material: Ferramentas de IA",
+        },
+        {
+          question: "25. Em relação aos receptores intracelulares/nucleares, qual é o tipo de molécula que eles principalmente respondem, de acordo com o texto?",
+          options: [
+            "a) Moléculas hidrofílicas.",
+            "b) Proteínas acopladas a proteína G.",
+            "c) Hormônios (como os esteroides).",
+            "d) Neurotransmissores.",
+          ],
+          correctAnswer: "c) Hormônios (como os esteroides).",
+          comment: "O PDF especifica que receptores intracelulares/nucleares são 'principalmente para hormônios'.",
+          topic: "Receptores Intracelulares/Nucleares: Ligantes",
+        },
+        {
+          question: "26. A Figura 1 da página 4 mostra a 'Plasma Membrane' e o 'Extracellular Fluid'. Onde a 'Signal Molecule' se liga ao 'Receptor'?",
+          options: [
+            "a) No citoplasma.",
+            "b) Dentro do núcleo.",
+            "c) Na superfície da membrana que está em contato com o fluido extracelular.",
+            "d) Dentro de uma vesícula.",
+          ],
+          correctAnswer: "c) Na superfície da membrana que está em contato com o fluido extracelular.",
+          comment: "A Figura 1 ilustra a 'Signal Molecule' vindo do 'Extracellular Fluid' e se ligando à parte do 'Receptor' exposta na 'Plasma Membrane'.",
+          topic: "Local de Ligação do Receptor",
+        },
+        {
+          question: "27. Qual o tipo de comunicação celular em que os sinais são liberados em uma fenda sináptica por neurônios para afetar células-alvo?",
+          options: [
+            "a) Parácrina.",
+            "b) Autócrina.",
+            "c) Endócrina.",
+            "d) Sináptica.",
+          ],
+          correctAnswer: "d) Sináptica.",
+          comment: "A sinalização sináptica é definida e ilustrada (Figura 3) como o processo em que 'Neurônio' libera 'Neurotransmitter' em uma 'Synapse' para uma 'Target cell'.",
+          topic: "Comunicação Sináptica",
+        },
+        {
+          question: "28. As vias de transdução de sinal são cruciais. Qual é um dos papéis essenciais dessas vias no contexto da comunicação celular?",
+          options: [
+            "a) Sintetizar lipídios para a membrana.",
+            "b) Amplificar o sinal recebido pelo receptor.",
+            "c) Degradar proteínas intracelulares sem seletividade.",
+            "d) Excluir substâncias tóxicas da célula.",
+          ],
+          correctAnswer: "b) Amplificar o sinal recebido pelo receptor.",
+          comment: "O texto afirma que as vias de transdução de sinal são 'essenciais para a transmissão e amplificação do sinal'.",
+          topic: "Amplificação do Sinal",
+        },
+        {
+          question: "29. Na via da insulina (Figura 5), qual transportador é inserido na membrana plasmática para permitir a captação de glicose pela célula?",
+          options: [
+            "a) Receptor de insulina.",
+            "b) Proteína G.",
+            "c) GLUT4.",
+            "d) ATP sintase.",
+          ],
+          correctAnswer: "c) GLUT4.",
+          comment: "A Figura 5 mostra claramente as 'GLUT4-containing vesicle' se fundindo com a membrana e os 'GLUT4' permitindo a entrada de glicose.",
+          topic: "Via da Insulina: GLUT4",
+        },
+        {
+          question: "30. Conforme a Figura 6, qual enzima é ativada pela Proteína G na via do hormônio não esteroide para converter ATP em cAMP?",
+          options: [
+            "a) ATP sintase.",
+            "b) Adenilil ciclase.",
+            "c) Fosfolipase C.",
+            "d) Tirosina quinase.",
+          ],
+          correctAnswer: "b) Adenilil ciclase.",
+          comment: "A Figura 6 ilustra que a Proteína G ativada move-se para e ativa a 'Adenylyl cyclase', que então produz cAMP a partir de ATP.",
+          topic: "Sinalização por Hormônio Não Esteroide: Enzima",
+        },
+        {
+          question: "31. Qual das referências bibliográficas listadas na página 10 foi publicada mais recentemente?",
+          options: [
+            "a) Berne & Levy Fisiologia. Elsevier Health Education; Edição: 6, 2011.",
+            "b) Linda S. Costanzo Fisiologia. Elsevier; Edição: 5ª, 2014.",
+            "c) Margarida Aires. Fisiologia. Guanabara Koogan; Edição: 5ª, 2018.",
+            "d) Nenhuma das anteriores.",
+          ],
+          correctAnswer: "c) Margarida Aires. Fisiologia. Guanabara Koogan; Edição: 5ª, 2018.",
+          comment: "Ao comparar os anos de publicação das referências, Margarida Aires. Fisiologia (2018) é a mais recente.",
+          topic: "Referências Bibliográficas: Data",
+        },
+        {
+          question: "32. A 'Conclusão' do PDF enfatiza a importância de compreender os mecanismos de comunicação celular. Para qual propósito essa compreensão é fundamental?",
+          options: [
+            "a) Apenas para entender processos patológicos.",
+            "b) Apenas para entender processos fisiológicos.",
+            "c) Para entender muitos processos fisiológicos e patológicos.",
+            "d) Para desenvolver novos softwares de comunicação.",
+          ],
+          correctAnswer: "c) Para entender muitos processos fisiológicos e patológicos.",
+          comment: "A conclusão afirma que 'Compreender os mecanismos subjacentes à comunicação celular e as vias de transdução de sinal é fundamental para entender muitos processos fisiológicos e patológicos'.",
+          topic: "Comunicação Celular: Importância",
+        },
+        {
+          question: "33. Onde o material genético está contido na célula, e qual tipo de receptor está associado a ele para promover a transcrição gênica?",
+          options: [
+            "a) Mitocôndrias; Receptores de canal iônico.",
+            "b) Retículo Endoplasmático; Receptores catalíticos.",
+            "c) Núcleo; Receptores intracelulares/nucleares.",
+            "d) Citoplasma; Receptores de membrana.",
+          ],
+          correctAnswer: "c) Núcleo; Receptores intracelulares/nucleares.",
+          comment: "O texto menciona que os receptores intracelulares/nucleares atuam no núcleo e, ao se ligarem, 'promovem a transcrição gênica', indicando sua associação com o material genético.",
+          topic: "Material Genético e Receptores Nucleares",
+        },
+        {
+          question: "34. A autora do material de Fisiologia Celular é Natália de Oliveira Lima. Onde essa informação é primeiramente apresentada no PDF?",
+          options: [
+            "a) Na página 1 (capa).",
+            "b) Na página 2 (sumário).",
+            "c) Na página 3 (início do conteúdo).",
+            "d) Na página 10 (referências).",
+          ],
+          correctAnswer: "c) Na página 3 (início do conteúdo).",
+          comment: "A página 3, antes do primeiro tópico, inicia com 'Autora: Natália de Oliveira Lima'.",
+          topic: "Autoria do Material: Localização",
+        },
+        {
+          question: "35. Segundo a Figura 1, o que acontece imediatamente após a 'Reception' de uma 'Signal Molecule' por um 'Receptor'?",
+          options: [
+            "a) Ocorre a 'Activation of Cellular Responses' diretamente.",
+            "b) Inicia-se a 'Transduction' através de 'Relay Molecules'.",
+            "c) A 'Plasma Membrane' é degradada.",
+            "d) A 'Signal Molecule' é convertida em ATP.",
+          ],
+          correctAnswer: "b) Inicia-se a 'Transduction' através de 'Relay Molecules'.",
+          comment: "A Figura 1 ilustra uma seta que leva da 'Reception' para a 'Transduction', com 'Relay Molecule' sendo a primeira molécula envolvida na cascata intracelular.",
+          topic: "Sinalização por Receptor: Sequência de Eventos",
+        },
+        {
+          question: "36. Qual tipo de comunicação celular pode ocorrer entre células adjacentes ou entre células distantes, mas de maneira específica, coordenada e amplificada?",
+          options: [
+            "a) Todas as formas de comunicação celular.",
+            "b) Apenas a comunicação autócrina.",
+            "c) A comunicação celular em geral.",
+            "d) Exclusivamente a sinalização sináptica.",
+          ],
+          correctAnswer: "c) A comunicação celular em geral.",
+          comment: "O texto introdutório sobre 'Comunicação Celular' na página 3 afirma que 'Essa comunicação pode ocorrer entre células adjacentes ou entre células distantes, mas de maneira específica, coordenada e amplificada', referindo-se ao processo de comunicação celular como um todo.",
+          topic: "Comunicação Celular: Abrangência",
+        },
+        {
+          question: "37. Qual a última página do PDF que contém informações de Copyright?",
+          options: [
+            "a) Página 1.",
+            "b) Página 5.",
+            "c) Página 10.",
+            "d) Página 11.",
+          ],
+          correctAnswer: "d) Página 11.",
+          comment: "A página 11 do PDF contém as informações de Copyright, como 'Copyright © SanarFlix. Todos os direitos reservados.'",
+          topic: "Informações do Documento: Copyright",
+        },
+        {
+          question: "38. Qual dos seguintes não é um tipo de receptor de membrana mencionado no PDF?",
+          options: [
+            "a) Receptores Catalíticos.",
+            "b) Receptores de Canais Iônicos.",
+            "c) Receptores de Proteína G.",
+            "d) Receptores de DNA.",
+          ],
+          correctAnswer: "d) Receptores de DNA.",
+          comment: "Os tipos de receptores de membrana listados são 'Catalíticos', 'Canais iônicos' e 'Proteína G'. Receptores de DNA não são um tipo de receptor de membrana, mas sim intracelulares que interagem com o DNA.",
+          topic: "Receptores de Membrana: Tipos",
+        },
+        {
+          question: "39. Considerando a Figura 5 (Via da Insulina), qual é o papel principal da insulina (Insulin) nessa via?",
+          options: [
+            "a) Ser um segundo mensageiro.",
+            "b) Atuar como o receptor.",
+            "c) Ser a molécula sinalizadora primária (ligante).",
+            "d) Transportar diretamente a glicose para dentro da célula.",
+          ],
+          correctAnswer: "c) Ser a molécula sinalizadora primária (ligante).",
+          comment: "A Figura 5 mostra a 'Insulin' como a molécula que se liga ao 'Insulin receptor', iniciando toda a cascata de sinalização para a captação de glicose, caracterizando-a como o ligante ou mensageiro primário.",
+          topic: "Via da Insulina: Papel da Insulina",
+        },
+        {
+          question: "40. O que significa a informação de que a 'Comunicação Celular' pode ser 'amplificada', conforme descrito na página 3?",
+          options: [
+            "a) Que o sinal se torna mais fraco à medida que se propaga.",
+            "b) Que um pequeno número de moléculas sinalizadoras pode gerar uma grande resposta intracelular.",
+            "c) Que a comunicação ocorre apenas em células grandes.",
+            "d) Que o sinal é restrito a uma única célula.",
+          ],
+          correctAnswer: "b) Que um pequeno número de moléculas sinalizadoras pode gerar uma grande resposta intracelular.",
+          comment: "O termo 'amplificada' no contexto da comunicação celular e da transdução de sinal refere-se à capacidade de um sinal externo inicial, mesmo em baixa concentração, gerar uma resposta intracelular robusta através de uma cascata de eventos.",
+          topic: "Comunicação Celular: Amplificação",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; 
+        totalAnsweredQuestionsByTopic = {}; 
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } 
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { 
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; 
+            buttonText.textContent = 'Diagnóstico de Erros'; 
+            isShowingErrors = false; 
+            isShowingDiagnosis = false; 
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { 
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; 
+                currentWrongQuestionIndex = 0; 
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+                
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; 
+                    
+                    if (totalAnsweredInTopic > 0) { 
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+
+        } else if (isShowingErrors) { 
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+        } 
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
