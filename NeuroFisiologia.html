@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulado de Fisiologia Celular</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .quiz-container {
+        max-width: 800px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .question {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .options {
+        margin-top: 15px;
+      }
+
+      .option {
+        display: flex; /* Para alinhar imagem e texto */
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative; /* Para posicionar a tesoura */
+      }
+
+      .option:hover {
+        background-color: #e9e9e9;
+      }
+
+      .option.selected {
+        background-color: #d1e7dd;
+        border-color: #28a745;
+      }
+
+      .option.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+      }
+
+      .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .submit-btn:hover {
+        background-color: #0056b3;
+      }
+
+      .results {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .scissor-icon {
+        margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+        width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+        opacity: 0.5; /* Transparência como no original */
+        cursor: pointer;
+      }
+
+      .scissor-icon.hidden {
+        display: none;
+      }
+
+      .struck-through {
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .comment {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-left: 4px solid #007bff;
+        font-style: italic;
+        color: #555;
+        display: none; /* Escondido por padrão */
+      }
+      .comment.show {
+        display: block; /* Mostrado quando ativado */
+      }
+
+      /* Estilos para o botão de navegação de erro / diagnóstico */
+      .error-nav-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #dc3545; /* Vermelho para erro */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Torna o botão redondo */
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none; /* Escondido por padrão */
+        flex-direction: column; /* Para empilhar o ícone e o contador */
+        padding: 5px; /* Ajuste o padding para acomodar texto maior */
+        box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+        text-align: center;
+      }
+
+      .error-nav-btn:hover {
+        background-color: #c82333;
+      }
+
+      .error-nav-btn .arrow-icon {
+        font-size: 30px; /* Tamanho da seta */
+        line-height: 1; /* Ajuste para centralizar */
+      }
+
+      .error-nav-btn .button-text {
+        font-size: 12px; /* Tamanho do texto abaixo da seta */
+        line-height: 1;
+        margin-top: 2px; /* Espaço entre a seta e o texto */
+      }
+      
+      /* Estilos para a seção de diagnóstico de erros */
+      .error-diagnosis-section {
+          margin-top: 50px;
+          padding: 30px;
+          background-color: #ffe0b2; /* Um laranja claro ou similar */
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          display: none; /* Escondido por padrão */
+          text-align: center;
+          font-size: 1.1em;
+          color: #333;
+      }
+
+      .error-diagnosis-section h2 {
+          color: #e65100; /* Laranja mais escuro */
+          margin-bottom: 20px;
+          font-size: 1.8em;
+      }
+
+      .error-diagnosis-section ul {
+          list-style: none; /* Remove marcadores de lista */
+          padding: 0;
+          margin: 0;
+      }
+
+      .error-diagnosis-section li {
+          background-color: #ff9800; /* Laranja */
+          color: white;
+          padding: 8px 15px;
+          margin: 8px 0;
+          border-radius: 5px;
+          display: inline-block; /* Para que os itens fiquem lado a lado */
+          margin-right: 10px;
+          font-weight: bold;
+      }
+      .error-diagnosis-section li:last-child {
+          margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>Simulado de Fisiologia Celular</h1>
+      <div id="quiz"></div>
+      <button class="submit-btn" id="submit">Verificar Respostas</button>
+      <div id="results" class="results"></div>
+
+      <div id="errorDiagnosis" class="error-diagnosis-section">
+        <h2>Diagnóstico de Erros</h2>
+        <p>Parece que você precisa revisar os seguintes assuntos:</p>
+        <ul id="topicsToReview">
+          </ul>
+      </div>
+    </div>
+
+    <button class="error-nav-btn" id="errorNavBtn">
+      <span class="arrow-icon"></span> <span class="button-text"></span> </button>
+
+    <script>
+      const quizContainer = document.getElementById("quiz");
+      const submitButton = document.getElementById("submit");
+      const resultsContainer = document.getElementById("results");
+      const errorNavBtn = document.getElementById("errorNavBtn");
+      const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+      const buttonText = errorNavBtn.querySelector(".button-text");
+      const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+      const topicsToReviewList = document.getElementById("topicsToReview");
+
+      let wrongQuestionIndices = []; 
+      let errorCountByTopic = {}; 
+      let totalAnsweredQuestionsByTopic = {}; 
+      let currentWrongQuestionIndex = -1; 
+      let hasErrors = false; 
+      let isShowingErrors = false; 
+      let isShowingDiagnosis = false; 
+
+      const questions = [
+        {
+          question: "1. Qual é a principal função e característica do neurônio como unidade funcional do sistema nervoso?",
+          options: [
+            "1. As células da glia são responsáveis pela transmissão de informações a longas distâncias.",
+            "2. O neurônio é a unidade funcional do sistema nervoso, especializado na comunicação através de sinais elétricos e químicos.",
+            "3. Dendritos são estruturas que transmitem informações do neurônio para outras células.",
+            "4. A bainha de mielina tem a função de diminuir a velocidade de propagação do impulso nervoso.",
+          ],
+          correctAnswer: "2. O neurônio é a unidade funcional do sistema nervoso, especializado na comunicação através de sinais elétricos e químicos.",
+          comment: "O neurônio é a célula especializada na comunicação neural. Suas principais características são a capacidade de gerar e transmitir sinais elétricos (potenciais de ação) e químicos (neurotransmissores), o que é fundamental para a coordenação das funções do corpo. As outras opções descrevem incorretamente as funções das células da glia, dos dendritos e da bainha de mielina.",
+          topic: "Introdução ao Neurônio",
+        },
+        {
+          question: "2. O que define o potencial de ação e como ele é gerado?",
+          options: [
+            "1. É uma mudança lenta e permanente no potencial de membrana.",
+            "2. É gerado pelo fechamento sequencial de canais iônicos dependentes de voltagem.",
+            "3. É uma mudança rápida e temporária no potencial de membrana de um neurônio, gerada pela abertura e fechamento sequencial de canais iônicos dependentes de voltagem.",
+            "4. É o estado de repouso da membrana neuronal, onde não há fluxo de íons.",
+          ],
+          correctAnswer: "3. É uma mudança rápida e temporária no potencial de membrana de um neurônio, gerada pela abertura e fechamento sequencial de canais iônicos dependentes de voltagem.",
+          comment: "O potencial de ação é, de fato, uma alteração rápida e transitória no potencial elétrico da membrana de um neurônio. Essa alteração é desencadeada pela ação coordenada de canais iônicos (de sódio e potássio) que se abrem e fecham em resposta a mudanças na voltagem da membrana. Não é um evento lento nem permanente, e envolve fluxo ativo de íons.",
+          topic: "Potencial de Ação: Definição e Geração",
+        },
+        {
+          question: "3. Qual das afirmações a seguir descreve corretamente uma fase do processo do potencial de ação?",
+          options: [
+            "1. O potencial de repouso é de +70mV intracelularmente, com mais cargas positivas dentro da célula.",
+            "2. A hiperpolarização ocorre quando o potencial de membrana atinge um limiar de -50mV/-55mV.",
+            "3. A despolarização torna o interior da célula positivo devido à entrada de íons sódio.",
+            "4. Uma resposta sublimiar é aquela que gera um potencial de ação 'tudo ou nada'.",
+          ],
+          correctAnswer: "3. A despolarização torna o interior da célula positivo devido à entrada de íons sódio.",
+          comment: "No potencial de repouso, o interior da célula é negativo (aproximadamente -70mV). A despolarização ocorre quando estímulos levam o potencial ao limiar (-50mV/-55mV), o que causa a abertura de canais de sódio e a entrada massiva de Na⁺, tornando o interior da célula temporariamente positivo. A hiperpolarização, por sua vez, é um período em que o potencial se torna mais negativo que o de repouso, e uma resposta sublimiar é insuficiente para gerar um potencial de ação.",
+          topic: "Fases do Potencial de Ação: Despolarização",
+        },
+        {
+          question: "4. Sobre o papel dos canais iônicos no potencial de ação, qual afirmação está correta?",
+          options: [
+            "1. A bomba de sódio-potássio ATPase abre canais de sódio voltagem-dependentes para iniciar o potencial de ação.",
+            "2. Durante a repolarização, os canais de potássio dependentes de voltagem se fecham rapidamente, impedindo a hiperpolarização.",
+            "3. A entrada de íons sódio através de canais voltagem-dependentes é responsável pela fase de despolarização.",
+            "4. A hiperpolarização ocorre devido à rápida saída de íons cálcio.",
+          ],
+          correctAnswer: "3. A entrada de íons sódio através de canais voltagem-dependentes é responsável pela fase de despolarização.",
+          comment: "A despolarização do potencial de ação é iniciada pela abertura de canais de sódio dependentes de voltagem, permitindo o rápido influxo de Na⁺ para o interior da célula. A bomba Na⁺/K⁺-ATPase é crucial para manter o potencial de repouso e restaurar os gradientes iônicos após o potencial de ação, mas não inicia a despolarização. Os canais de potássio se fecham lentamente, causando a fase de hiperpolarização devido à saída prolongada de K⁺.",
+          topic: "Canais Iônicos e Potencial de Ação",
+        },
+        {
+          question: "5. Assinale a alternativa correta sobre a transmissão sináptica.",
+          options: [
+            "1. A transmissão sináptica ocorre exclusivamente por junções Gap, sendo sempre bidirecional.",
+            "2. Na sinapse química, neurotransmissores são liberados na fenda sináptica e se ligam a receptores na célula pós-sináptica, gerando uma resposta.",
+            "3. Receptores pós-sinápticos são apenas do tipo ionotrópico, que são acoplados à proteína G.",
+            "4. A modulação da transmissão sináptica é impossível uma vez que os neurotransmissores são liberados.",
+          ],
+          correctAnswer: "2. Na sinapse química, neurotransmissores são liberados na fenda sináptica e se ligam a receptores na célula pós-sináptica, gerando uma resposta.",
+          comment: "A transmissão sináptica pode ser elétrica (via junções Gap) ou química. Na sinapse química, a liberação de neurotransmissores na fenda sináptica e sua ligação a receptores na membrana pós-sináptica são eventos centrais que levam à propagação do sinal. Receptores podem ser ionotrópicos (canais iônicos diretos) ou metabotrópicos (acoplados a proteína G), e a transmissão pode ser modulada por diversos fatores.",
+          topic: "Transmissão Sináptica",
+        },
+        {
+          question: "6. Com relação aos neurotransmissores, qual afirmação está correta?",
+          options: [
+            "1. Noradrenalina, dopamina e acetilcolina são exemplos de neurotransmissores peptídicos.",
+            "2. Neurotransmissores são substâncias químicas responsáveis pela transmissão de informações entre neurônios.",
+            "3. Todos os neurotransmissores têm a mesma função no sistema nervoso.",
+            "4. Neurotransmissores peptídicos são sintetizados na forma ativa no terminal pré-sináptico.",
+          ],
+          correctAnswer: "2. Neurotransmissores são substâncias químicas responsáveis pela transmissão de informações entre neurônios.",
+          comment: "Neurotransmissores são mensageiros químicos que atuam na sinapse para transmitir, amplificar ou modular sinais entre um neurônio e outra célula. Noradrenalina, dopamina e acetilcolina são neurotransmissores não peptídicos, e cada neurotransmissor possui funções específicas e variadas no sistema nervoso. Neurotransmissores peptídicos são sintetizados no corpo celular na forma pré-ativa e transportados até o terminal.",
+          topic: "Neurotransmissores",
+        },
+        {
+          question: "7. Qual das alternativas a seguir descreve corretamente a propagação do potencial de ação ao longo do axônio?",
+          options: [
+            "1. A propagação do potencial de ação é bidirecional e diminui com o diâmetro do axônio.",
+            "2. O potencial de ação é formado em qualquer ponto da bainha de mielina.",
+            "3. A presença de bainha de mielina aumenta a velocidade de propagação do potencial de ação.",
+            "4. A propagação do impulso nervoso responde melhor a frequências altas de estímulo.",
+          ],
+          correctAnswer: "3. A presença de bainha de mielina aumenta a velocidade de propagação do potencial de ação.",
+          comment: "A propagação do potencial de ação é unidirecional e é acelerada pela presença da bainha de mielina (condução saltatória) e pelo aumento do diâmetro do axônio. Os potenciais de ação são gerados especificamente nos Nodos de Ranvier, que são as interrupções na bainha de mielina. Além disso, a propagação tende a responder melhor a frequências baixas de estímulo para uma transmissão eficaz.",
+          topic: "Propagação do Potencial de Ação",
+        },
+        {
+          question: "8. Sobre os tipos de transmissão sináptica, qual a principal característica da sinapse química?",
+          options: [
+            "1. A sinapse elétrica é caracterizada pela presença de fenda sináptica e neurotransmissores.",
+            "2. Sinapses elétricas são mais complexas e unidirecionais.",
+            "3. Sinapses químicas utilizam junções comunicantes (Gap) para a transmissão de cargas elétricas.",
+            "4. A sinapse química envolve canais de cálcio dependentes de voltagem no terminal pré-sináptico.",
+          ],
+          correctAnswer: "4. A sinapse química envolve canais de cálcio dependentes de voltagem no terminal pré-sináptico.",
+          comment: "A sinapse química distingue-se pela presença de uma fenda sináptica e pela utilização de neurotransmissores. A chegada do potencial de ação no terminal pré-sináptico abre canais de cálcio dependentes de voltagem, e a entrada de íons Ca²⁺ desencadeia a liberação dos neurotransmissores por exocitose. As sinapses elétricas, por outro lado, utilizam junções comunicantes e são mais rápidas e bidirecionais.",
+          topic: "Tipos de Sinapses: Química",
+        },
+        {
+          question: "9. Qual das seguintes opções descreve corretamente a dinâmica dos íons e dos canais durante o potencial de ação?",
+          options: [
+            "1. O potencial de ação se inicia com o influxo de íons potássio, que causa a despolarização.",
+            "2. A fase de repolarização é marcada pela entrada de íons sódio na célula.",
+            "3. A bomba de sódio-potássio ATPase é essencial para manter e restaurar o potencial de repouso.",
+            "4. A hiperpolarização ocorre quando o potencial de membrana é exatamente igual ao potencial de repouso.",
+          ],
+          correctAnswer: "3. A bomba de sódio-potássio ATPase é essencial para manter e restaurar o potencial de repouso.",
+          comment: "O potencial de ação inicia-se com o influxo de íons sódio (Na⁺) durante a despolarização. A fase de repolarização é caracterizada pela saída de íons potássio (K⁺). A bomba Na⁺/K⁺-ATPase é fundamental para restabelecer os gradientes iônicos de sódio e potássio através da membrana, mantendo o potencial de repouso e preparando o neurônio para um novo potencial de ação. A hiperpolarização é um breve período onde o potencial de membrana fica mais negativo que o potencial de repouso.",
+          topic: "Dinâmica Iônica e Canais no Potencial de Ação",
+        },
+        {
+          question: "10. Considerando a estrutura do neurônio e a comunicação entre as células nervosas, qual das afirmações é verdadeira?",
+          options: [
+            "1. São componentes do neurônio: núcleo, corpo celular e bainha de mielina.",
+            "2. Os terminais do axônio recebem informações de outros neurônios.",
+            "3. A sinapse é a junção entre o axônio de um neurônio e os dendritos de outro, onde ocorre a transmissão de sinais.",
+            "4. O nodo de Ranvier é uma região do axônio coberta por mielina, onde o potencial de ação é inibido.",
+          ],
+          correctAnswer: "3. A sinapse é a junção entre o axônio de um neurônio e os dendritos de outro, onde ocorre a transmissão de sinais.",
+          comment: "A sinapse é o ponto de comunicação especializada entre neurônios, ou entre um neurônio e uma célula-alvo. Geralmente, envolve o terminal do axônio do neurônio pré-sináptico e os dendritos ou o corpo celular do neurônio pós-sináptico. Os dendritos recebem informações, enquanto os terminais do axônio as transmitem. O nodo de Ranvier, por sua vez, é uma interrupção na mielina que permite a regeneração e condução saltatória do potencial de ação, não sua inibição.",
+          topic: "Estrutura do Neurônio e Sinapse",
+        },
+      ];
+
+      function buildQuiz() {
+        const output = [];
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const options = [];
+          for (let i = 0; i < currentQuestion.options.length; i++) {
+            options.push(
+              `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+                <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+                ${currentQuestion.options[i]}
+              </label>`
+            );
+          }
+
+          output.push(
+            `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+              <div class="question">${currentQuestion.question}</div>
+              <div class="options">${options.join("")}</div>
+              <div class="comment" id="comment-${questionNumber}"></div>
+            </div>`
+          );
+        });
+
+        quizContainer.innerHTML = output.join("");
+      }
+
+      function showResults() {
+        wrongQuestionIndices = []; 
+        errorCountByTopic = {}; 
+        totalAnsweredQuestionsByTopic = {}; 
+        currentWrongQuestionIndex = -1; 
+        hasErrors = false; 
+        isShowingErrors = false; 
+        isShowingDiagnosis = false;
+
+        errorDiagnosisSection.style.display = 'none';
+        topicsToReviewList.innerHTML = ''; 
+
+        const answerContainers = quizContainer.querySelectorAll(".options");
+        let correctAnswers = 0;
+
+        questions.forEach((currentQuestion, questionNumber) => {
+          const answerContainer = answerContainers[questionNumber];
+          const userAnswerElement = answerContainer.querySelector('.option.selected');
+          const userAnswerValue = userAnswerElement ? userAnswerElement.dataset.value : undefined;
+          const commentDiv = document.getElementById(`comment-${questionNumber}`);
+
+          // Limpa estados anteriores
+          const allOptions = answerContainer.querySelectorAll('.option');
+          allOptions.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            const scissorIcon = option.querySelector('.scissor-icon');
+            if (scissorIcon) scissorIcon.classList.remove('hidden');
+          });
+          if (commentDiv) commentDiv.classList.remove('show');
+
+
+          const optionElements = answerContainer.querySelectorAll('.option');
+          optionElements.forEach(option => {
+            const scissorIcon = option.querySelector('.scissor-icon');
+
+            if (option === userAnswerElement && scissorIcon) {
+                scissorIcon.classList.add('hidden');
+            } 
+            
+            if (option.dataset.value === currentQuestion.correctAnswer) {
+                option.classList.add('correct');
+                if (commentDiv && currentQuestion.comment) {
+                    commentDiv.textContent = currentQuestion.comment;
+                    commentDiv.classList.add('show');
+                }
+            }
+          });
+
+          // ***************************************************************
+          // Lógica crucial: Apenas contabiliza se a questão foi respondida
+          // ***************************************************************
+          if (userAnswerElement) { 
+            totalAnsweredQuestionsByTopic[currentQuestion.topic] = (totalAnsweredQuestionsByTopic[currentQuestion.topic] || 0) + 1;
+
+            if (userAnswerValue !== currentQuestion.correctAnswer) {
+              userAnswerElement.classList.add('incorrect');
+              wrongQuestionIndices.push(questionNumber);
+              hasErrors = true; 
+
+              // Incrementa o contador de erros para este tópico
+              errorCountByTopic[currentQuestion.topic] = (errorCountByTopic[currentQuestion.topic] || 0) + 1;
+            } else {
+              correctAnswers++;
+            }
+          }
+          // ***************************************************************
+          // Fim da lógica crucial
+          // ***************************************************************
+        });
+
+        resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+        
+        // Rola a página totalmente para baixo para exibir o resultado
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        if (hasErrors) {
+            errorNavBtn.style.display = 'flex';
+            arrowIcon.textContent = '⬆️'; 
+            buttonText.textContent = 'Diagnóstico de Erros'; 
+            isShowingErrors = false; 
+            isShowingDiagnosis = false; 
+        } else {
+            errorNavBtn.style.display = 'none';
+        }
+      }
+
+      function scrollToQuestion(index) {
+        const questionCard = document.getElementById(`question-${index}`);
+        if (questionCard) {
+          questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        }
+      }
+      
+      function scrollToDiagnosis() {
+          errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      quizContainer.addEventListener("click", function (event) {
+        const clickedElement = event.target;
+        const optionElement = clickedElement.closest('.option');
+
+        if (optionElement) {
+            if (clickedElement.classList.contains("scissor-icon")) {
+                optionElement.classList.toggle("struck-through");
+            } 
+            else {
+                const questionNumber = optionElement.dataset.question;
+                const currentQuestionOptions = quizContainer.querySelectorAll(`.option[data-question=\"${questionNumber}\"]`);
+                currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+                
+                optionElement.classList.add("selected");
+            }
+        }
+      });
+
+      errorNavBtn.addEventListener("click", function() {
+        if (!hasErrors) { 
+            errorNavBtn.style.display = 'none';
+            return;
+        }
+
+        if (!isShowingErrors && !isShowingDiagnosis) { 
+            if (wrongQuestionIndices.length > 0) {
+                isShowingErrors = true; 
+                currentWrongQuestionIndex = 0; 
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+            } else {
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬆️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+                
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0; 
+                    
+                    if (totalAnsweredInTopic > 0) { 
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+
+        } else if (isShowingErrors) { 
+            currentWrongQuestionIndex++;
+            if (currentWrongQuestionIndex < wrongQuestionIndices.length) {
+                scrollToQuestion(wrongQuestionIndices[currentWrongQuestionIndex]);
+                buttonText.textContent = `Próximo Erro (${currentWrongQuestionIndex + 1}/${wrongQuestionIndices.length})`;
+            } else {
+                isShowingErrors = false; 
+                isShowingDiagnosis = true;
+                arrowIcon.textContent = '⬇️'; 
+                buttonText.textContent = 'Diagnóstico de Erros'; 
+
+                topicsToReviewList.innerHTML = ''; 
+                for (const topic in errorCountByTopic) {
+                    const errorsInTopic = errorCountByTopic[topic];
+                    const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+                    
+                    if (totalAnsweredInTopic > 0) {
+                        const percentage = ((errorsInTopic / totalAnsweredInTopic) * 100).toFixed(1); 
+                        const li = document.createElement('li');
+                        li.textContent = `${topic}: ${percentage}% de erros (${errorsInTopic} de ${totalAnsweredInTopic} questões respondidas)`;
+                        topicsToReviewList.appendChild(li);
+                    }
+                }
+                errorDiagnosisSection.style.display = 'block'; 
+                scrollToDiagnosis();
+                errorNavBtn.style.display = 'none'; 
+            }
+        } 
+      });
+
+      submitButton.addEventListener("click", showResults);
+
+      buildQuiz();
+    </script>
+  </body>
+</html>
