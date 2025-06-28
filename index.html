@@ -40,8 +40,20 @@
             max-width: 1000px; /* Alinha com a largura do container dos cards */
             margin: 0 auto 30px auto; /* Centraliza o container da busca e adiciona margem inferior */
             display: flex;
-            justify-content: flex-end; /* Alinha a barra de pesquisa à direita */
+            justify-content: space-between; /* Ajustado para espaçar o ícone e a barra de busca */
+            align-items: center; /* Alinha verticalmente os itens */
             padding-right: 20px; /* Padding para alinhar com o card mais à direita, compensando o padding do body */
+            padding-left: 20px; /* Adicionado padding à esquerda para o ícone */
+        }
+
+        .youtube-icon {
+            margin-right: 15px; /* Espaço entre o ícone e a barra de pesquisa */
+        }
+
+        .youtube-icon img {
+            width: 80px; /* Aumentado o tamanho do ícone para 80px */
+            height: auto;
+            vertical-align: middle;
         }
 
         .search-bar {
@@ -192,10 +204,16 @@
             .search-container {
                 padding-right: 0; /* Remove padding for smaller screens if it causes issues */
                 justify-content: center; /* Center the search bar on small screens */
+                flex-direction: column; /* Empilha os itens em telas menores */
             }
 
             .search-bar {
                 max-width: 90%; /* Adjust width for small screens */
+                margin-top: 10px; /* Adiciona espaço entre o ícone e a barra de busca em telas pequenas */
+            }
+
+            .youtube-icon {
+                margin-right: 0; /* Remove margem direita em telas menores */
             }
         }
     </style>
@@ -203,7 +221,7 @@
 <body>
     <div class="alert-overlay" id="alertOverlay">
         <div class="alert-box">
-            <span class="alert-close" id="alertClose">&times;</span>
+            <span class="alert-close" id="alertClose">×</span>
             <h2>Aviso</h2>
             <p>Essa página foi desenvolvida por mim, Bruno Fernandes Damasceno, com o intuito de ajudar colegas de faculdade e profissão a terem um complemento na faculdade. Declaro que não tenho finalidade lucrativa nessa página e que os questionários são feitos com base na ementa do curso. Utilizo bancos de dados de questões como o USP, UNIFAL, Universidade do Michigan, Uneb, etc. Também utilizo inteligências artificiais para formularem as questões. Caso detectem erros, vocês podem livremente me contactar para que eu possa corrigir.</p>
         </div>
@@ -214,6 +232,9 @@
     </header>
 
     <div class="search-container">
+        <a href="https://www.youtube.com/@brunof.damasceno7936" target="_blank" class="youtube-icon">
+            <img src="YouTube_2024.svg" alt="YouTube Icon">
+        </a>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Buscar simulados por título...">
         </div>
@@ -336,7 +357,7 @@
         </div>
     </div>
     <footer>
-        <p>&copy; 2025 Simulados de Medicina Unip. Todos os direitos reservados.</p>
+        <p>© 2025 Simulados de Medicina Unip. Todos os direitos reservados.</p>
     </footer>
 
     <script>
