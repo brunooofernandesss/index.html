@@ -1,183 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Quiz com Gemini</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #loading {
-            text-align: center;
-            margin-top: 20px;
-            font-style: italic;
-            color: #555;
-            display: none; /* Escondido por padrão */
-        }
-        #quizOutput {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .question {
-            background-color: #e9f7fe;
-            border: 1px solid #cceeff;
-            border-left: 5px solid #007bff;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-        .question p {
-            margin: 0 0 10px 0;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        .question ol {
-            list-style-type: lower-alpha;
-            padding-left: 25px;
-            margin: 0;
-        }
-        .question li {
-            margin-bottom: 5px;
-        }
-        .error {
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Quiz Inteligente com Gemini</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 { text-align: center; }
+    .card {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .erro {
+      color: red;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Gerador de Quiz com Gemini</h1>
+  <h1>Gerador de Quiz com Gemini</h1>
 
-        <label for="topicosInput">Tópicos (separe por vírgulas):</label>
-        <input type="text" id="topicosInput" placeholder="Ex: fotossíntese, gravidade, matemática básica">
+  <input id="topicos" type="text" placeholder="Digite os tópicos separados por vírgula" style="width: 100%; padding: 10px;" />
+  <button onclick="gerarQuiz()" style="margin-top: 1rem; padding: 10px 20px;">Gerar Quiz</button>
 
-        <button onclick="gerarQuiz()">Gerar Quiz</button>
+  <div id="resultado" style="margin-top: 2rem;"></div>
+  <div class="erro" id="erro"></div>
 
-        <div id="loading">Gerando o quiz, por favor aguarde...</div>
-        <div id="quizOutput">
-            </div>
-    </div>
+  <script>
+    async function gerarQuiz() {
+      const topicos = document.getElementById("topicos").value.split(",").map(t => t.trim());
+      const resultado = document.getElementById("resultado");
+      const erro = document.getElementById("erro");
+      resultado.innerHTML = "";
+      erro.textContent = "⏳ Gerando quiz...";
 
-    <script>
-        async function gerarQuiz() {
-            const topicosInput = document.getElementById('topicosInput').value;
-            const quizOutput = document.getElementById('quizOutput');
-            const loading = document.getElementById('loading');
-            
-            // Limpa mensagens anteriores
-            quizOutput.innerHTML = '';
-            loading.style.display = 'block'; // Mostra o indicador de carregamento
+      try {
+        const response = await fetch("https://habitat-cure-deck-bargains.trycloudflare.com/quiz", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topicos })
+        });
 
-            if (!topicosInput) {
-                quizOutput.innerHTML = '<p class="error">Por favor, insira pelo menos um tópico.</p>';
-                loading.style.display = 'none';
-                return;
-            }
-
-            const topicosArray = topicosInput.split(',').map(topic => topic.trim()).filter(topic => topic.length > 0);
-
-            if (topicosArray.length === 0) {
-                quizOutput.innerHTML = '<p class="error">Por favor, insira tópicos válidos.</p>';
-                loading.style.display = 'none';
-                return;
-            }
-
-            const data = {
-                topicos: topicosArray
-            };
-
-            try {
-                // Use o endereço público do Cloudflare Tunnel ou o local, se preferir testar localmente.
-                // const response = await fetch('http://127.0.0.1:5000/quiz', { 
-                const response = await fetch('https://condos-permission-rp-trivia.trycloudflare.com/quiz', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                loading.style.display = 'none'; // Esconde o indicador de carregamento
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(Erro HTTP! Status: ${response.status} - ${errorText});
-                }
-
-                const quizData = await response.json();
-
-                if (quizData.perguntas && quizData.perguntas.length > 0) {
-                    let htmlContent = '';
-                    quizData.perguntas.forEach((pergunta, index) => {
-                        htmlContent += <div class="question">;
-                        htmlContent += <p>${index + 1}. ${pergunta.pergunta}</p>;
-                        if (pergunta.opcoes && pergunta.opcoes.length > 0) {
-                            htmlContent += <ol>;
-                            pergunta.opcoes.forEach(opcao => {
-                                htmlContent += <li>${opcao}</li>;
-                            });
-                            htmlContent += </ol>;
-                        }
-                        htmlContent += </div>;
-                    });
-                    quizOutput.innerHTML = htmlContent;
-                } else {
-                    quizOutput.innerHTML = '<p>Não foi possível gerar perguntas para os tópicos fornecidos. Tente com outros tópicos.</p>';
-                }
-
-            } catch (error) {
-                loading.style.display = 'none'; // Garante que o loading seja escondido em caso de erro
-                console.error('Erro ao gerar o quiz:', error);
-                quizOutput.innerHTML = <p class="error">Ocorreu um erro ao conectar com o servidor ou gerar o quiz: ${error.message}. Verifique o console para mais detalhes.</p>;
-            }
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.erro || "Erro desconhecido");
         }
-    </script>
+
+        const data = await response.json();
+        resultado.innerHTML = data.html;
+        erro.textContent = "";
+      } catch (e) {
+        erro.textContent = "❌ Erro de conexão com a API: " + e.message;
+      }
+    }
+  </script>
 </body>
 </html>
