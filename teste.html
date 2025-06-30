@@ -3,79 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz com Gemini</title>
+  <title>Gerador de Quiz - Gemini</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
-      background: #f9f9f9;
+      background-color: #f2f2f2;
     }
     h1 {
       color: #333;
     }
-    textarea {
+    input, button {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
       width: 100%;
-      height: 100px;
-      margin-top: 1rem;
     }
-    button {
-      padding: 10px 20px;
-      margin-top: 1rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    #quiz {
+    #quiz-container {
       margin-top: 2rem;
     }
     .card {
       background: #fff;
-      border: 1px solid #ccc;
       padding: 1rem;
-      margin-bottom: 1rem;
+      margin: 1rem 0;
       border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <h1>Gerador de Quiz com Gemini</h1>
-  <p>Digite os tópicos separados por vírgula (ex: genética, energia, história do Brasil):</p>
-  <textarea id="topicos" placeholder="Digite os tópicos aqui..."></textarea>
-  <br />
+  <h1>Quiz Automático com Gemini</h1>
+  <label for="topicos">Digite os tópicos separados por vírgula:</label>
+  <input id="topicos" type="text" placeholder="Ex: biologia, história, matemática" />
   <button onclick="gerarQuiz()">Gerar Quiz</button>
 
-  <div id="quiz"></div>
+  <div id="status"></div>
+  <div id="quiz-container"></div>
 
   <script>
     async function gerarQuiz() {
-      const topicosTexto = document.getElementById("topicos").value.trim();
-      if (!topicosTexto) {
-        alert("Por favor, digite ao menos um tópico.");
-        return;
-      }
-
-      const topicos = topicosTexto.split(',').map(t => t.trim());
-      const quizDiv = document.getElementById("quiz");
-      quizDiv.innerHTML = "⌛ Gerando quiz...";
+      const topicos = document.getElementById("topicos").value;
+      const status = document.getElementById("status");
+      const quizContainer = document.getElementById("quiz-container");
+      status.textContent = "⏳ Gerando quiz...";
+      quizContainer.innerHTML = "";
 
       try {
-        const resposta = await fetch("https://lighting-allowance-humor-military.trycloudflare.com/quiz", {
+        const resposta = await fetch("https://www.quizia.xyz/quiz", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topicos })
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ topicos: topicos.split(",").map(t => t.trim()) })
         });
 
-        if (!resposta.ok) throw new Error("Erro ao gerar quiz");
+        const json = await resposta.json();
 
-        const data = await resposta.json();
-
-        if (data.erro) {
-          quizDiv.innerHTML = <p style="color:red;">Erro: ${data.erro}</p>;
+        if (resposta.ok && json.html) {
+          quizContainer.innerHTML = json.html;
+          status.textContent = "✅ Quiz gerado com sucesso!";
         } else {
-          quizDiv.innerHTML = data.html;
+          status.textContent = "⚠ Erro: " + (json.erro || "Erro inesperado");
         }
-      } catch (erro) {
-        console.error(erro);
-        quizDiv.innerHTML = <p style="color:red;">Erro de conexão com a API. Tente novamente.</p>;
+      } catch (e) {
+        status.textContent = "❌ Falha de conexão com a API.";
       }
     }
   </script>
