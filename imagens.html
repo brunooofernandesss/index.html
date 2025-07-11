@@ -205,6 +205,7 @@
 
             // Mapeamento das pastas com seus títulos em português
             // e o número máximo de imagens (ajuste conforme necessário)
+            // IMPORTANTE: Ajuste o max_images para o *total* de imagens, incluindo a "EmbeddedImage.jpg"
             const folders = {
                 'Abdominal_Wall_Peritoneum_and_Intestines': {
                     title_pt: 'Parede Abdominal, Peritônio e Intestinos',
@@ -235,7 +236,7 @@
                     max_images: 28 // Exemplo
                 },
                 'Face': {
-            title_pt: 'Face',
+                    title_pt: 'Face',
                     max_images: 32 // Exemplo
                 },
                 'Heart': {
@@ -339,6 +340,34 @@
                 });
             }
 
+            // Função auxiliar para criar e anexar elementos de imagem
+            function createImageElement(folderName, fileName) {
+                const imageUrl = `${baseUrl}${folderName}/${fileName}`;
+                const imageCaptionText = imageUrl;
+
+                const imageItem = document.createElement('div');
+                imageItem.classList.add('image-item');
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = `${folderName} - ${fileName}`; // Alt text para acessibilidade
+                img.loading = 'lazy'; // Carregamento lazy para otimização
+                img.classList.add('zoomable-image'); // Adiciona classe para o zoom
+
+                const caption = document.createElement('p');
+                caption.classList.add('image-caption');
+                const captionLink = document.createElement('a');
+                captionLink.href = imageUrl;
+                captionLink.textContent = imageCaptionText;
+                captionLink.target = "_blank"; // Abre o link em uma nova aba
+                caption.appendChild(captionLink);
+
+                imageItem.appendChild(img);
+                imageItem.appendChild(caption);
+
+                return imageItem;
+            }
+
             // Itera sobre cada pasta e cria o bloco correspondente
             for (const folderName in folders) {
                 if (folders.hasOwnProperty(folderName)) {
@@ -363,32 +392,18 @@
                     const imageGrid = document.createElement('div');
                     imageGrid.classList.add('image-grid');
 
-                    // Adiciona as imagens para a pasta atual
-                    for (let i = 1; i <= maxImages; i++) {
-                        const imageUrl = `${baseUrl}${folderName}/EmbeddedImage-${i}.jpg`;
-                        // O texto da legenda agora será o próprio URL
-                        const imageCaptionText = imageUrl; 
+                    // 1. Adiciona a imagem 'EmbeddedImage.jpg' se ela existir
+                    const firstImageItem = createImageElement(folderName, 'EmbeddedImage.jpg');
+                    imageGrid.appendChild(firstImageItem);
 
-                        const imageItem = document.createElement('div');
-                        imageItem.classList.add('image-item');
 
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = `${titleEn} - Imagem ${i}`; // Alt text para acessibilidade
-                        img.loading = 'lazy'; // Carregamento lazy para otimização
-                        img.classList.add('zoomable-image'); // Adiciona classe para o zoom
-
-                        const caption = document.createElement('p');
-                        caption.classList.add('image-caption');
-                        // Cria um link com o próprio URL como texto
-                        const captionLink = document.createElement('a');
-                        captionLink.href = imageUrl;
-                        captionLink.textContent = imageCaptionText;
-                        captionLink.target = "_blank"; // Abre o link em uma nova aba
-                        caption.appendChild(captionLink);
-
-                        imageItem.appendChild(img);
-                        imageItem.appendChild(caption);
+                    // 2. Adiciona as imagens numeradas (EmbeddedImage-1.jpg, EmbeddedImage-2.jpg, etc.)
+                    // Começa do 1 e vai até maxImages - 1 (já que a primeira imagem já foi adicionada)
+                    // Se 'max_images' representa o total, e 'EmbeddedImage.jpg' conta como uma,
+                    // então precisamos de (max_images - 1) imagens numeradas.
+                    // O loop deve ir de 1 até o (max_images - 1) para as imagens com sufixo numérico.
+                    for (let i = 1; i < maxImages; i++) { // Alterado para i < maxImages
+                        const imageItem = createImageElement(folderName, `EmbeddedImage-${i}.jpg`);
                         imageGrid.appendChild(imageItem);
                     }
 
