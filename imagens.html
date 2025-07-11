@@ -89,8 +89,18 @@
 
         .image-caption {
             padding: 10px;
-            font-size: 0.9em;
+            font-size: 0.8em; /* Tamanho da fonte um pouco menor para o link */
             color: #666;
+            word-break: break-all; /* Quebra o texto para evitar overflow */
+        }
+
+        .image-caption a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        .image-caption a:hover {
+            text-decoration: underline;
         }
 
         footer {
@@ -167,7 +177,6 @@
         /* Início do JavaScript */
         document.addEventListener('DOMContentLoaded', function() {
             const galleryContainer = document.getElementById('gallery-container');
-            // BASE URL CORRIGIDO com "Anatomia" em maiúsculas
             const baseUrl = 'https://brunooofernandesss.github.io/index.html/Anatomia/Michigan/';
             const modal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
@@ -226,7 +235,7 @@
                     max_images: 28 // Exemplo
                 },
                 'Face': {
-                    title_pt: 'Face',
+            title_pt: 'Face',
                     max_images: 32 // Exemplo
                 },
                 'Heart': {
@@ -357,7 +366,8 @@
                     // Adiciona as imagens para a pasta atual
                     for (let i = 1; i <= maxImages; i++) {
                         const imageUrl = `${baseUrl}${folderName}/EmbeddedImage-${i}.jpg`;
-                        const imageCaption = `Imagem ${i}`; // Legenda da imagem
+                        // O texto da legenda agora será o próprio URL
+                        const imageCaptionText = imageUrl; 
 
                         const imageItem = document.createElement('div');
                         imageItem.classList.add('image-item');
@@ -370,7 +380,12 @@
 
                         const caption = document.createElement('p');
                         caption.classList.add('image-caption');
-                        caption.textContent = imageCaption;
+                        // Cria um link com o próprio URL como texto
+                        const captionLink = document.createElement('a');
+                        captionLink.href = imageUrl;
+                        captionLink.textContent = imageCaptionText;
+                        captionLink.target = "_blank"; // Abre o link em uma nova aba
+                        caption.appendChild(captionLink);
 
                         imageItem.appendChild(img);
                         imageItem.appendChild(caption);
