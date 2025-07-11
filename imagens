@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomia Michigan - Galeria</title>
+    <style>
+        /* Início do CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .category-block {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        .category-title {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .category-subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .image-item {
+            background-color: #e9e9e9;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 200px; /* Altura fixa para as imagens */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            display: block;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .image-caption {
+            padding: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        footer {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 40px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsividade básica */
+        @media (max-width: 768px) {
+            .image-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            header h1 {
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+            .image-item img {
+                height: 180px;
+            }
+        }
+        /* Fim do CSS */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Galeria de Anatomia</h1>
+        <p>Imagens da Anatomia de Michigan</p>
+    </header>
+
+    <main id="gallery-container">
+        </main>
+
+    <footer>
+        <p>&copy; 2025 Bruno Fernandes. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        /* Início do JavaScript */
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryContainer = document.getElementById('gallery-container');
+            const baseUrl = 'https://brunooofernandesss.github.io/Anatomia/Michigan/';
+
+            // Mapeamento das pastas com seus títulos em português
+            // e o número máximo de imagens (ajuste conforme necessário)
+            const folders = {
+                'Abdominal_Wall_Peritoneum_and_Intestines': {
+                    title_pt: 'Parede Abdominal, Peritônio e Intestinos',
+                    max_images: 41
+                },
+                'Anterior_Neck': {
+                    title_pt: 'Pescoço Anterior',
+                    max_images: 39
+                },
+                'Bones_Joints_and_Movement': {
+                    title_pt: 'Ossos, Articulações e Movimento',
+                    max_images: 30 // Exemplo, ajuste o número real
+                },
+                'Brachial_Plexus': {
+                    title_pt: 'Plexo Braquial',
+                    max_images: 25 // Exemplo
+                },
+                'Cranial_Cavity_Venous_Sinuses_and_Brain': {
+                    title_pt: 'Cavidade Craniana, Seios Venosos e Cérebro',
+                    max_images: 45 // Exemplo
+                },
+                'Deep_Back_and_Spinal_Cord': {
+                    title_pt: 'Dorso Profundo e Medula Espinhal',
+                    max_images: 35 // Exemplo
+                },
+                'Duodenum_Pancreas_and_Abdominal_Aorta': {
+                    title_pt: 'Duodeno, Pâncreas e Aorta Abdominal',
+                    max_images: 28 // Exemplo
+                },
+                'Face': {
+                    title_pt: 'Face',
+                    max_images: 32 // Exemplo
+                },
+                'Heart': {
+                    title_pt: 'Coração',
+                    max_images: 40 // Exemplo
+                },
+                'Infratemporal_Fossa': {
+                    title_pt: 'Fossa Infratemporal',
+                    max_images: 20 // Exemplo
+                },
+                'Kidneys_and_Urinary_System': {
+                    title_pt: 'Rins e Sistema Urinário',
+                    max_images: 38 // Exemplo
+                },
+                'Lumbar_Spine_Hip_and_Knee': {
+                    title_pt: 'Coluna Lombar, Quadril e Joelho',
+                    max_images: 30 // Exemplo
+                },
+                'Lungs_and_Ventilation_Pathway': {
+                    title_pt: 'Pulmões e Via de Ventilação',
+                    max_images: 33 // Exemplo
+                },
+                'Mastication': {
+                    title_pt: 'Mastigação',
+                    max_images: 18 // Exemplo
+                },
+                'Nasal_Cavity_Sinuses_and_Ear': {
+                    title_pt: 'Cavidade Nasal, Seios e Ouvido',
+                    max_images: 27 // Exemplo
+                },
+                'Oral_Cavity': {
+                    title_pt: 'Cavidade Oral',
+                    max_images: 22 // Exemplo
+                },
+                'Orbit_and_Cavernous_Sinus': {
+                    title_pt: 'Órbita e Seio Cavernoso',
+                    max_images: 29 // Exemplo
+                },
+                'Overview_of_Lower_Limb': {
+                    title_pt: 'Visão Geral do Membro Inferior',
+                    max_images: 42 // Exemplo
+                },
+                'Overview_of_Upper_Limb': {
+                    title_pt: 'Visão Geral do Membro Superior',
+                    max_images: 40 // Exemplo
+                },
+                'Parotid_Gland_and_Submandibular_Triangle': {
+                    title_pt: 'Glândula Parótida e Triângulo Submandibular',
+                    max_images: 25 // Exemplo
+                },
+                'Pectoral_Region_and_Superficial_Back': {
+                    title_pt: 'Região Peitoral e Dorso Superficial',
+                    max_images: 36 // Exemplo
+                },
+                'Pelvic_Cavity': {
+                    title_pt: 'Cavidade Pélvica',
+                    max_images: 31 // Exemplo
+                },
+                'Perineum': {
+                    title_pt: 'Períneo',
+                    max_images: 23 // Exemplo
+                },
+                'Pharynx_and_Larynx': {
+                    title_pt: 'Faringe e Laringe',
+                    max_images: 30 // Exemplo
+                },
+                'Posterior_Mediastinum': {
+                    title_pt: 'Mediastino Posterior',
+                    max_images: 20 // Exemplo
+                },
+                'Posterior_Neck': {
+                    title_pt: 'Pescoço Posterior',
+                    max_images: 24 // Exemplo
+                },
+                'Pterygopalatine_Fossa_and_Palate': {
+                    title_pt: 'Fossa Pterigopalatina e Palato',
+                    max_images: 19 // Exemplo
+                },
+                'Shoulder': {
+                    title_pt: 'Ombro',
+                    max_images: 34 // Exemplo
+                },
+                'Stomach_Liver_and_Spleen': {
+                    title_pt: 'Estômago, Fígado e Baço',
+                    max_images: 37 // Exemplo
+                },
+                'Superior_Mediastinum_and_Root_of_Neck': {
+                    title_pt: 'Mediastino Superior e Raiz do Pescoço',
+                    max_images: 26 // Exemplo
+                },
+                'Wrist_Hand_and_Foot': {
+                    title_pt: 'Punho, Mão e Pé',
+                    max_images: 43 // Exemplo
+                }
+            };
+
+            // Função para capitalizar a primeira letra de cada palavra
+            function toTitleCase(str) {
+                return str.replace(/_/g, ' ').replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
+
+            // Itera sobre cada pasta e cria o bloco correspondente
+            for (const folderName in folders) {
+                if (folders.hasOwnProperty(folderName)) {
+                    const folderInfo = folders[folderName];
+                    const maxImages = folderInfo.max_images;
+                    const titleEn = toTitleCase(folderName);
+                    const titlePt = folderInfo.title_pt;
+
+                    const categoryBlock = document.createElement('section');
+                    categoryBlock.classList.add('category-block');
+
+                    const titleElement = document.createElement('h2');
+                    titleElement.classList.add('category-title');
+                    titleElement.textContent = titleEn;
+                    categoryBlock.appendChild(titleElement);
+
+                    const subtitleElement = document.createElement('p');
+                    subtitleElement.classList.add('category-subtitle');
+                    subtitleElement.textContent = titlePt;
+                    categoryBlock.appendChild(subtitleElement);
+
+                    const imageGrid = document.createElement('div');
+                    imageGrid.classList.add('image-grid');
+
+                    // Adiciona as imagens para a pasta atual
+                    for (let i = 1; i <= maxImages; i++) {
+                        const imageUrl = `${baseUrl}${folderName}/EmbeddedImage-${i}.jpg`;
+                        const imageCaption = `Imagem ${i}`; // Legenda da imagem
+
+                        const imageItem = document.createElement('div');
+                        imageItem.classList.add('image-item');
+
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = `${titleEn} - Imagem ${i}`; // Alt text para acessibilidade
+                        img.loading = 'lazy'; // Carregamento lazy para otimização
+
+                        const caption = document.createElement('p');
+                        caption.classList.add('image-caption');
+                        caption.textContent = imageCaption;
+
+                        imageItem.appendChild(img);
+                        imageItem.appendChild(caption);
+                        imageGrid.appendChild(imageItem);
+                    }
+
+                    categoryBlock.appendChild(imageGrid);
+                    galleryContainer.appendChild(categoryBlock);
+                }
+            }
+        });
+        /* Fim do JavaScript */
+    </script>
+</body>
+</html>
