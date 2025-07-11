@@ -189,6 +189,14 @@
             const modalImage = document.getElementById('modalImage');
             const closeButton = document.querySelector('.modal-close-button');
 
+            // Função para capitalizar a primeira letra de cada palavra
+            // MOVIDA PARA CIMA PARA SER DEFINIDA ANTES DE SER USADA
+            function toTitleCase(str) {
+                return str.replace(/_/g, ' ').replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
+
             // Função para abrir o modal
             function openModal(imageUrl) {
                 modalImage.src = imageUrl;
@@ -216,7 +224,7 @@
             const folders = {
                 'Abdominal_Wall_Peritoneum_and_Intestines': {
                     title_pt: 'Parede Abdominal, Peritônio e Intestinos',
-                    max_images: 42, // Ajustado para 42 imagens neste bloco
+                    max_images: 42, // Ajustado para 42 imagens neste bloco (1 original + 41 numeradas)
                     descriptions: {
                         'EmbeddedImage.jpg': 'Esta imagem mostra uma vista superior de uma vértebra lombar. As estruturas rotuladas são: Spinous process (Processo espinhoso), Transverse process (Processo transverso) e Vertebral body (Corpo vertebral).',
                         'EmbeddedImage-1.jpg': 'Esta imagem apresenta uma vista anterior da cintura pélvica. As estruturas ósseas destacadas são: Ilium (Ilio), Ischium (Ísquio) e Pubis (Púbis).',
@@ -264,13 +272,158 @@
                 },
                 'Anterior_Neck': {
                     title_pt: 'Pescoço Anterior',
-                    max_images: 39 // Lembre-se de ajustar este e os próximos conforme a sua contagem real + 1 se tiver "EmbeddedImage.jpg"
+                    max_images: 39, // Ajuste este e os próximos conforme a sua contagem real + 1 se tiver "EmbeddedImage.jpg"
+                    descriptions: {} // Adicione as descrições aqui quando enviar
                 },
-                // ... (outras pastas, adicionar as descrições aqui quando você enviar)
+                'Bones_Joints_and_Movement': {
+                    title_pt: 'Ossos, Articulações e Movimento',
+                    max_images: 30, // Exemplo, ajuste o número real
+                    descriptions: {}
+                },
+                'Brachial_Plexus': {
+                    title_pt: 'Plexo Braquial',
+                    max_images: 25, // Exemplo
+                    descriptions: {}
+                },
+                'Cranial_Cavity_Venous_Sinuses_and_Brain': {
+                    title_pt: 'Cavidade Craniana, Seios Venosos e Cérebro',
+                    max_images: 45, // Exemplo
+                    descriptions: {}
+                },
+                'Deep_Back_and_Spinal_Cord': {
+                    title_pt: 'Dorso Profundo e Medula Espinhal',
+                    max_images: 35, // Exemplo
+                    descriptions: {}
+                },
+                'Duodenum_Pancreas_and_Abdominal_Aorta': {
+                    title_pt: 'Duodeno, Pâncreas e Aorta Abdominal',
+                    max_images: 28, // Exemplo
+                    descriptions: {}
+                },
+                'Face': {
+                    title_pt: 'Face',
+                    max_images: 32, // Exemplo
+                    descriptions: {}
+                },
+                'Heart': {
+                    title_pt: 'Coração',
+                    max_images: 40, // Exemplo
+                    descriptions: {}
+                },
+                'Infratemporal_Fossa': {
+                    title_pt: 'Fossa Infratemporal',
+                    max_images: 20, // Exemplo
+                    descriptions: {}
+                },
+                'Kidneys_and_Urinary_System': {
+                    title_pt: 'Rins e Sistema Urinário',
+                    max_images: 38, // Exemplo
+                    descriptions: {}
+                },
+                'Lumbar_Spine_Hip_and_Knee': {
+                    title_pt: 'Coluna Lombar, Quadril e Joelho',
+                    max_images: 30, // Exemplo
+                    descriptions: {}
+                },
+                'Lungs_and_Ventilation_Pathway': {
+                    title_pt: 'Pulmões e Via de Ventilação',
+                    max_images: 33, // Exemplo
+                    descriptions: {}
+                },
+                'Mastication': {
+                    title_pt: 'Mastigação',
+                    max_images: 18, // Exemplo
+                    descriptions: {}
+                },
+                'Nasal_Cavity_Sinuses_and_Ear': {
+                    title_pt: 'Cavidade Nasal, Seios e Ouvido',
+                    max_images: 27, // Exemplo
+                    descriptions: {}
+                },
+                'Oral_Cavity': {
+                    title_pt: 'Cavidade Oral',
+                    max_images: 22, // Exemplo
+                    descriptions: {}
+                },
+                'Orbit_and_Cavernous_Sinus': {
+                    title_pt: 'Órbita e Seio Cavernoso',
+                    max_images: 29, // Exemplo
+                    descriptions: {}
+                },
+                'Overview_of_Lower_Limb': {
+                    title_pt: 'Visão Geral do Membro Inferior',
+                    max_images: 42, // Exemplo
+                    descriptions: {}
+                },
+                'Overview_of_Upper_Limb': {
+                    title_pt: 'Visão Geral do Membro Superior',
+                    max_images: 40, // Exemplo
+                    descriptions: {}
+                },
+                'Parotid_Gland_and_Submandibular_Triangle': {
+                    title_pt: 'Glândula Parótida e Triângulo Submandibular',
+                    max_images: 25, // Exemplo
+                    descriptions: {}
+                },
+                'Pectoral_Region_and_Superficial_Back': {
+                    title_pt: 'Região Peitoral e Dorso Superficial',
+                    max_images: 36, // Exemplo
+                    descriptions: {}
+                },
+                'Pelvic_Cavity': {
+                    title_pt: 'Cavidade Pélvica',
+                    max_images: 31, // Exemplo
+                    descriptions: {}
+                },
+                'Perineum': {
+                    title_pt: 'Períneo',
+                    max_images: 23, // Exemplo
+                    descriptions: {}
+                },
+                'Pharynx_and_Larynx': {
+                    title_pt: 'Faringe e Laringe',
+                    max_images: 30, // Exemplo
+                    descriptions: {}
+                },
+                'Posterior_Mediastinum': {
+                    title_pt: 'Mediastino Posterior',
+                    max_images: 20, // Exemplo
+                    descriptions: {}
+                },
+                'Posterior_Neck': {
+                    title_pt: 'Pescoço Posterior',
+                    max_images: 24, // Exemplo
+                    descriptions: {}
+                },
+                'Pterygopalatine_Fossa_and_Palate': {
+                    title_pt: 'Fossa Pterigopalatina e Palato',
+                    max_images: 19, // Exemplo
+                    descriptions: {}
+                },
+                'Shoulder': {
+                    title_pt: 'Ombro',
+                    max_images: 34, // Exemplo
+                    descriptions: {}
+                },
+                'Stomach_Liver_and_Spleen': {
+                    title_pt: 'Estômago, Fígado e Baço',
+                    max_images: 37, // Exemplo
+                    descriptions: {}
+                },
+                'Superior_Mediastinum_and_Root_of_Neck': {
+                    title_pt: 'Mediastino Superior e Raiz do Pescoço',
+                    max_images: 26, // Exemplo
+                    descriptions: {}
+                },
+                'Wrist_Hand_and_Foot': {
+                    title_pt: 'Punho, Mão e Pé',
+                    max_images: 43, // Exemplo
+                    descriptions: {}
+                }
             };
 
             // Função auxiliar para criar e anexar elementos de imagem
-            function createImageElement(folderName, fileName, descriptionText) {
+            function createImageElement(folderName, fileName, descriptionText, titleEn) {
                 const imageUrl = `${baseUrl}${folderName}/${fileName}`;
                 const imageCaptionText = imageUrl;
 
@@ -279,7 +432,7 @@
 
                 const img = document.createElement('img');
                 img.src = imageUrl;
-                img.alt = `${folderName} - ${fileName}`; // Alt text para acessibilidade
+                img.alt = `${titleEn} - ${fileName}`; // Alt text para acessibilidade
                 img.loading = 'lazy'; // Carregamento lazy para otimização
                 img.classList.add('zoomable-image'); // Adiciona classe para o zoom
 
@@ -330,19 +483,22 @@
                     const imageGrid = document.createElement('div');
                     imageGrid.classList.add('image-grid');
 
-                    // Lógica para adicionar EmbeddedImage.jpg
+                    // 1. Adiciona a imagem 'EmbeddedImage.jpg' se ela existir e tiver descrição
                     const fileName0 = 'EmbeddedImage.jpg';
                     const description0 = descriptions[fileName0];
-                    const firstImageItem = createImageElement(folderName, fileName0, description0);
+                    // Só adiciona a primeira imagem se ela tiver uma descrição (ou se você quiser que ela sempre tente carregar)
+                    // Decidi sempre tentar carregar, mas a descrição só aparece se existir
+                    const firstImageItem = createImageElement(folderName, fileName0, description0, titleEn);
                     imageGrid.appendChild(firstImageItem);
 
-                    // Lógica para adicionar EmbeddedImage-1.jpg até EmbeddedImage-N.jpg
-                    // Note que se max_images é o TOTAL de imagens e inclui EmbeddedImage.jpg,
-                    // então as imagens numeradas vão de 1 até (max_images - 1).
+
+                    // 2. Adiciona as imagens numeradas (EmbeddedImage-1.jpg, EmbeddedImage-2.jpg, etc.)
+                    // O loop deve ir de 1 até o (max_images - 1) para as imagens com sufixo numérico.
+                    // Isso pressupõe que 'max_images' é o TOTAL de imagens (incluindo EmbeddedImage.jpg).
                     for (let i = 1; i < maxImages; i++) {
                         const fileName = `EmbeddedImage-${i}.jpg`;
                         const description = descriptions[fileName];
-                        const imageItem = createImageElement(folderName, fileName, description);
+                        const imageItem = createImageElement(folderName, fileName, description, titleEn);
                         imageGrid.appendChild(imageItem);
                     }
 
