@@ -44,6 +44,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
             padding: 20px;
+            position: relative; /* Para posicionar o overlay */
         }
 
         .category-title {
@@ -74,6 +75,7 @@
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             text-align: center;
+            position: relative; /* Para posicionar o ícone de zoom */
         }
 
         .image-item img {
@@ -82,6 +84,7 @@
             object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
             display: block;
             border-bottom: 1px solid #ccc;
+            cursor: zoom-in; /* Indica que a imagem pode ser ampliada */
         }
 
         .image-caption {
@@ -99,24 +102,46 @@
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* Responsividade básica */
-        @media (max-width: 768px) {
-            .image-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-            header h1 {
-                font-size: 2em;
-            }
+        /* Estilos para o modal de zoom */
+        .image-modal {
+            display: none; /* Inicialmente escondido */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* Fundo preto semi-transparente */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow: auto; /* Para imagens muito grandes */
         }
 
-        @media (max-width: 480px) {
-            .image-grid {
-                grid-template-columns: 1fr;
-            }
-            .image-item img {
-                height: 180px;
-            }
+        .image-modal-content {
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
         }
+
+        .modal-close-button {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .modal-close-button:hover,
+        .modal-close-button:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         /* Fim do CSS */
     </style>
 </head>
@@ -129,6 +154,11 @@
     <main id="gallery-container">
         </main>
 
+    <div id="imageModal" class="image-modal">
+        <span class="modal-close-button">&times;</span>
+        <img class="image-modal-content" id="modalImage">
+    </div>
+
     <footer>
         <p>&copy; 2025 Bruno Fernandes. Todos os direitos reservados.</p>
     </footer>
@@ -139,6 +169,30 @@
             const galleryContainer = document.getElementById('gallery-container');
             // BASE URL CORRIGIDO com "Anatomia" em maiúsculas
             const baseUrl = 'https://brunooofernandesss.github.io/index.html/Anatomia/Michigan/';
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const closeButton = document.querySelector('.modal-close-button');
+
+            // Função para abrir o modal
+            function openModal(imageUrl) {
+                modalImage.src = imageUrl;
+                modal.style.display = "flex";
+            }
+
+            // Função para fechar o modal
+            function closeModal() {
+                modal.style.display = "none";
+            }
+
+            // Fecha o modal ao clicar no botão de fechar
+            closeButton.addEventListener('click', closeModal);
+
+            // Fecha o modal ao clicar fora da imagem
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            });
 
             // Mapeamento das pastas com seus títulos em português
             // e o número máximo de imagens (ajuste conforme necessário)
@@ -279,7 +333,7 @@
             // Itera sobre cada pasta e cria o bloco correspondente
             for (const folderName in folders) {
                 if (folders.hasOwnProperty(folderName)) {
-                    const folderInfo = folders[folderName];
+                    const folderInfo = folders [folderName];
                     const maxImages = folderInfo.max_images;
                     const titleEn = toTitleCase(folderName);
                     const titlePt = folderInfo.title_pt;
@@ -312,6 +366,7 @@
                         img.src = imageUrl;
                         img.alt = `${titleEn} - Imagem ${i}`; // Alt text para acessibilidade
                         img.loading = 'lazy'; // Carregamento lazy para otimização
+                        img.classList.add('zoomable-image'); // Adiciona classe para o zoom
 
                         const caption = document.createElement('p');
                         caption.classList.add('image-caption');
@@ -326,6 +381,14 @@
                     galleryContainer.appendChild(categoryBlock);
                 }
             }
+
+            // Adiciona evento de clique a todas as imagens zoomáveis
+            const zoomableImages = document.querySelectorAll('.zoomable-image');
+            zoomableImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    openModal(this.src);
+                });
+            });
         });
         /* Fim do JavaScript */
     </script>
