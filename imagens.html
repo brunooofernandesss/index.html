@@ -103,6 +103,13 @@
             text-decoration: underline;
         }
 
+        .image-description {
+            font-size: 0.75em; /* Tamanho da fonte menor para a descrição */
+            color: #444;
+            padding: 0 10px 10px; /* Preenchimento para a descrição */
+            text-align: left; /* Alinhar texto da descrição à esquerda */
+        }
+
         footer {
             background-color: #0056b3;
             color: white;
@@ -209,139 +216,61 @@
             const folders = {
                 'Abdominal_Wall_Peritoneum_and_Intestines': {
                     title_pt: 'Parede Abdominal, Peritônio e Intestinos',
-                    max_images: 41
+                    max_images: 42, // Ajustado para 42 imagens neste bloco
+                    descriptions: {
+                        'EmbeddedImage.jpg': 'Esta imagem mostra uma vista superior de uma vértebra lombar. As estruturas rotuladas são: Spinous process (Processo espinhoso), Transverse process (Processo transverso) e Vertebral body (Corpo vertebral).',
+                        'EmbeddedImage-1.jpg': 'Esta imagem apresenta uma vista anterior da cintura pélvica. As estruturas ósseas destacadas são: Ilium (Ilio), Ischium (Ísquio) e Pubis (Púbis).',
+                        'EmbeddedImage-2.jpg': 'Esta imagem é uma vista lateral de um osso coxal esquerdo, com diferentes partes coloridas para distinção. Os rótulos indicam: Ilium (Ilio) - em azul, Pubis (Púbis) - em verde e Ischium (Ísquio) - em laranja.',
+                        'EmbeddedImage-3.jpg': 'Esta imagem é uma vista anterior da cintura pélvica, focando em marcos específicos do ilio. Os rótulos são: Iliac crest (Crista ilíaca) e Anterior superior iliac spine (Espina ilíaca ântero-superior).',
+                        'EmbeddedImage-4.jpg': 'Esta imagem mostra uma vista anterior da cintura pélvica, com ênfase nas características do púbis. Os rótulos incluem: Pubic crest (Crista púbica), Pubic tubercle (Tubérculo púbico) e Pubic body (Corpo do púbis).',
+                        'EmbeddedImage-5.jpg': 'Esta imagem é uma vista superior da cintura pélvica, mostrando a entrada pélvica e o tubérculo púbico. Os rótulos são: Pelvic inlet (brim) (Entrada pélvica - margem) e Pubic tubercle (Tubérculo púbico).',
+                        'EmbeddedImage-6.jpg': 'Esta imagem apresenta uma vista superior da cintura pélvica, com foco no sacro. Os rótulos são: Sacral promontory (Promontório sacral) e Ala of sacrum (Asa do sacro).',
+                        'EmbeddedImage-7.jpg': 'Esta imagem é uma vista anterior do abdômen, mostrando a musculatura superficial. Os rótulos indicam: Muscular fascia of external oblique m. (Fáscia muscular do músculo oblíquo externo) e Rectus sheath (Bainha do reto).',
+                        'EmbeddedImage-8.jpg': 'Esta imagem também é uma vista anterior do abdômen, com mais detalhes sobre a aponeurose e músculos. Os rótulos são: Linea alba (Linha alba), Rectus sheath (Bainha do reto) e External oblique m. (Músculo oblíquo externo).',
+                        'EmbeddedImage-9.jpg': 'Esta imagem mostra a região inguinal anterior, destacando algumas estruturas importantes. Os rótulos são: External oblique m. (Músculo oblíquo externo) e Inguinal ligament (Ligamento inguinal).',
+                        'EmbeddedImage-10.jpg': 'Esta imagem apresenta uma vista anterior da região inguinal, mostrando os componentes do anel inguinal superficial. As estruturas rotuladas são: Lateral crus of superficial inguinal ring (Pilar lateral do anel inguinal superficial), Superficial inguinal ring (Anel inguinal superficial), Medial crus of superficial inguinal ring (Pilar medial do anel inguinal superficial) e Inguinal ligament (Ligamento inguinal).',
+                        'EmbeddedImage-11.jpg': 'Esta imagem é uma vista anterior da região inguinal, com foco em estruturas relacionadas ao ligamento inguinal em um modelo feminino. Os rótulos indicam: Round ligament of the uterus (Ligamento redondo do útero) e Anterior labial br. of ilio-inguinal n. (Ramo labial anterior do nervo ilio-inguinal).',
+                        'EmbeddedImage-12.jpg': 'Esta imagem também é uma vista anterior da região inguinal, destacando estruturas associadas ao funículo espermático em um modelo masculino. Os rótulos incluem: Anterior scrotal br. of ilio-inguinal n. (Ramo escrotal anterior do nervo ilio-inguinal), Inguinal ligament (Ligamento inguinal) e Spermatic cord (Funículo espermático).',
+                        'EmbeddedImage-13.jpg': 'Esta imagem mostra uma vista anterior do abdômen, evidenciando a linha alba e a bainha do reto. Os rótulos são: Linea alba (Linha alba), Rectus sheath (Bainha do reto) e External oblique m. (Músculo oblíquo externo).',
+                        'EmbeddedImage-14.jpg': 'Esta imagem é uma vista anterior do abdômen onde a bainha do reto foi rebatida para expor o músculo reto do abdômen. Os rótulos são: Rectus abdominis m. (Músculo reto do abdômen) e Rectus sheath, reflected (Bainha do reto, rebatida).',
+                        'EmbeddedImage-15.jpg': 'Esta imagem apresenta uma vista anterior do abdômen, mostrando a bainha do reto rebatida e a vascularização epigástrica. Os rótulos indicam: Rectus sheath (Bainha do reto), Superior epigastric a. & v. (Artéria e veia epigástrica superior), Inferior epigastric a. & v. (Artéria e veia epigástrica inferior) e Rectus abdominis m., reflected (Músculo reto do abdômen, rebatido).',
+                        'EmbeddedImage-16.jpg': 'Esta imagem é uma vista anterior do abdômen, focando na linha arqueada e na fáscia transversal. Os rótulos são: Rectus sheath (Bainha do reto), Arcuate line (Linha arqueada) e Transversalis fascia (Fáscia transversal).',
+                        'EmbeddedImage-17.jpg': 'Esta imagem é uma seção coronal da parede abdominal, revelando as camadas musculares e fasciais. Os rótulos incluem: External oblique m. (Músculo oblíquo externo), Internal oblique m. (Músculo oblíquo interno), Transversus abdominis m. (Músculo transverso do abdômen), Parietal peritoneum (Peritônio parietal), Extraperitoneal fat (Gordura extraperitoneal) e Transversalis fascia (Fáscia transversal).',
+                        'EmbeddedImage-18.jpg': 'Esta imagem mostra a parede abdominal anterior rebatida posteriormente, exibindo as pregas umbilicais. Os rótulos são: Lateral umbilical (epigastric) fold (Prega umbilical lateral - epigástrica), Medial umbilical fold (Prega umbilical medial) e Median umbilical fold (Prega umbilical mediana).',
+                        'EmbeddedImage-19.jpg': 'Esta imagem é uma vista posterior da parede abdominal anterior rebatida, destacando o anel inguinal profundo e estruturas relacionadas. Os rótulos indicam: Round ligament of uterus (Ligamento redondo do útero), Deep inguinal ring (Anel inguinal profundo), Inferior epigastric vessels (Vasos epigástricos inferiores) e Rectus abdominis m., deep (Músculo reto do abdômen, profundo).',
+                        'EmbeddedImage-20.jpg': 'Esta imagem mostra uma vista anterior do triângulo inguinal, uma área clinicamente importante na parede abdominal. Os rótulos indicam: Medial border of inferior epigastric vasculature (Borda medial da vasculatura epigástrica inferior), Lateral border of rectus abdominis m. (Borda lateral do músculo reto do abdômen) e Inguinal ligament (Ligamento inguinal).',
+                        'EmbeddedImage-21.jpg': 'Esta imagem é uma vista anterossuperior do diafragma, com destaque para aberturas e estruturas centrais. Os rótulos são: Caval opening (with IVC) (Abertura da veia cava - com VCI) e Central tendon (deep) (Tendão central - profundo).',
+                        'EmbeddedImage-22.jpg': 'Esta imagem apresenta uma vista anterior da cavidade abdominal, mostrando o fígado e o omento maior. Os rótulos incluem: Falciform ligament, cut (Ligamento falciforme, cortado), Liver (Fígado) e Omental apron of gastrocolic ligament (Avental omental do ligamento gastrocólico).',
+                        'EmbeddedImage-23.jpg': 'Esta imagem também é uma vista anterior da cavidade abdominal, com o omento maior cobrindo parte das vísceras. Os rótulos são: Liver (Fígado), Falciform ligament (Ligamento falciforme), Stomach (Estômago) e Omental apron of gastrocolic ligament (Avental omental do ligamento gastrocólico).',
+                        'EmbeddedImage-24.jpg': 'Esta imagem mostra uma vista anterior da cavidade abdominal com o cólon transverso rebatido, expondo o intestino delgado e o ceco. Os rótulos indicam: Transverse colon, reflected (Cólon transverso, rebatido), Small intestine (Intestino delgado) e Cecum (Ceco).',
+                        'EmbeddedImage-25.jpg': 'Esta imagem é uma vista anterior da cavidade abdominal, com foco no jejuno e íleo do intestino delgado, bem como o mesentério. Os rótulos são: Ileum of small intestine (Íleo do intestino delgado), Jejunum of small intestine (Jejuno do intestino delgado), Mesentery (Mesentério) e Root of mesentery (Raiz do mesentério).',
+                        'EmbeddedImage-26.jpg': 'Esta imagem apresenta uma vista anterior do jejuno, mostrando suas dobras características. O rótulo é: Circular folds (Pregas circulares).',
+                        'EmbeddedImage-27.jpg': 'Esta imagem é uma vista anterior da cavidade abdominal, destacando a transição entre o íleo e o ceco. Os rótulos são: Ileum (Íleo), Ileocecal junction (Junção ileocecal) e Cecum (Ceco).',
+                        'EmbeddedImage-28.jpg': 'Esta imagem mostra uma vista anterior dos intestinos, especificamente a válvula e junção ileocecal, além do ceco e íleo. Os rótulos são: Ileocecal valve (Válvula ileocecal), Ileocecal junction (Junção ileocecal), Cecum (Ceco) e Ileum (Íleo).',
+                        'EmbeddedImage-29.jpg': 'Esta imagem apresenta uma vista anterior da cavidade abdominal, focando em partes do intestino grosso. Os rótulos indicam: Transverse colon (Cólon transverso), Right colic (hepatic) flexure, deep (Flexura cólica direita - hepática, profunda), Ascending colon (Cólon ascendente) e Cecum (Ceco).',
+                        'EmbeddedImage-30.jpg': 'Esta imagem mostra uma vista anterior da cavidade abdominal, focando nas porções mais distais do cólon e no reto. Os rótulos indicam: Left colic (splenic) flexure (Flexura cólica esquerda - esplênica), Descending colon (Cólon descendente), Sigmoid colon (Cólon sigmoide) e Rectum (Reto).',
+                        'EmbeddedImage-31.jpg': 'Esta imagem é uma vista anterior do ceco, destacando a relação com o íleo e o apêndice. Os rótulos são: Ileum (Íleo), Cecum (Ceco) e Appendix (Apêndice).',
+                        'EmbeddedImage-32.jpg': 'Esta imagem apresenta uma vista do cólon transverso rebatido, mostrando as características da parede do intestino grosso. Os rótulos incluem: Taeniae coli (Tênias do cólon), Haustrum of colon (Haustro do cólon) e Omental (epiploic) appendage (Apêndice omental - epiploico).',
+                        'EmbeddedImage-33.jpg': 'Esta imagem mostra uma vista anterior do intestino grosso proximal, com divertículos visíveis. Os rótulos são: Transverse colon (Cólon transverso), Ascending colon (Cólon ascendente), Diverticula (Divertículos), Ileum (Íleo) e Cecum (Ceco).',
+                        'EmbeddedImage-34.jpg': 'Esta imagem é uma vista anterior do intestino grosso proximal dissecado, revelando as pregas semilunares internas. Os rótulos indicam: Ascending colon (Cólon ascendente), Semilunar folds (Pregas semilunares), Cecum (Ceco) e Ileum (Íleo).',
+                        'EmbeddedImage-35.jpg': 'Esta imagem apresenta uma vista anterior da cavidade abdominal com o cólon transverso rebatido, mostrando o mesocólon transverso e o mesentério. Os rótulos são: Transverse colon, reflected (Cólon transverso, rebatido), Transverse mesocolon (Mesocólon transverso), Mesentery (Mesentério) e Small intestine (Intestino delgado).',
+                        'EmbeddedImage-36.jpg': 'Esta imagem é uma vista anterior da cavidade abdominal, focando na artéria mesentérica superior e seus ramos. Os rótulos são: Superior mesenteric a. (Artéria mesentérica superior), Superior mesenteric v. (Veia mesentérica superior), Jejunual aa. (Artérias jejunais) e Ileal aa. (Artérias ileais).',
+                        'EmbeddedImage-37.jpg': 'Esta imagem mostra uma vista anterior da cavidade abdominal, detalhando a vascularização arterial do cólon. Os rótulos incluem: Marginal a. (Artéria marginal), Middle colic a. (Artéria cólica média), Right colic a. (Artéria cólica direita), Ileocolic a. (Artéria ileocólica) e Appendicular a. (Artéria apendicular).',
+                        'EmbeddedImage-38.jpg': 'Esta imagem apresenta uma vista anterior da cavidade abdominal, exibindo as principais artérias e veias mesentéricas. Os rótulos são: Superior mesenteric a. (Artéria mesentérica superior), Superior mesenteric v. (Veia mesentérica superior), Inferior mesenteric v. (Veia mesentérica inferior) e Inferior mesenteric a. (Artéria mesentérica inferior).',
+                        'EmbeddedImage-39.jpg': 'Esta imagem é uma vista anterior da cavidade abdominal, semelhante à EmbeddedImage-30.jpg, mas incluindo o mesocólon sigmoide. Os rótulos são: Left colic (splenic) flexure (Flexura cólica esquerda - esplênica), Descending colon (Cólon descendente), Sigmoid colon (Cólon sigmoide), Sigmoid mesocolon (Mesocólon sigmoide) e Rectum (Reto).',
+                        'EmbeddedImage-40.jpg': 'Esta imagem mostra uma vista anterior da cavidade abdominal, focando na artéria mesentérica inferior e seus ramos que vascularizam o cólon esquerdo e o reto. Os rótulos indicam: Inferior mesenteric a. (Artéria mesentérica inferior), Left colic a. (Artéria cólica esquerda), Sigmoid aa. (Artérias sigmoides) e Superior rectal a. (Artéria retal superior).',
+                        'EmbeddedImage-41.jpg': 'Esta imagem apresenta uma vista anterior da cavidade abdominal, exibindo as principais artérias e veias mesentéricas. Os rótulos são: Superior mesenteric a. (Artéria mesentérica superior), Superior mesenteric v. (Veia mesentérica superior), Inferior mesenteric v. (Veia mesentérica inferior) e Inferior mesenteric a. (Artéria mesentérica inferior).'
+                    }
                 },
                 'Anterior_Neck': {
                     title_pt: 'Pescoço Anterior',
-                    max_images: 39
+                    max_images: 39 // Lembre-se de ajustar este e os próximos conforme a sua contagem real + 1 se tiver "EmbeddedImage.jpg"
                 },
-                'Bones_Joints_and_Movement': {
-                    title_pt: 'Ossos, Articulações e Movimento',
-                    max_images: 30 // Exemplo, ajuste o número real
-                },
-                'Brachial_Plexus': {
-                    title_pt: 'Plexo Braquial',
-                    max_images: 25 // Exemplo
-                },
-                'Cranial_Cavity_Venous_Sinuses_and_Brain': {
-                    title_pt: 'Cavidade Craniana, Seios Venosos e Cérebro',
-                    max_images: 45 // Exemplo
-                },
-                'Deep_Back_and_Spinal_Cord': {
-                    title_pt: 'Dorso Profundo e Medula Espinhal',
-                    max_images: 35 // Exemplo
-                },
-                'Duodenum_Pancreas_and_Abdominal_Aorta': {
-                    title_pt: 'Duodeno, Pâncreas e Aorta Abdominal',
-                    max_images: 28 // Exemplo
-                },
-                'Face': {
-                    title_pt: 'Face',
-                    max_images: 32 // Exemplo
-                },
-                'Heart': {
-                    title_pt: 'Coração',
-                    max_images: 40 // Exemplo
-                },
-                'Infratemporal_Fossa': {
-                    title_pt: 'Fossa Infratemporal',
-                    max_images: 20 // Exemplo
-                },
-                'Kidneys_and_Urinary_System': {
-                    title_pt: 'Rins e Sistema Urinário',
-                    max_images: 38 // Exemplo
-                },
-                'Lumbar_Spine_Hip_and_Knee': {
-                    title_pt: 'Coluna Lombar, Quadril e Joelho',
-                    max_images: 30 // Exemplo
-                },
-                'Lungs_and_Ventilation_Pathway': {
-                    title_pt: 'Pulmões e Via de Ventilação',
-                    max_images: 33 // Exemplo
-                },
-                'Mastication': {
-                    title_pt: 'Mastigação',
-                    max_images: 18 // Exemplo
-                },
-                'Nasal_Cavity_Sinuses_and_Ear': {
-                    title_pt: 'Cavidade Nasal, Seios e Ouvido',
-                    max_images: 27 // Exemplo
-                },
-                'Oral_Cavity': {
-                    title_pt: 'Cavidade Oral',
-                    max_images: 22 // Exemplo
-                },
-                'Orbit_and_Cavernous_Sinus': {
-                    title_pt: 'Órbita e Seio Cavernoso',
-                    max_images: 29 // Exemplo
-                },
-                'Overview_of_Lower_Limb': {
-                    title_pt: 'Visão Geral do Membro Inferior',
-                    max_images: 42 // Exemplo
-                },
-                'Overview_of_Upper_Limb': {
-                    title_pt: 'Visão Geral do Membro Superior',
-                    max_images: 40 // Exemplo
-                },
-                'Parotid_Gland_and_Submandibular_Triangle': {
-                    title_pt: 'Glândula Parótida e Triângulo Submandibular',
-                    max_images: 25 // Exemplo
-                },
-                'Pectoral_Region_and_Superficial_Back': {
-                    title_pt: 'Região Peitoral e Dorso Superficial',
-                    max_images: 36 // Exemplo
-                },
-                'Pelvic_Cavity': {
-                    title_pt: 'Cavidade Pélvica',
-                    max_images: 31 // Exemplo
-                },
-                'Perineum': {
-                    title_pt: 'Períneo',
-                    max_images: 23 // Exemplo
-                },
-                'Pharynx_and_Larynx': {
-                    title_pt: 'Faringe e Laringe',
-                    max_images: 30 // Exemplo
-                },
-                'Posterior_Mediastinum': {
-                    title_pt: 'Mediastino Posterior',
-                    max_images: 20 // Exemplo
-                },
-                'Posterior_Neck': {
-                    title_pt: 'Pescoço Posterior',
-                    max_images: 24 // Exemplo
-                },
-                'Pterygopalatine_Fossa_and_Palate': {
-                    title_pt: 'Fossa Pterigopalatina e Palato',
-                    max_images: 19 // Exemplo
-                },
-                'Shoulder': {
-                    title_pt: 'Ombro',
-                    max_images: 34 // Exemplo
-                },
-                'Stomach_Liver_and_Spleen': {
-                    title_pt: 'Estômago, Fígado e Baço',
-                    max_images: 37 // Exemplo
-                },
-                'Superior_Mediastinum_and_Root_of_Neck': {
-                    title_pt: 'Mediastino Superior e Raiz do Pescoço',
-                    max_images: 26 // Exemplo
-                },
-                'Wrist_Hand_and_Foot': {
-                    title_pt: 'Punho, Mão e Pé',
-                    max_images: 43 // Exemplo
-                }
+                // ... (outras pastas, adicionar as descrições aqui quando você enviar)
             };
 
-            // Função para capitalizar a primeira letra de cada palavra
-            function toTitleCase(str) {
-                return str.replace(/_/g, ' ').replace(/\w\S*/g, function(txt){
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-            }
-
             // Função auxiliar para criar e anexar elementos de imagem
-            function createImageElement(folderName, fileName) {
+            function createImageElement(folderName, fileName, descriptionText) {
                 const imageUrl = `${baseUrl}${folderName}/${fileName}`;
                 const imageCaptionText = imageUrl;
 
@@ -362,6 +291,14 @@
                 captionLink.target = "_blank"; // Abre o link em uma nova aba
                 caption.appendChild(captionLink);
 
+                // Adiciona a descrição se existir
+                if (descriptionText) {
+                    const description = document.createElement('p');
+                    description.classList.add('image-description');
+                    description.textContent = descriptionText.toLowerCase(); // Convertendo para minúsculo
+                    caption.appendChild(description); // Adiciona a descrição abaixo do link
+                }
+
                 imageItem.appendChild(img);
                 imageItem.appendChild(caption);
 
@@ -375,6 +312,7 @@
                     const maxImages = folderInfo.max_images;
                     const titleEn = toTitleCase(folderName);
                     const titlePt = folderInfo.title_pt;
+                    const descriptions = folderInfo.descriptions || {}; // Pega as descrições ou um objeto vazio
 
                     const categoryBlock = document.createElement('section');
                     categoryBlock.classList.add('category-block');
@@ -392,18 +330,19 @@
                     const imageGrid = document.createElement('div');
                     imageGrid.classList.add('image-grid');
 
-                    // 1. Adiciona a imagem 'EmbeddedImage.jpg' se ela existir
-                    const firstImageItem = createImageElement(folderName, 'EmbeddedImage.jpg');
+                    // Lógica para adicionar EmbeddedImage.jpg
+                    const fileName0 = 'EmbeddedImage.jpg';
+                    const description0 = descriptions[fileName0];
+                    const firstImageItem = createImageElement(folderName, fileName0, description0);
                     imageGrid.appendChild(firstImageItem);
 
-
-                    // 2. Adiciona as imagens numeradas (EmbeddedImage-1.jpg, EmbeddedImage-2.jpg, etc.)
-                    // Começa do 1 e vai até maxImages - 1 (já que a primeira imagem já foi adicionada)
-                    // Se 'max_images' representa o total, e 'EmbeddedImage.jpg' conta como uma,
-                    // então precisamos de (max_images - 1) imagens numeradas.
-                    // O loop deve ir de 1 até o (max_images - 1) para as imagens com sufixo numérico.
-                    for (let i = 1; i < maxImages; i++) { // Alterado para i < maxImages
-                        const imageItem = createImageElement(folderName, `EmbeddedImage-${i}.jpg`);
+                    // Lógica para adicionar EmbeddedImage-1.jpg até EmbeddedImage-N.jpg
+                    // Note que se max_images é o TOTAL de imagens e inclui EmbeddedImage.jpg,
+                    // então as imagens numeradas vão de 1 até (max_images - 1).
+                    for (let i = 1; i < maxImages; i++) {
+                        const fileName = `EmbeddedImage-${i}.jpg`;
+                        const description = descriptions[fileName];
+                        const imageItem = createImageElement(folderName, fileName, description);
                         imageGrid.appendChild(imageItem);
                     }
 
