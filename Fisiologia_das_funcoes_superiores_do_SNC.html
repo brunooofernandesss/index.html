@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Simulado de Fisiologia Celular</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .options {
+      margin-top: 15px;
+    }
+
+    /* Estilos unificados para todas as opções (estáticas e dinâmicas) */
+    .option, label.option, label, #newQuestionsContent label {
+      display: flex; /* Para alinhar imagem e texto */
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      position: relative; /* Para posicionar a tesoura */
+    }
+
+    /* FORÇA a remoção de inputs de radio em QUALQUER lugar */
+    .option input[type="radio"], 
+    label input[type="radio"],
+    #newQuestionsContent input[type="radio"],
+    #newQuestionsContent label input[type="radio"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+
+    .option:hover, 
+    label.option:hover, 
+    label:hover,
+    #newQuestionsContent label:hover {
+      background-color: #e9e9e9;
+    }
+
+    .option.selected, 
+    label.option.selected, 
+    label.selected,
+    #newQuestionsContent label.selected {
+      background-color: #d1e7dd;
+      border-color: #28a745;
+    }
+
+    .option.correct, 
+    label.option.correct, 
+    label.correct,
+    #newQuestionsContent label.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+    }
+
+    .option.incorrect, 
+    label.option.incorrect, 
+    label.incorrect,
+    #newQuestionsContent label.incorrect {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .submit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .results {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .scissor-icon {
+      margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+      width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      opacity: 0.5; /* Transparência como no original */
+      cursor: pointer;
+    }
+
+    .scissor-icon.hidden {
+      display: none;
+    }
+
+    .struck-through {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .comment {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-left: 4px solid #007bff;
+      font-style: italic;
+      color: #555;
+      display: none; /* Escondido por padrão */
+    }
+    .comment.show {
+      display: block; /* Mostrado quando ativado */
+    }
+
+    /* Estilos para o botão de navegação de erro / diagnóstico */
+    .error-nav-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #dc3545; /* Vermelho para erro */
+      color: white;
+      border: none;
+      border-radius: 50%; /* Torna o botão redondo */
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none; /* Escondido por padrão */
+      flex-direction: column; /* Para empilhar o ícone e o contador */
+      padding: 5px; /* Ajuste o padding para acomodar texto maior */
+      box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+      text-align: center;
+    }
+
+    .error-nav-btn:hover {
+      background-color: #c82333;
+    }
+
+    .error-nav-btn .arrow-icon {
+      font-size: 30px; /* Tamanho da seta */
+      line-height: 1; /* Ajuste para centralizar */
+    }
+
+    .error-nav-btn .button-text {
+      font-size: 12px; /* Tamanho do texto abaixo da seta */
+      line-height: 1;
+      margin-top: 2px; /* Espaço entre a seta e o texto */
+    }
+
+    /* Estilos para a seção de diagnóstico de erros */
+    .error-diagnosis-section {
+        margin-top: 50px;
+        padding: 30px;
+        background-color: #ffe0b2; /* Um laranja claro ou similar */
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        display: none; /* Escondido por padrão */
+        text-align: center;
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .error-diagnosis-section h2 {
+        color: #e65100; /* Laranja mais escuro */
+        margin-bottom: 20px;
+        font-size: 1.8em;
+    }
+
+    .error-diagnosis-section ul {
+        list-style: none; /* Remove marcadores de lista */
+        padding: 0;
+        margin: 0;
+    }
+
+    .error-diagnosis-section li {
+        background-color: #ff9800; /* Laranja */
+        color: white;
+        padding: 8px 15px;
+        margin: 8px 0;
+        border-radius: 5px;
+        display: inline-block; /* Para que os itens fiquem lado a lado */
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .error-diagnosis-section li:last-child {
+        margin-right: 0;
+    }
+ .card-bloco {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1 style="text-align:center; margin-bottom: 30px;">Simulado de Fisiologia Celular</h1>
+    <div class="card-bloco" id="quiz"></div>
+    <button class="submit-btn" id="verifyAnswersBtn">Verificar Respostas</button>
+
+    <button class="generate-questions-btn submit-btn" id="generateNewQuestionsBtn" style="display:none;">
+      Gerar Novas Perguntas
+    </button>
+
+    <div class="results card-bloco" id="results"></div>
+    <div id="statusMessage" style="text-align: center; margin-top: 10px; font-weight: bold; color: #007bff;"></div>
+
+    <div class="error-diagnosis-section card-bloco" id="errorDiagnosis">
+      <h2>Diagnóstico de Erros</h2>
+      <p>Parece que você precisa revisar os seguintes assuntos:</p>
+      <ul id="topicsToReview"></ul>
+    </div>
+
+    <div class="generated-questions-section card-bloco" id="generatedQuestionsSection" style="display:none;">
+      <h2>Novas Perguntas Geradas</h2>
+      <div id="newQuestionsContent"></div>
+    </div>
+  </div>
+  
+  <button class="error-nav-btn" id="errorNavBtn" style="display:none;">
+    <span class="arrow-icon"></span>
+    <span class="button-text"></span>
+  </button>
+
+  <script>
+    const quizContainer = document.getElementById("quiz");
+    const resultsContainer = document.getElementById("results");
+    const errorNavBtn = document.getElementById("errorNavBtn");
+    const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+    const buttonText = errorNavBtn.querySelector(".button-text");
+    const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+    const topicsToReviewList = document.getElementById("topicsToReview");
+    const generateNewQuestionsBtn = document.getElementById("generateNewQuestionsBtn");
+    const generatedQuestionsSection = document.getElementById("generatedQuestionsSection");
+    const newQuestionsContent = document.getElementById("newQuestionsContent");
+    const statusMessage = document.getElementById("statusMessage");
+
+    let wrongQuestionIndices = [];
+    let errorCountByTopic = {};
+    let totalAnsweredQuestionsByTopic = {};
+    let currentWrongQuestionIndex = -1;
+    let hasErrors = false;
+    let isShowingErrors = false;
+    let isShowingDiagnosis = false;
+
+    // Inicializa a visibilidade das seções no carregamento
+    errorDiagnosisSection.style.display = 'none';
+    topicsToReviewList.innerHTML = '';
+    statusMessage.textContent = '';
+
+    const questions = [
+      {
+        question: "1. Qual é a principal função da organização do córtex cerebral em giros e sulcos/fissuras?",
+        options: [
+          "A) Aumentar a velocidade de transmissão dos impulsos nervosos.",
+          "B) Reduzir a superfície total do cérebro para economizar energia.",
+          "C) Permitir que uma grande superfície cortical ocupe um volume menor.",
+          "D) Facilitar o transporte de nutrientes para os neurônios.",
+        ],
+        correctAnswer: "C) Permitir que uma grande superfície cortical ocupe um volume menor.",
+        comment: "O texto explica que a organização em giros (dobras) e sulcos/fissuras (depressões) permite que o córtex cerebral tenha uma grande superfície ocupando um volume menor dentro do crânio, sendo cerca de 2/3 da área 'escondida' por essa organização.",
+        topic: "Funções do Córtex Cerebral",
+      },
+      {
+        question: "2. Qual fissura separa o Lobo Frontal e Parietal do Lobo Temporal?",
+        options: [
+          "A) Sulco Central.",
+          "B) Fissura Parieto-Occipital.",
+          "C) Fissura Lateral.",
+          "D) Sulco Calcarino.",
+        ],
+        correctAnswer: "C) Fissura Lateral.",
+        comment: "A Fissura Lateral é a responsável por separar o Lobo Frontal e o Lobo Parietal do Lobo Temporal, conforme descrito na página 5 do PDF.",
+        topic: "Anatomia Cerebral: Fissuras e Lobos",
+      },
+      {
+        question: "3. Qual estrutura do Sistema Límbico é crucial para a formação de novas memórias e consolidação da memória de longo prazo, sendo que lesões nessa área podem causar amnésia anterógrada?",
+        options: [
+          "A) Hipotálamo.",
+          "B) Amígdala.",
+          "C) Hipocampo.",
+          "D) Tálamo.",
+        ],
+        correctAnswer: "C) Hipocampo.",
+        comment: "O Hipocampo é destacado como a estrutura do Sistema Límbico diretamente relacionada à memória, onde lesões podem causar amnésia anterógrada (incapacidade de aprender e formar novas memórias de longo prazo), conforme a página 6.",
+        topic: "Sistema Límbico e Memória",
+      },
+      {
+        question: "4. A qual lobo cerebral a Área de Broca está predominantemente associada, e qual sua principal função?",
+        options: [
+          "A) Lobo Temporal; compreensão da linguagem.",
+          "B) Lobo Frontal; articulação e geração da fala.",
+          "C) Lobo Parietal; processamento sensorial.",
+          "D) Lobo Occipital; processamento visual.",
+        ],
+        correctAnswer: "B) Lobo Frontal; articulação e geração da fala.",
+        comment: "A Área de Broca é localizada no lobo frontal e é uma importante área da linguagem, responsável pela geração e articulação da fala, conforme a página 12 e 28 do PDF.",
+        topic: "Linguagem: Área de Broca",
+      },
+      {
+        question: "5. Qual é a principal característica das células piramidais do Neocórtex?",
+        options: [
+          "A) São interneurônios, em menor número e com corpo celular pequeno.",
+          "B) Representam a maioria das células, com corpo celular maior e diversas ramificações dendríticas.",
+          "C) Sua principal função é a regulação da temperatura corporal.",
+          "D) São responsáveis pela percepção da dor e tato.",
+        ],
+        correctAnswer: "B) Representam a maioria das células, com corpo celular maior e diversas ramificações dendríticas.",
+        comment: "A página 20 descreve as células piramidais como as que compõem a maioria do neocórtex, com corpo celular maior e diversas ramificações dendríticas.",
+        topic: "Estrutura do Neocórtex",
+      },
+      {
+        question: "6. Qual é o ritmo do EEG característico de um indivíduo acordado, mas com os olhos fechados?",
+        options: [
+          "A) Beta.",
+          "B) Delta.",
+          "C) Teta.",
+          "D) Alfa.",
+        ],
+        correctAnswer: "D) Alfa.",
+        comment: "O ritmo Alfa (8 a 13 Hz) é o ritmo do EEG observado quando o indivíduo está acordado, mas com os olhos fechados, conforme a página 25.",
+        topic: "Eletroencefalograma (EEG) e Ritmos Cerebrais",
+      },
+      {
+        question: "7. Qual estrutura é a principal responsável pela transferência de informações entre os dois hemisférios cerebrais, e que sua lesão pode causar síndromes de desconexão?",
+        options: [
+          "A) Tálamo.",
+          "B) Hipotálamo.",
+          "C) Corpo Caloso.",
+          "D) Amígdala.",
+        ],
+        correctAnswer: "C) Corpo Caloso.",
+        comment: "O Corpo Caloso é a estrutura principal para a transferência de informações entre os hemisférios cerebrais, e lesões nele podem levar a síndromes de desconexão, conforme a página 6 e 31.",
+        topic: "Comunicação Inter-hemisférica",
+      },
+      {
+        question: "8. Qual tipo de memória está relacionado ao conhecimento de fatos e eventos, sendo acessível à consciência?",
+        options: [
+          "A) Memória de Procedimento.",
+          "B) Memória Declarativa (Explícita).",
+          "C) Memória Emocional.",
+          "D) Aprendizagem Não Associativa.",
+        ],
+        correctAnswer: "B) Memória Declarativa (Explícita).",
+        comment: "A memória Declarativa (ou Explícita) é definida como aquela relacionada ao conhecimento de fatos e eventos, sendo acessível à consciência, e subdividida em memória episódica e semântica, conforme a página 32.",
+        topic: "Tipos de Memória: Declarativa",
+      },
+      {
+        question: "9. A despolarização no potencial de ação torna o interior da célula positivo devido à entrada de quais íons?",
+        options: [
+          "A) Potássio.",
+          "B) Cálcio.",
+          "C) Cloreto.",
+          "D) Sódio.",
+        ],
+        correctAnswer: "D) Sódio.",
+        comment: "A despolarização torna o interior da célula positivo devido à entrada de íons sódio (Na⁺) através de canais voltagem-dependentes, conforme a explicação da página 3 e 4 do arquivo original (na questão 3 e 4 do simulado em HTML).",
+        topic: "Potencial de Ação: Despolarização",
+      },
+      {
+        question: "10. Qual área do córtex pré-motor é conhecida por ter neurônios que se ativam tanto ao executar uma tarefa motora quanto ao observar a mesma tarefa sendo executada por outra pessoa?",
+        options: [
+          "A) Área de Broca.",
+          "B) Córtex Motor Primário.",
+          "C) Neurônios-espelho.",
+          "D) Área Motora Suplementar.",
+        ],
+        correctAnswer: "C) Neurônios-espelho.",
+        comment: "Os neurônios-espelho, localizados no córtex pré-motor, são os responsáveis por essa ativação dual, importantes para a compreensão das ações alheias e aprendizado por imitação, conforme a página 11.",
+        topic: "Neurônios-Espelho e Córtex Pré-Motor",
+      },
+      {
+        question: "11. Qual a função da Área de Wernicke no lobo temporal?",
+        options: [
+          "A) Articulação da fala.",
+          "B) Geração de padrões complexos de movimento.",
+          "C) Processamento e compreensão da linguagem.",
+          "D) Controle da personalidade.",
+        ],
+        correctAnswer: "C) Processamento e compreensão da linguagem.",
+        comment: "A Área de Wernicke é a principal área do lobo temporal responsável pelo processamento e compreensão da linguagem, conforme a página 17 e 28.",
+        topic: "Linguagem: Área de Wernicke",
+      },
+      {
+        question: "12. Qual é a principal característica do sono REM (paradoxal)?",
+        options: [
+          "A) Predominância de ondas Delta no EEG.",
+          "B) Padrão de EEG semelhante ao do indivíduo acordado, com perda do tônus muscular e movimentos oculares rápidos.",
+          "C) Ocorre apenas na fase inicial do sono.",
+          "D) É a fase mais profunda do sono de ondas lentas.",
+        ],
+        correctAnswer: "B) Padrão de EEG semelhante ao do indivíduo acordado, com perda do tônus muscular e movimentos oculares rápidos.",
+        comment: "O sono REM (paradoxal) é caracterizado por um padrão de EEG semelhante ao do indivíduo acordado, perda do tônus muscular e movimentos oculares rápidos, conforme a página 26.",
+        topic: "Fases do Sono",
+      },
+      {
+        question: "13. O que é amnésia anterógrada e a qual estrutura do sistema límbico ela está associada quando lesionada?",
+        options: [
+          "A) Incapacidade de reconhecer objetos; associada à amígdala.",
+          "B) Incapacidade de formar novas memórias de longo prazo; associada ao hipocampo.",
+          "C) Dificuldade na articulação da fala; associada à área de Broca.",
+          "D) Perda da memória de eventos passados; associada ao hipotálamo.",
+        ],
+        correctAnswer: "B) Incapacidade de formar novas memórias de longo prazo; associada ao hipocampo.",
+        comment: "Lesões no hipocampo podem causar amnésia anterógrada, que é a incapacidade de aprender e formar novas memórias de longo prazo, conforme a página 6.",
+        topic: "Amnésia Anterógrada e Hipocampo",
+      },
+      {
+        question: "14. Qual camada do Neocórtex é composta predominantemente por axônios?",
+        options: [
+          "A) Camada Granular Externa (II).",
+          "B) Camada Piramidal Externa (III).",
+          "C) Camada Molecular (I).",
+          "D) Camada Multiforme (VI).",
+        ],
+        correctAnswer: "C) Camada Molecular (I).",
+        comment: "A Camada Molecular (I) do Neocórtex é composta predominantemente por axônios, conforme a página 21.",
+        topic: "Camadas do Neocórtex",
+      },
+      {
+        question: "15. Qual a principal via de saída das informações processadas na Formação Hipocampal, que se conecta a outras regiões encefálicas?",
+        options: [
+          "A) Giro Denteado.",
+          "B) Subículo.",
+          "C) Fímbria.",
+          "D) Tálamo.",
+        ],
+        correctAnswer: "C) Fímbria.",
+        comment: "A Fímbria é a faixa de fibras mielinizadas que forma o início do fórnix, a principal via de saída das informações processadas no hipocampo, conforme a página 24.",
+        topic: "Vias de Saída do Hipocampo",
+      },
+      {
+        question: "16. Qual das seguintes afasias é caracterizada pela dificuldade na compreensão da linguagem, mesmo com a capacidade de articulação da fala?",
+        options: [
+          "A) Afasia de Broca.",
+          "B) Afasia de Condução.",
+          "C) Afasia de Wernicke.",
+          "D) Afasia Nominativa.",
+        ],
+        correctAnswer: "C) Afasia de Wernicke.",
+        comment: "A Afasia de Wernicke (ou de Compreensão) é caracterizada pela dificuldade na compreensão da linguagem, mesmo que o paciente consiga articular a fala, muitas vezes de forma incompreensível, conforme a página 29.",
+        topic: "Afasias: Compreensão da Linguagem",
+      },
+      {
+        question: "17. O que é a Potenciação de Longo Prazo (LTP) e qual seu papel na memória?",
+        options: [
+          "A) Uma diminuição duradoura na força da transmissão sináptica, inibindo o aprendizado.",
+          "B) Um aumento duradouro na força da transmissão sináptica, fundamental para o aprendizado e a formação de memórias.",
+          "C) Um tipo de memória de curto prazo que se perde rapidamente.",
+          "D) A incapacidade de formar novas memórias.",
+        ],
+        correctAnswer: "B) Um aumento duradouro na força da transmissão sináptica, fundamental para o aprendizado e a formação de memórias.",
+        comment: "A Potenciação de Longo Prazo (LTP) é um aumento duradouro na força da transmissão sináptica, sendo um mecanismo celular crucial para o aprendizado e a formação de memórias, conforme as páginas 35 e 36.",
+        topic: "Plasticidade Sináptica: LTP",
+      },
+      {
+        question: "18. No Homúnculo Motor de Penfield, qual parte do corpo ocupa uma proporção maior do córtex, indicando maior controle motor fino?",
+        options: [
+          "A) Tronco.",
+          "B) Pernas.",
+          "C) Mãos e face.",
+          "D) Braços.",
+        ],
+        correctAnswer: "C) Mãos e face.",
+        comment: "Mais da metade do córtex motor primário está ligada ao controle dos músculos das mãos e da fala, evidenciando sua importância e maior representação no Homúnculo Motor de Penfield, conforme a página 9 e 10.",
+        topic: "Córtex Motor e Homúnculo",
+      },
+      {
+        question: "19. Qual lobo cerebral é o principal centro de processamento visual?",
+        options: [
+          "A) Frontal.",
+          "B) Parietal.",
+          "C) Occipital.",
+          "D) Temporal.",
+        ],
+        correctAnswer: "C) Occipital.",
+        comment: "O Lobo Occipital é de grande importância para o sistema visual, sendo responsável pelo processamento e percepção visual através da área cortical da visão, conforme a página 15.",
+        topic: "Sistema Visual: Lobo Occipital",
+      },
+      {
+        question: "20. A qual tipo de coloração histológica se refere a técnica que evidencia melhor as ramificações dendríticas dos neurônios no neocórtex?",
+        options: [
+          "A) Coloração de Nielsen.",
+          "B) Coloração de Weigert.",
+          "C) Coloração de Golgi.",
+          "D) Coloração de hematoxilina-eosina.",
+        ],
+        correctAnswer: "C) Coloração de Golgi.",
+        comment: "A Coloração de Golgi é a técnica utilizada para evidenciar as ramificações dendríticas dos neurônios no neocórtex, conforme a página 22.",
+        topic: "Técnicas de Coloração Histológica",
+      },
+      {
+        question: "21. Qual o nome da estrutura do tronco encefálico que atua como um 'relé talâmico' para todos os níveis sensoriais, exceto a via olfatória?",
+        options: [
+          "A) Hipotálamo.",
+          "B) Ponte.",
+          "C) Tálamo.",
+          "D) Medula oblonga.",
+        ],
+        correctAnswer: "C) Tálamo.",
+        comment: "O Tálamo é descrito como um 'relé talâmico' para todos os níveis sensoriais, exceto a via olfatória, conforme a página 6.",
+        topic: "Tálamo e Vias Sensoriais",
+      },
+      {
+        question: "22. A Ínsula, uma região profunda na Fissura Lateral, é importante para quais funções, além da gustatória?",
+        options: [
+          "A) Visão e audição.",
+          "B) Comportamento motor e planejamento.",
+          "C) Funções somestésicas e emoções.",
+          "D) Articulação da fala e compreensão da linguagem.",
+        ],
+        correctAnswer: "C) Funções somestésicas e emoções.",
+        comment: "A Ínsula possui funções somestésicas e relacionadas às emoções, além de abrigar o córtex gustativo primário, conforme a página 5.",
+        topic: "Ínsula e Funções Corticais",
+      },
+      {
+        question: "23. Qual a principal característica da Afasia de Broca (motora ou de expressão)?",
+        options: [
+          "A) Dificuldade na compreensão da linguagem, mas fala fluente.",
+          "B) Dificuldade em se expressar verbalmente, mas compreensão preservada.",
+          "C) Incapacidade de reconhecer objetos pelo tato.",
+          "D) Dificuldade em nomear objetos (anomia).",
+        ],
+        correctAnswer: "B) Dificuldade em se expressar verbalmente, mas compreensão preservada.",
+        comment: "A Afasia de Broca é caracterizada pela dificuldade em se expressar verbalmente, mesmo com a compreensão da linguagem falada ou escrita preservada, conforme a página 29.",
+        topic: "Afasias: Expressão da Fala",
+      },
+      {
+        question: "24. O que é a Depressão de Longo Prazo (LTD) e como ela se relaciona com o aprendizado?",
+        options: [
+          "A) Um aumento duradouro na força da transmissão sináptica, crucial para a memorização.",
+          "B) Uma diminuição duradoura na força da transmissão sináptica, também importante para a plasticidade sináptica e o aprendizado.",
+          "C) A incapacidade de recordar eventos passados.",
+          "D) Um distúrbio do sono que afeta a memória.",
+        ],
+        correctAnswer: "B) Uma diminuição duradoura na força da transmissão sináptica, também importante para a plasticidade sináptica e o aprendizado.",
+        comment: "A Depressão de Longo Prazo (LTD) é uma diminuição duradoura na força da transmissão sináptica, contribuindo para a plasticidade sináptica e, consequentemente, para o aprendizado, conforme as páginas 35 e 36.",
+        topic: "Plasticidade Sináptica: LTD",
+      },
+      {
+        question: "25. Qual das vias visuais é importante para a sincronização do ritmo circadiano?",
+        options: [
+          "A) Retinotectais.",
+          "B) Retinogeniculadas.",
+          "C) Retino-hipotalâmicas.",
+          "D) Retino-pré-tectais.",
+        ],
+        correctAnswer: "C) Retino-hipotalâmicas.",
+        comment: "As fibras retino-hipotalâmicas são importantes para a sincronização do ritmo circadiano, conforme a página 16.",
+        topic: "Vias Visuais e Ritmo Circadiano",
+      },
+      {
+        question: "26. Qual a principal função da área pré-frontal do lobo frontal?",
+        options: [
+          "A) Controle motor primário.",
+          "B) Articulação da fala.",
+          "C) Coordenação das funções neurais, comportamento inteligente, atenção e personalidade.",
+          "D) Processamento visual.",
+        ],
+        correctAnswer: "C) Coordenação das funções neurais, comportamento inteligente, atenção e personalidade.",
+        comment: "A área pré-frontal é o centro de controle da personalidade e comportamentos, coordenando funções neurais e sendo essencial para o comportamento inteligente, atenção e planejamento, conforme a página 12.",
+        topic: "Lobo Frontal: Área Pré-Frontal",
+      },
+      {
+        question: "27. Qual é o ritmo do EEG com frequência de 0,5 a 4 Hz, associado ao sono?",
+        options: [
+          "A) Alfa.",
+          "B) Beta.",
+          "C) Teta.",
+          "D) Delta.",
+        ],
+        correctAnswer: "D) Delta.",
+        comment: "O ritmo Delta (0,5 a 4 Hz) é um ritmo de sono no EEG, conforme a página 25 e 26.",
+        topic: "Ritmos do EEG e Sono",
+      },
+      {
+        question: "28. No contexto da plasticidade sináptica, qual fenômeno envolve o aumento da liberação de neurotransmissores e o aumento do número de receptores no neurônio pós-sináptico?",
+        options: [
+          "A) Depressão de Longo Prazo (LTD).",
+          "B) Potenciação de Longo Prazo (LTP).",
+          "C) Habituação.",
+          "D) Sensibilização.",
+        ],
+        correctAnswer: "B) Potenciação de Longo Prazo (LTP).",
+        comment: "A Potenciação de Longo Prazo (LTP) envolve o aumento da liberação de neurotransmissores e o aumento do número de receptores no neurônio pós-sináptico, conforme a página 35.",
+        topic: "Mecanismos Celulares da Plasticidade",
+      },
+      {
+        question: "29. O que é a Síndrome da Mão Alheia e a qual estrutura sua lesão está associada?",
+        options: [
+          "A) Incapacidade de falar; Área de Broca.",
+          "B) Uma mão agindo de forma autônoma; Corpo Caloso.",
+          "C) Dificuldade em reconhecer faces; Amígdala.",
+          "D) Perda da sensibilidade ao tato; Córtex somatossensorial.",
+        ],
+        correctAnswer: "B) Uma mão agindo de forma autônoma; Corpo Caloso.",
+        comment: "A Síndrome da Mão Alheia, onde uma das mãos age de forma autônoma, é uma das síndromes de desconexão resultantes de lesões no Corpo Caloso, conforme a página 31.",
+        topic: "Síndromes de Desconexão: Corpo Caloso",
+      },
+      {
+        question: "30. Qual tipo de memória não declarativa está relacionada a habilidades motoras e cognitivas, como andar de bicicleta?",
+        options: [
+          "A) Priming.",
+          "B) Condicionamento Clássico.",
+          "C) Memória de Procedimento.",
+          "D) Memória Episódica.",
+        ],
+        correctAnswer: "C) Memória de Procedimento.",
+        comment: "A Memória de Procedimento é um tipo de memória não declarativa que se refere a habilidades motoras e cognitivas, como andar de bicicleta, conforme a página 34.",
+        topic: "Tipos de Memória: Procedural",
+      },
+      {
+        question: "31. Qual das camadas do Neocórtex é o principal local de chegada das projeções talâmicas específicas (fibras talamocorticais aferentes específicas)?",
+        options: [
+          "A) Camada Molecular (I).",
+          "B) Camada Granular Externa (II).",
+          "C) Camada Piramidal Externa (III).",
+          "D) Camada Granular Interna (IV).",
+        ],
+        correctAnswer: "D) Camada Granular Interna (IV).",
+        comment: "As fibras talamocorticais aferentes específicas que chegam ao córtex situam-se na Camada Granular Interna (IV), conforme a página 22.",
+        topic: "Projeções Talâmicas no Córtex",
+      },
+      {
+        question: "32. Qual a principal diferença entre um sulco e uma fissura no tecido neuronal do córtex cerebral?",
+        options: [
+          "A) Sulcos são depressões profundas e fissuras são rasas.",
+          "B) Sulcos são depressões rasas e fissuras são espaços mais profundos.",
+          "C) Sulcos são dobras e fissuras são ramificações.",
+          "D) Não há diferença significativa, são termos sinônimos.",
+        ],
+        correctAnswer: "B) Sulcos são depressões rasas e fissuras são espaços mais profundos.",
+        comment: "O texto explica que sulcos são depressões rasas, enquanto fissuras são espaços mais profundos no tecido neuronal, conforme a página 3.",
+        topic: "Anatomia Cortical: Sulcos e Fissuras",
+      },
+      {
+        question: "33. Quais nervos cranianos são mencionados como parte da via gustatória, recebendo estímulos dos 2/3 anteriores da língua?",
+        options: [
+          "A) Oculomotor (III) e Troclear (IV).",
+          "B) Facial (VII) e Glossofaríngeo (IX).",
+          "C) Trigêmeo (V) e Abducente (VI).",
+          "D) Vestibulococlear (VIII) e Hipoglosso (XII).",
+        ],
+        correctAnswer: "B) Facial (VII) e Glossofaríngeo (IX).",
+        comment: "O texto descreve que os impulsos gustatórios dos 2/3 anteriores da língua passam pelo nervo lingual, nervo facial (NC VII), glossofaríngeo (NC IX) e vago (X), conforme a página 6. A opção mais completa e correta entre as alternativas é a B.",
+        topic: "Via Gustatória",
+      },
+      {
+        question: "34. O Hipotálamo é responsável pelo controle comportamental e das funções vegetativas do corpo, como:",
+        options: [
+          "A) Articulação da fala e compreensão da linguagem.",
+          "B) Temperatura corporal, osmolalidade dos líquidos e desejos de comer/beber.",
+          "C) Processamento visual e auditivo.",
+          "D) Movimentos voluntários finos dos dedos.",
+        ],
+        correctAnswer: "B) Temperatura corporal, osmolalidade dos líquidos e desejos de comer/beber.",
+        comment: "O Hipotálamo é responsável pelo controle comportamental e das funções vegetativas do corpo, incluindo temperatura corporal, osmolalidade dos líquidos, e desejos de comer e beber, conforme a página 6.",
+        topic: "Hipotálamo e Funções Vegetativas",
+      },
+      {
+        question: "35. Qual é o papel do córtex parietal como um córtex de associação?",
+        options: [
+          "A) Gerar movimentos voluntários.",
+          "B) Conectar o sistema somatossensorial ao sistema motor, gerando respostas corticais integradas.",
+          "C) Processar apenas informações auditivas.",
+          "D) Controlar a personalidade e o comportamento social.",
+        ],
+        correctAnswer: "B) Conectar o sistema somatossensorial ao sistema motor, gerando respostas corticais integradas.",
+        comment: "O córtex parietal é um córtex de associação, fazendo diversas conexões, incluindo emissão de conexões frontais para ligar o sistema somatossensorial ao sistema motor, gerando respostas corticais integradas, conforme a página 15.",
+        topic: "Córtex Parietal: Associação",
+      },
+      {
+        question: "36. A perda da estereognosia (incapacidade de reconhecer objetos colocados nas mãos) é uma implicação clínica de lesões em qual área?",
+        options: [
+          "A) Área de Broca.",
+          "B) Córtex Motor Primário.",
+          "C) Área Somestésica (córtex somatossensorial).",
+          "D) Lobo Occipital.",
+        ],
+        correctAnswer: "C) Área Somestésica (córtex somatossensorial).",
+        comment: "Lesões na área somestésica podem levar à perda da sensibilidade discriminativa e, consequentemente, à perda da estereognosia, conforme a página 15.",
+        topic: "Somestesia e Estereognosia",
+      },
+      {
+        question: "37. Qual das seguintes afasias é caracterizada pela dificuldade em repetir frases longas e pela presença de erros fonêmicos e parafásicos na fala, geralmente associada a lesões no fascículo arqueado?",
+        options: [
+          "A) Afasia de Broca.",
+          "B) Afasia de Condução.",
+          "C) Afasia de Wernicke.",
+          "D) Afasia Nominativa.",
+        ],
+        correctAnswer: "B) Afasia de Condução.",
+        comment: "A Afasia de Condução é caracterizada por boa compreensão e fala fluente, mas dificuldades em repetir frases longas e presença de erros fonêmicos e parafásicos, associada a lesões em estruturas de associação como o fascículo arqueado, conforme a página 29 e 30 (Caso 03).",
+        topic: "Afasias: Fascículo Arqueado",
+      },
+      {
+        question: "38. Qual a função da área motora suplementar?",
+        options: [
+          "A) Articulação da fala.",
+          "B) Geração de padrões complexos de movimentos finos das mãos.",
+          "C) Desencadear contrações bilaterais e atuar na postura geral, movimentos de fixação, e posição da cabeça e olhos.",
+          "D) Compreensão da linguagem.",
+        ],
+        correctAnswer: "C) Desencadear contrações bilaterais e atuar na postura geral, movimentos de fixação, e posição da cabeça e olhos.",
+        comment: "A área motora suplementar desencadeia contrações bilaterais e atua na postura geral, movimentos de fixação, e posição da cabeça e olhos, servindo como base para o controle motor fino dos braços e mãos, conforme a página 12.",
+        topic: "Área Motora Suplementar",
+      },
+      {
+        question: "39. Qual é a principal via de entrada das informações para o hipocampo na Formação Hipocampal?",
+        options: [
+          "A) Fímbria.",
+          "B) Subículo.",
+          "C) Giro Denteado.",
+          "D) Tálamo.",
+        ],
+        correctAnswer: "C) Giro Denteado.",
+        comment: "O Giro Denteado atua como 'porta de entrada' das informações para o hipocampo, conforme a página 24.",
+        topic: "Vias de Entrada do Hipocampo",
+      },
+      {
+        question: "40. Qual das fases do sono de ondas lentas é composta apenas pelo ritmo Delta no EEG?",
+        options: [
+          "A) Fase 1.",
+          "B) Fase 2.",
+          "C) Fase 3.",
+          "D) Fase 4.",
+        ],
+        correctAnswer: "D) Fase 4.",
+        comment: "A Fase 4 do sono de ondas lentas é composta apenas pelo ritmo Delta no EEG, conforme a página 26.",
+        topic: "Fases do Sono Profundo",
+      },
+    ];
+
+    function buildQuiz() {
+      const output = [];
+
+      questions.forEach((currentQuestion, questionNumber) => {
+        const options = [];
+        for (let i = 0; i < currentQuestion.options.length; i++) {
+          options.push(
+            `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+              <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+              ${currentQuestion.options[i]}
+            </label>`
+          );
+        }
+
+        output.push(
+          `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+            <div class="question">${currentQuestion.question}</div>
+            <div class="options">${options.join("")}</div>
+            <div class="comment" id="comment-${questionNumber}"></div>
+          </div>`
+        );
+      });
+
+      quizContainer.innerHTML = output.join("");
+    }
+
+    function showResults() {
+      wrongQuestionIndices = [];
+      errorCountByTopic = {};
+      totalAnsweredQuestionsByTopic = {};
+      currentWrongQuestionIndex = -1;
+      hasErrors = false;
+      isShowingErrors = false;
+      isShowingDiagnosis = false;
+
+      errorDiagnosisSection.style.display = 'none';
+      topicsToReviewList.innerHTML = '';
+      statusMessage.textContent = '';
+
+      // Busca por todas as perguntas: estáticas e dinâmicas
+      const allQuestionCards = document.querySelectorAll('.quiz-container .card, #newQuestionsContent .card');
+      let correctAnswersCount = 0;
+      let totalQuestionsAnswered = 0;
+
+      console.log('🔍 Verificando', allQuestionCards.length, 'perguntas...');
+
+      allQuestionCards.forEach((card, index) => {
+        const questionEl = card.querySelector('.question') || card.querySelector('p');
+        if (!questionEl) return;
+
+        const questionText = questionEl.textContent.trim();
+        const optionsContainer = card.querySelector('.options') || card;
+        const allOptions = optionsContainer.querySelectorAll('.option, label.option, label');
+        const userAnswerElement = optionsContainer.querySelector('.option.selected, label.selected');
+        const commentDiv = card.querySelector('.comment');
+
+        const questionTopic = card.dataset.topic || "Tópico não informado";
+        
+        console.log(`📝 Pergunta ${index + 1}: Tópico = "${questionTopic}"`);
+        console.log(`🔍 Encontradas ${allOptions.length} alternativas`);
+        
+        // Remove classes anteriores
+        allOptions.forEach(option => {
+          option.classList.remove('correct', 'incorrect', 'selected');
+        });
+        if (commentDiv) commentDiv.classList.remove('show');
+
+        let correctAnswerValue = null;
+        let questionComment = null;
+
+        // Verifica se é pergunta estática ou dinâmica
+        const isStatic = card.id && card.id.startsWith('question-');
+        if (isStatic) {
+          // Pergunta estática - busca nos dados originais
+          const questionData = questions.find(q => q.question.trim() === questionText);
+          if (questionData) {
+            correctAnswerValue = questionData.correctAnswer.trim();
+            questionComment = questionData.comment;
+          }
+        } else {
+          // Pergunta dinâmica - busca pela opção marcada como correta
+          const correctOpt = optionsContainer.querySelector('.option[data-answer="true"], label[data-answer="true"]');
+          if (correctOpt) {
+            correctAnswerValue = correctOpt.dataset.value?.trim() || correctOpt.textContent.trim();
+            console.log(`✅ Resposta correta encontrada: "${correctAnswerValue}"`);
+          } else {
+            console.log('❌ Nenhuma resposta correta encontrada para pergunta dinâmica');
+          }
+          
+          // Busca comentário no próprio card ou no div comment
+          const commentElement = card.querySelector('.comment');
+          if (commentElement && commentElement.textContent.trim()) {
+            questionComment = commentElement.textContent.trim();
+          }
+        }
+
+        // Processa resposta do usuário e aplica coloração
+        let userAnswer = null;
+        if (userAnswerElement) {
+          userAnswerElement.classList.add('selected');
+          userAnswer = userAnswerElement.dataset.value?.trim() || userAnswerElement.textContent.trim();
+          totalQuestionsAnswered++;
+          totalAnsweredQuestionsByTopic[questionTopic] = (totalAnsweredQuestionsByTopic[questionTopic] || 0) + 1;
+
+          console.log(`👤 Resposta do usuário: "${userAnswer}"`);
+          console.log(`🎯 Resposta correta: "${correctAnswerValue}"`);
+
+          // Verifica se a resposta está correta
+          if (userAnswer === correctAnswerValue) {
+            correctAnswersCount++;
+            console.log(`✅ Resposta correta!`);
+          } else {
+            hasErrors = true;
+            errorCountByTopic[questionTopic] = (errorCountByTopic[questionTopic] || 0) + 1;
+            console.log(`❌ Resposta incorreta para tópico: ${questionTopic}`);
+          }
+        }
+
+        // Aplica coloração: SEMPRE marca a correta de verde, e a errada de vermelho se foi marcada
+        allOptions.forEach(option => {
+          const optionValue = option.dataset.value?.trim() || option.textContent.trim();
+          
+          // Marca a resposta correta de verde SEMPRE
+          if (optionValue === correctAnswerValue) {
+            option.classList.add('correct');
+            console.log(`🟢 Marcando como correta: "${optionValue}"`);
+          }
+          
+          // Se o usuário marcou uma resposta E ela está errada, marca de vermelho
+          if (userAnswer && optionValue === userAnswer && userAnswer !== correctAnswerValue) {
+            option.classList.add('incorrect');
+            console.log(`🔴 Marcando como incorreta: "${optionValue}"`);
+          }
+        });
+
+        // Mostra comentário se disponível
+        if (commentDiv && questionComment) {
+          commentDiv.textContent = questionComment;
+          commentDiv.classList.add('show');
+        }
+      });
+
+      // Exibe resultados
+      resultsContainer.textContent = `Você acertou ${correctAnswersCount} de ${totalQuestionsAnswered} questões respondidas.`;
+
+      console.log('📊 Erros por tópico:', errorCountByTopic);
+      console.log('📊 Total por tópico:', totalAnsweredQuestionsByTopic);
+
+      // Gera diagnóstico de erros
+      if (hasErrors) {
+        for (const topic in errorCountByTopic) {
+          const errors = errorCountByTopic[topic];
+          const total = totalAnsweredQuestionsByTopic[topic] || 0;
+          if (total > 0) {
+            const percent = ((errors / total) * 100).toFixed(1);
+            const li = document.createElement('li');
+            li.textContent = `${topic}: ${percent}% de erros (${errors} de ${total} questões respondidas)`;
+            topicsToReviewList.appendChild(li);
+          }
+        }
+      } else {
+        const li = document.createElement('li');
+        li.textContent = "🥳 Parabéns! Você não teve erros nas questões respondidas.";
+        topicsToReviewList.appendChild(li);
+      }
+
+      errorDiagnosisSection.style.display = 'block';
+      generatedQuestionsSection.style.display = 'block';
+      generateNewQuestionsBtn.style.display = 'block';
+      scrollToDiagnosis();
+    }
+
+    function scrollToQuestion(index) {
+      const questionCard = document.getElementById(`question-${index}`);
+      if (questionCard) {
+        questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function scrollToDiagnosis() {
+        errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToGeneratedQuestions() {
+        generatedQuestionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Event listener para seleção de opções (funciona para estáticas e dinâmicas)
+    document.addEventListener("click", function (event) {
+      const clickedElement = event.target;
+      const optionElement = clickedElement.closest('.option');
+
+      if (optionElement) {
+          if (clickedElement.classList.contains("scissor-icon")) {
+              event.stopPropagation();
+              optionElement.classList.toggle("struck-through");
+          }
+          else {
+              const parentCard = optionElement.closest('.card');
+              const currentQuestionOptions = parentCard.querySelectorAll('.option');
+
+              currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+              optionElement.classList.add("selected");
+          }
+      }
+    });
+
+    generateNewQuestionsBtn.addEventListener("click", async function() {
+        statusMessage.textContent = '⏳ Gerando novas perguntas...';
+        generateNewQuestionsBtn.disabled = true;
+
+        const topics = Object.keys(errorCountByTopic).filter(topic => {
+            const errorsInTopic = errorCountByTopic[topic] || 0;
+            const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+            return errorsInTopic > 0 && totalAnsweredInTopic > 0;
+        });
+
+        const topicsToSend = topics.length > 0 ? topics : ["fisiologia celular", "biologia"];
+
+        try {
+            const response = await fetch('https://www.quizia.xyz/quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topicos: topicsToSend }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            newQuestionsContent.innerHTML = '';
+            if (data && data.html) {
+                console.log('📥 HTML recebido do Flask:', data.html);
+                
+                // Insere o HTML diretamente sem reconstrução complexa
+                newQuestionsContent.innerHTML = data.html.replace(/```html|```/g, '');
+                
+                // Adiciona tesouras e ajusta formatação apenas se necessário
+                newQuestionsContent.querySelectorAll('.card').forEach((card, cardIndex) => {
+                    // Garante que o elemento de pergunta tenha a classe correta
+                    const questionElement = card.querySelector('p');
+                    if (questionElement && !questionElement.classList.contains('question')) {
+                       questionElement.classList.add('question');
+                    }
+
+                    // Remove qualquer input de radio que possa existir e adiciona tesouras
+                    card.querySelectorAll('label').forEach((label) => {
+                        // Remove inputs de radio MAS preserva o atributo data-answer
+                        const radioInput = label.querySelector('input[type="radio"]');
+                        if (radioInput) {
+                            // PRESERVA o atributo data-answer do input no label
+                            if (radioInput.hasAttribute('data-answer')) {
+                                label.setAttribute('data-answer', radioInput.getAttribute('data-answer'));
+                            }
+                            radioInput.remove();
+                        }
+                        
+                        // Garante que tenha a classe option
+                        if (!label.classList.contains('option')) {
+                            label.classList.add('option');
+                        }
+
+                        // Garante que tenha data-value
+                        if (!label.dataset.value) {
+                            label.dataset.value = label.textContent.trim();
+                        }
+
+                        // Adiciona tesoura se não existir
+                        if (!label.querySelector('.scissor-icon')) {
+                            const scissorIcon = document.createElement('img');
+                            scissorIcon.src = 'tesouras.png';
+                            scissorIcon.className = 'scissor-icon';
+                            scissorIcon.onclick = function(e) {
+                                e.stopPropagation();
+                                label.classList.toggle('struck-through');
+                            };
+                            label.insertBefore(scissorIcon, label.firstChild);
+                        }
+                    });
+
+                    console.log(`🏷️ Card ${cardIndex}: data-topic = "${card.dataset.topic}"`);
+                    
+                    // Verifica se há opção correta marcada
+                    const correctOption = card.querySelector('label[data-answer="true"]');
+                    if (correctOption) {
+                        console.log(`✅ Opção correta encontrada: "${correctOption.dataset.value}"`);
+                    } else {
+                        console.log('❌ Nenhuma opção correta encontrada');
+                    }
+                });
+            } else {
+                newQuestionsContent.innerHTML = "<p>Não foi possível gerar novas perguntas para os tópicos selecionados.</p>";
+            }
+            
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '✅ Perguntas geradas com sucesso!';
+            setTimeout(() => { statusMessage.textContent = '' }, 3000);
+
+        } catch (error) {
+            console.error('Erro ao gerar novas perguntas:', error);
+            newQuestionsContent.innerHTML = `<p>Erro ao carregar novas perguntas: ${error.message}. Por favor, tente novamente.</p>`;
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '❌ Erro na requisição: ' + error.message;
+            setTimeout(() => { statusMessage.textContent = '' }, 5000);
+        } finally {
+            generateNewQuestionsBtn.disabled = false;
+        }
+    });
+
+    // Inicialização
+    buildQuiz();
+    errorDiagnosisSection.style.display = 'none';
+    generatedQuestionsSection.style.display = 'none';
+    generateNewQuestionsBtn.style.display = 'none';
+
+    // Event listener para o botão de verificar respostas
+    document.getElementById("verifyAnswersBtn").addEventListener("click", showResults);
+  </script>
+</body>
+</html>
