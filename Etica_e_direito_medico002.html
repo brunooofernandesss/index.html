@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Simulado de Ética e Direito Médico</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .options {
+      margin-top: 15px;
+    }
+
+    /* Estilos unificados para todas as opções (estáticas e dinâmicas) */
+    .option, label.option, label, #newQuestionsContent label {
+      display: flex; /* Para alinhar imagem e texto */
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      position: relative; /* Para posicionar a tesoura */
+    }
+
+    /* FORÇA a remoção de inputs de radio em QUALQUER lugar */
+    .option input[type="radio"], 
+    label input[type="radio"],
+    #newQuestionsContent input[type="radio"],
+    #newQuestionsContent label input[type="radio"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+
+    .option:hover, 
+    label.option:hover, 
+    label:hover,
+    #newQuestionsContent label:hover {
+      background-color: #e9e9e9;
+    }
+
+    .option.selected, 
+    label.option.selected, 
+    label.selected,
+    #newQuestionsContent label.selected {
+      background-color: #d1e7dd;
+      border-color: #28a745;
+    }
+
+    .option.correct, 
+    label.option.correct, 
+    label.correct,
+    #newQuestionsContent label.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+    }
+
+    .option.incorrect, 
+    label.option.incorrect, 
+    label.incorrect,
+    #newQuestionsContent label.incorrect {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .submit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .results {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .scissor-icon {
+      margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+      width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      opacity: 0.5; /* Transparência como no original */
+      cursor: pointer;
+    }
+
+    .scissor-icon.hidden {
+      display: none;
+    }
+
+    .struck-through {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .comment {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-left: 4px solid #007bff;
+      font-style: italic;
+      color: #555;
+      display: none; /* Escondido por padrão */
+    }
+    .comment.show {
+      display: block; /* Mostrado quando ativado */
+    }
+
+    /* Estilos para o botão de navegação de erro / diagnóstico */
+    .error-nav-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #dc3545; /* Vermelho para erro */
+      color: white;
+      border: none;
+      border-radius: 50%; /* Torna o botão redondo */
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none; /* Escondido por padrão */
+      flex-direction: column; /* Para empilhar o ícone e o contador */
+      padding: 5px; /* Ajuste o padding para acomodar texto maior */
+      box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+      text-align: center;
+    }
+
+    .error-nav-btn:hover {
+      background-color: #c82333;
+    }
+
+    .error-nav-btn .arrow-icon {
+      font-size: 30px; /* Tamanho da seta */
+      line-height: 1; /* Ajuste para centralizar */
+    }
+
+    .error-nav-btn .button-text {
+      font-size: 12px; /* Tamanho do texto abaixo da seta */
+      line-height: 1;
+      margin-top: 2px; /* Espaço entre a seta e o texto */
+    }
+
+    /* Estilos para a seção de diagnóstico de erros */
+    .error-diagnosis-section {
+        margin-top: 50px;
+        padding: 30px;
+        background-color: #ffe0b2; /* Um laranja claro ou similar */
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        display: none; /* Escondido por padrão */
+        text-align: center;
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .error-diagnosis-section h2 {
+        color: #e65100; /* Laranja mais escuro */
+        margin-bottom: 20px;
+        font-size: 1.8em;
+    }
+
+    .error-diagnosis-section ul {
+        list-style: none; /* Remove marcadores de lista */
+        padding: 0;
+        margin: 0;
+    }
+
+    .error-diagnosis-section li {
+        background-color: #ff9800; /* Laranja */
+        color: white;
+        padding: 8px 15px;
+        margin: 8px 0;
+        border-radius: 5px;
+        display: inline-block; /* Para que os itens fiquem lado a lado */
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .error-diagnosis-section li:last-child {
+        margin-right: 0;
+    }
+ .card-bloco {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1 style="text-align:center; margin-bottom: 30px;">Simulado de Ética e Direito Médico</h1>
+    <div class="card-bloco" id="quiz"></div>
+    <button class="submit-btn" id="verifyAnswersBtn">Verificar Respostas</button>
+
+    <button class="generate-questions-btn submit-btn" id="generateNewQuestionsBtn" style="display:none;">
+      Gerar Novas Perguntas
+    </button>
+
+    <div class="results card-bloco" id="results"></div>
+    <div id="statusMessage" style="text-align: center; margin-top: 10px; font-weight: bold; color: #007bff;"></div>
+
+    <div class="error-diagnosis-section card-bloco" id="errorDiagnosis">
+      <h2>Diagnóstico de Erros</h2>
+      <p>Parece que você precisa revisar os seguintes assuntos:</p>
+      <ul id="topicsToReview"></ul>
+    </div>
+
+    <div class="generated-questions-section card-bloco" id="generatedQuestionsSection" style="display:none;">
+      <h2>Novas Perguntas Geradas</h2>
+      <div id="newQuestionsContent"></div>
+    </div>
+  </div>
+  
+  <button class="error-nav-btn" id="errorNavBtn" style="display:none;">
+    <span class="arrow-icon"></span>
+    <span class="button-text"></span>
+  </button>
+
+  <script>
+    const quizContainer = document.getElementById("quiz");
+    const resultsContainer = document.getElementById("results");
+    const errorNavBtn = document.getElementById("errorNavBtn");
+    const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+    const buttonText = errorNavBtn.querySelector(".button-text");
+    const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+    const topicsToReviewList = document.getElementById("topicsToReview");
+    const generateNewQuestionsBtn = document.getElementById("generateNewQuestionsBtn");
+    const generatedQuestionsSection = document.getElementById("generatedQuestionsSection");
+    const newQuestionsContent = document.getElementById("newQuestionsContent");
+    const statusMessage = document.getElementById("statusMessage");
+
+    let wrongQuestionIndices = [];
+    let errorCountByTopic = {};
+    let totalAnsweredQuestionsByTopic = {};
+    let currentWrongQuestionIndex = -1;
+    let hasErrors = false;
+    let isShowingErrors = false;
+    let isShowingDiagnosis = false;
+
+    // Inicializa a visibilidade das seções no carregamento
+    errorDiagnosisSection.style.display = 'none';
+    topicsToReviewList.innerHTML = '';
+    statusMessage.textContent = '';
+
+    const questions = [       {         question: "1. Qual o dilema ético inicial abordado na aula, que serve como ponto de partida para a discussão?",         options: [           "a) O Problema do Ônibus",           "b) O Problema do Bonde",           "c) O Dilema da Escolha",           "d) A Parábola do Salto Quântico",         ],         correctAnswer: "b) O Problema do Bonde",         comment: "A aula inicia a discussão sobre dilemas éticos usando o \"Problema do Bonde\" para ilustrar a complexidade das decisões morais.",         topic: "Dilemas Éticos",       },       {         question: "2. A discussão inicial da aula faz uma distinção entre quais duas posturas?",         options: [           "a) Postura ativa e postura passiva",           "b) Postura utilitarista e postura deontológica",           "c) Postura correta e postura incorreta",           "d) Postura reflexiva e postura impulsiva",         ],         correctAnswer: "a) Postura ativa e postura passiva",         comment: "O Dr. Pedro diferencia uma postura passiva (não agir e permitir um resultado) de uma postura ativa (agir para causar um resultado).",         topic: "Postura Passiva e Ativa",       },       {         question: "3. O cenário médico hipotético utilizado na aula para ilustrar o dilema envolvia qual situação?",         options: [           "a) Uma pessoa saudável precisando de um transplante e cinco pessoas doentes no pronto-socorro.",           "b) Um médico que precisa decidir entre duas cirurgias urgentes.",           "c) Uma pessoa saudável que chega ao pronto-socorro, enquanto cinco pessoas precisam de transplantes urgentes.",           "d) Um médico que precisa escolher qual paciente atender primeiro em uma situação de emergência.",         ],         correctAnswer: "c) Uma pessoa saudável que chega ao pronto-socorro, enquanto cinco pessoas precisam de transplantes urgentes.",         comment: "O palestrante utiliza esse cenário para discutir se seria ético sacrificar o indivíduo saudável para salvar os cinco doentes.",         topic: "Aplicação do Dilema Ético na Medicina",       },       {         question: "4. O que a aula sugere sobre uma abordagem puramente utilitarista, baseada em 'maior número de salvamentos'?",         options: [           "a) Que é a única abordagem correta em um cenário médico.",           "b) Que ela leva a um impasse ético.",           "c) Que é o fundamento do Direito e da Ética Médica.",           "d) Que deve ser aplicada em todos os casos de dilema ético.",         ],         correctAnswer: "b) Que ela leva a um impasse ético.",         comment: "O resumo afirma que uma lógica puramente numérica ou utilitarista leva a um impasse ético, pois não considera o valor intrínseco da vida.",         topic: "Crítica ao Utilitarismo",       },       {         question: "5. Qual é o conceito ético introduzido para contrapor a visão utilitarista?",         options: [           "a) Ética consequencialista",           "b) Ética da virtude",           "c) Ética deontológica",           "d) Ética normativa",         ],         correctAnswer: "c) Ética deontológica",         comment: "A deontologia é introduzida como o conceito que se opõe ao utilitarismo, focando na correção das ações em si.",         topic: "Introdução à Ética Deontológica",       },       {         question: "6. De acordo com a aula, em que a ética deontológica se baseia?",         options: [           "a) Nas consequências das ações.",           "b) Em um 'limite ético absoluto'.",           "c) No maior número de pessoas beneficiadas.",           "d) Na liberdade de escolha do indivíduo.",         ],         correctAnswer: "b) Em um 'limite ético absoluto'.",         comment: "O palestrante explica que a deontologia se baseia em um \"limite ético absoluto\", que estabelece a vida humana como tendo valor intrínseco.",         topic: "Princípios da Deontologia",       },       {         question: "7. Qual é o princípio fundamental da deontologia, segundo a aula, em relação à vida humana?",         options: [           "a) Que a vida pode ser usada como meio para um fim coletivo.",           "b) Que a vida humana não pode ser instrumentalizada.",           "c) Que o valor da vida é relativo.",           "d) Que o médico pode decidir sobre o valor da vida em cada caso.",         ],         correctAnswer: "b) Que a vida humana não pode ser instrumentalizada.",         comment: "A aula reforça que a deontologia é o fundamento do Direito e da Ética Médica por se basear no princípio de que a vida humana tem valor intrínseco e não pode ser usada como meio.",         topic: "Instrumentalização da Vida Humana",       },       {         question: "8. O que significa 'instrumentalizar' o ser humano, de acordo com o resumo?",         options: [           "a) Tratá-lo como um fim em si mesmo.",           "b) Usá-lo como uma ferramenta para a obtenção de benefícios para outros.",           "c) Oferecer-lhe instrumentos para sua cura.",           "d) Considerá-lo um indivíduo autônomo.",         ],         correctAnswer: "b) Usá-lo como uma ferramenta para a obtenção de benefícios para outros.",         comment: "O resumo define instrumentalizar como tratar a vida humana como uma ferramenta para um fim coletivo, o que é proibido pela ética deontológica.",         topic: "Conceito de Instrumentalização",       },       {         question: "9. A aula afirma que a ética deontológica é o fundamento de qual área?",         options: [           "a) Utilitarismo e deontologia.",           "b) Direito e Ética Médica.",           "c) Filosofia e moral.",           "d) Sociologia e psicologia.",         ],         correctAnswer: "b) Direito e Ética Médica.",         comment: "O Dr. Pedro reforça que a visão deontológica é o fundamento do Direito e da Ética Médica.",         topic: "Deontologia no Direito e Ética Médica",       },       {         question: "10. Qual é a crítica levantada na aula sobre a legalização da Eutanásia?",         options: [           "a) Que ela é contrária a princípios religiosos.",           "b) Que ela poderia abrir precedentes para o tratamento da vida humana como um bem de menor valor.",           "c) Que a vida é um bem disponível, então a legalização é correta.",           "d) Que a legalização já é uma realidade em muitos países.",         ],         correctAnswer: "b) Que ela poderia abrir precedentes para o tratamento da vida humana como um bem de menor valor.",         comment: "O palestrante destaca que, mesmo que se argumente que a vida é um bem disponível, a legalização da eutanásia poderia abrir precedentes perigosos.",         topic: "Ética e Eutanásia",       },       {         question: "11. Qual dos seguintes exemplos históricos é citado na aula para reforçar os perigos de uma ética puramente utilitarista?",         options: [           "a) A Revolução Francesa.",           "b) A Primeira Guerra Mundial.",           "c) A eugenia e os campos de concentração.",           "d) O Renascimento.",         ],         correctAnswer: "c) A eugenia e os campos de concentração.",         comment: "Esses exemplos históricos são utilizados para ilustrar os perigos de tratar a vida humana de forma instrumental, com base em uma ética utilitarista.",         topic: "História e Ética Utilitarista",       },       {         question: "12. Qual dos seguintes conceitos não foi abordado na segunda parte da aula (30:00 - 44:39)?",         options: [           "a) Imprudência",           "b) Negligência",           "c) Eutanásia",           "d) Imperícia",         ],         correctAnswer: "c) Eutanásia",         comment: "A segunda parte da aula foca nos conceitos de Negligência, Imprudência e Imperícia. A Eutanásia foi discutida na primeira parte.",         topic: "Conteúdo da Aula: Segunda Parte",       },       {         question: "13. A segunda parte da aula foca em conceitos jurídicos cruciais para qual aspecto da medicina?",         options: [           "a) A responsabilidade médica.",           "b) A ética deontológica.",           "c) O utilitarismo.",           "d) A bioética.",         ],         correctAnswer: "a) A responsabilidade médica.",         comment: "O resumo afirma que os conceitos de Negligência, Imprudência e Imperícia são cruciais para a responsabilidade médica.",         topic: "Responsabilidade Médica",       },       {         question: "14. Como o Dr. Pedro define Negligência?",         options: [           "a) A prática de uma conduta perigosa.",           "b) A falta de conhecimento técnico e prático.",           "c) A falta de cuidado ou de atenção necessária.",           "d) A ausência em um plantão.",         ],         correctAnswer: "c) A falta de cuidado ou de atenção necessária.",         comment: "O resumo define Negligência como a falta de cuidado ou de atenção necessária, uma omissão em observar os deveres.",         topic: "Conceito de Negligência",       },       {         question: "15. Qual o exemplo de Negligência citado na aula?",         options: [           "a) Realizar uma cirurgia complexa sem equipamento adequado.",           "b) Abandono de plantão por um médico.",           "c) Realizar um procedimento sem capacitação.",           "d) Fazer exames desnecessários.",         ],         correctAnswer: "b) Abandono de plantão por um médico.",         comment: "O resumo menciona o abandono de plantão como um exemplo de negligência, que pode ser interpretada como um ato de omissão.",         topic: "Exemplos de Negligência",       },       {         question: "16. A negligência é um ato de que natureza, segundo a aula?",         options: [           "a) Comissiva.",           "b) Deontológica.",           "c) Utilitarista.",           "d) Omissiva.",         ],         correctAnswer: "d) Omissiva.",         comment: "A aula explica que a negligência é um ato de omissão, ou seja, a falta de ação que deveria ser tomada.",         topic: "Negligência: Atos de Omissão",       },       {         question: "17. Como o Dr. Pedro define Imprudência?",         options: [           "a) É a falta de cuidado.",           "b) É a falta de conhecimento técnico.",           "c) É a prática de uma conduta perigosa ou sem a devida cautela.",           "d) É o abandono do plantão.",         ],         correctAnswer: "c) É a prática de uma conduta perigosa ou sem a devida cautela.",         comment: "O resumo define imprudência como uma conduta perigosa, realizada sem o devido cuidado.",         topic: "Conceito de Imprudência",       },       {         question: "18. Qual dos seguintes é um exemplo de Imprudência, segundo o resumo?",         options: [           "a) Realizar um procedimento cirúrgico complexo sem o equipamento adequado.",           "b) Abandono do plantão.",           "c) Falta de capacitação técnica.",           "d) Não dar atenção ao paciente.",         ],         correctAnswer: "a) Realizar um procedimento cirúrgico complexo sem o equipamento adequado.",         comment: "O resumo cita o médico que realiza um procedimento complexo sem o equipamento adequado como exemplo de imprudência.",         topic: "Exemplos de Imprudência",       },       {         question: "19. A imprudência é uma ação de que natureza, segundo a aula?",         options: [           "a) Omissiva.",           "b) Deontológica.",           "c) Comissiva.",           "d) Negligente.",         ],         correctAnswer: "c) Comissiva.",         comment: "Ao contrário da negligência, a imprudência é uma ação de natureza comissiva, ou seja, uma ação inadequada.",         topic: "Imprudência: Atos de Ação",       },       {         question: "20. Como o Dr. Pedro define Imperícia?",         options: [           "a) A falta de cuidado necessário.",           "b) A falta de conhecimento técnico e prático para a realização de uma atividade.",           "c) A prática de uma conduta perigosa.",           "d) O abandono do plantão.",         ],         correctAnswer: "b) A falta de conhecimento técnico e prático para a realização de uma atividade.",         comment: "Imperícia é a falta de habilidade ou conhecimento para a realização de um ato específico, como um procedimento cirúrgico.",         topic: "Conceito de Imperícia",       },       {         question: "21. Qual é o exemplo de Imperícia citado no resumo?",         options: [           "a) Um médico que abandona o plantão.",           "b) Um médico que não realiza exames essenciais.",           "c) Um médico que realiza um procedimento para o qual não tem capacitação.",           "d) Um médico que realiza uma cirurgia sem o equipamento adequado.",         ],         correctAnswer: "c) Um médico que realiza um procedimento para o qual não tem capacitação.",         comment: "O resumo exemplifica a imperícia com o médico que realiza um procedimento sem ter o conhecimento necessário para tal.",         topic: "Exemplos de Imperícia",       },       {         question: "22. O que é crucial para o julgamento de uma conduta médica, além da definição dos conceitos jurídicos?",         options: [           "a) A idade do médico.",           "b) O 'contexto' de cada caso.",           "c) A opinião dos outros médicos.",           "d) A duração do procedimento.",         ],         correctAnswer: "b) O 'contexto' de cada caso.",         comment: "A aula enfatiza que o contexto é crucial, pois as decisões médicas devem ser analisadas caso a caso, considerando as circunstâncias específicas.",         topic: "Contexto na Análise da Conduta Médica",       },       {         question: "23. Qual foi a experiência pessoal do Dr. Pedro que ele compartilha para ilustrar a importância do contexto?",         options: [           "a) Ele abandonou um plantão por causa de um paciente.",           "b) Ele foi questionado por um médico mais velho sobre o tratamento de um paciente.",           "c) Ele realizou uma cirurgia complexa com equipamento inadequado.",           "d) Ele foi acusado de imperícia em um caso.",         ],         correctAnswer: "b) Ele foi questionado por um médico mais velho sobre o tratamento de um paciente.",         comment: "O professor conta essa experiência para mostrar que o contexto pode mudar completamente a percepção sobre a conduta adequada.",         topic: "A Importância da Experiência na Prática Médica",       },       {         question: "24. O que a experiência pessoal do Dr. Pedro ressalta sobre a responsabilidade médica?",         options: [           "a) Que ela é sempre clara e objetiva.",           "b) Que ela depende da opinião de outros médicos.",           "c) Que é sempre uma análise de caso a caso.",           "d) Que o médico deve sempre seguir a conduta mais 'segura' no papel.",         ],         correctAnswer: "c) Que é sempre uma análise de caso a caso.",         comment: "O resumo conclui que a experiência do professor ressalta que a responsabilidade médica é uma análise de caso a caso, fugindo de regras rígidas.",         topic: "Responsabilidade Médica e Análise de Caso",       },       {         question: "25. O que a aula discute no período de 0 a 30 minutos?",         options: [           "a) Imprudência, Negligência e Imperícia.",           "b) O \"Problema do Bonde\" e a ética deontológica.",           "c) A história da medicina.",           "d) A responsabilidade médica.",         ],         correctAnswer: "b) O \"Problema do Bonde\" e a ética deontológica.",         comment: "O resumo fragmentado indica que este período aborda dilemas éticos, como o do bonde, e a introdução da deontologia.",         topic: "Tópicos de 0 a 30 Minutos",       },       {         question: "26. Quais conceitos são discutidos no período de 30 a 44 minutos e 39 segundos?",         options: [           "a) O \"Problema do Bonde\" e a eutanásia.",           "b) Ética utilitarista e deontológica.",           "c) Imprudência, Negligência e Imperícia.",           "d) A instrumentalização do ser humano.",         ],         correctAnswer: "c) Imprudência, Negligência e Imperícia.",         comment: "A segunda parte do resumo, referente a esse período, foca nos conceitos jurídicos de responsabilidade médica.",         topic: "Tópicos de 30 a 44 Minutos",       },       {         question: "27. O que a aula afirma sobre o valor da vida humana, de acordo com a ética deontológica?",         options: [           "a) É um bem disponível.",           "b) Tem um valor extrínseco.",           "c) Tem um valor intrínseco.",           "d) Pode ser sacrificada para o bem coletivo.",         ],         correctAnswer: "c) Tem um valor intrínseco.",         comment: "O resumo afirma que, para a deontologia, a vida humana tem um valor intrínseco, não podendo ser instrumentalizada.",         topic: "O Valor da Vida na Deontologia",       },       {         question: "28. O que a aula diz sobre a Negligência em relação ao dolo?",         options: [           "a) Que negligência é sinônimo de dolo.",           "b) Que negligência é o oposto de dolo.",           "c) Que negligência pode beirar o dolo.",           "d) Que dolo é um tipo de negligência.",         ],         correctAnswer: "c) Que negligência pode beirar o dolo.",         comment: "O resumo menciona que a negligência é um ato de omissão que pode, em alguns casos, beirar o dolo.",         topic: "Negligência e Dolo",       },       {         question: "29. Qual dos conceitos abaixo é um ato comissivo, segundo o resumo?",         options: [           "a) Negligência.",           "b) Imprudência.",           "c) Imperícia.",           "d) Eutanásia.",         ],         correctAnswer: "b) Imprudência.",         comment: "O resumo afirma que a imprudência é uma ação de natureza comissiva, ou seja, uma ação inadequada.",         topic: "Atos Comissivos e Omissivos",       },       {         question: "30. O que a aula reforça sobre a instrumentalização do ser humano ao final da primeira parte?",         options: [           "a) Que é uma prática aceitável em certas situações.",           "b) Que é o mesmo que o utilitarismo.",           "c) Que o médico deve sempre considerar a instrumentalização.",           "d) Que os perigos da instrumentalização são reforçados por exemplos históricos.",         ],         correctAnswer: "d) Que os perigos da instrumentalização são reforçados por exemplos históricos.",         comment: "A aula conclui a primeira parte reforçando os perigos de tratar a vida humana como um meio, citando exemplos históricos.",         topic: "Instrumentalização e História",       },       {         question: "31. A aula diferencia a 'postura passiva' da 'postura ativa' no contexto do 'Problema do Bonde'. O que representa a postura passiva nesse cenário?",         options: [           "a) Agir para desviar o bonde e salvar mais vidas.",           "b) Não agir e permitir que o resultado ocorra.",           "c) Realizar uma ação que cause um resultado direto.",           "d) Analisar todas as consequências antes de agir.",         ],         correctAnswer: "b) Não agir e permitir que o resultado ocorra.",         comment: "O resumo estabelece a postura passiva como a decisão de não agir, permitindo que o resultado se concretize.",         topic: "Postura Passiva",       },       {         question: "32. Qual a principal crítica da ética deontológica ao utilitarismo, segundo o resumo?",         options: [           "a) O utilitarismo foca em ações, enquanto a deontologia foca em consequências.",           "b) O utilitarismo não estabelece um 'limite ético absoluto' para a vida humana.",           "c) A deontologia ignora o contexto, enquanto o utilitarismo o valoriza.",           "d) O utilitarismo é baseado na omissão, e a deontologia na ação.",         ],         correctAnswer: "b) O utilitarismo não estabelece um 'limite ético absoluto' para a vida humana.",         comment: "O resumo explica que a deontologia é introduzida para contrapor o utilitarismo, que é visto como falho por não reconhecer o valor intrínseco e absoluto da vida.",         topic: "Deontologia vs. Utilitarismo",       },       {         question: "33. De acordo com a aula, a vida de um ser humano não pode ser tratada como...",         options: [           "a) um bem disponível.",           "b) um fim em si mesmo.",           "c) um meio para um fim coletivo.",           "d) um bem de menor valor.",         ],         correctAnswer: "c) um meio para um fim coletivo.",         comment: "O resumo afirma que o princípio deontológico fundamental é que a vida humana não pode ser usada como um meio para um fim coletivo.",         topic: "Instrumentalização na Ética",       },       {         question: "34. A discussão sobre Eutanásia no resumo é apresentada para levantar qual questionamento?",         options: [           "a) Sobre a legalização de uma prática que contraria a deontologia.",           "b) Se a vida é ou não um bem disponível.",           "c) Como o médico deve agir em casos de pacientes terminais.",           "d) Se a Eutanásia pode ser aplicada em todos os casos de doença.",         ],         correctAnswer: "a) Sobre a legalização de uma prática que contraria a deontologia.",         comment: "A aula discute a Eutanásia como um caso que questiona a deontologia, abordando a legalização de uma prática que contraria esse princípio.",         topic: "Eutanásia e Deontologia",       },       {         question: "35. O que a aula sugere que a legalização da Eutanásia poderia potencialmente abrir?",         options: [           "a) Aumento de plantões médicos.",           "b) Precedentes para o tratamento da vida humana como um bem de menor valor.",           "c) Novas técnicas cirúrgicas.",           "d) Mais liberdade para os médicos.",         ],         correctAnswer: "b) Precedentes para o tratamento da vida humana como um bem de menor valor.",         comment: "O palestrante levanta o perigo de que, uma vez legalizada, a Eutanásia poderia desvalorizar a vida humana.",         topic: "Consequências da Legalização da Eutanásia",       },       {         question: "36. Qual é a definição de Negligência que se aproxima do dolo?",         options: [           "a) Falta de conhecimento técnico.",           "b) Falta de cuidado.",           "c) Um ato de omissão.",           "d) Uma conduta perigosa.",         ],         correctAnswer: "c) Um ato de omissão.",         comment: "O resumo afirma que a negligência é um ato de omissão que pode beirar o dolo.",         topic: "Negligência e Dolo",       },       {         question: "37. Qual a definição de Imprudência que o Dr. Pedro utiliza?",         options: [           "a) A falta de conhecimento técnico.",           "b) A prática de uma conduta perigosa.",           "c) A omissão de um dever.",           "d) A falta de atenção.",         ],         correctAnswer: "b) A prática de uma conduta perigosa.",         comment: "Imprudência é definida como uma conduta perigosa, realizada sem a devida cautela.",         topic: "Definição de Imprudência",       },       {         question: "38. Como a Imperícia é exemplificada na aula?",         options: [           "a) Pela falta de equipamentos.",           "b) Pela falta de capacitação para um procedimento.",           "c) Pelo abandono do plantão.",           "d) Pela falta de atenção ao paciente.",         ],         correctAnswer: "b) Pela falta de capacitação para um procedimento.",         comment: "A Imperícia é a falta de conhecimento ou habilidade para realizar uma tarefa, exemplificada pelo médico que realiza um procedimento sem a capacitação necessária.",         topic: "Exemplo de Imperícia",       },       {         question: "39. O que a experiência pessoal do Dr. Pedro com o médico mais velho ilustra sobre a tomada de decisões na medicina?",         options: [           "a) Que a experiência é mais importante que o conhecimento técnico.",           "b) Que a decisão correta nem sempre é a mais óbvia.",           "c) Que a prática médica é sempre segura.",           "d) Que a ética não é relevante em situações de emergência.",         ],         correctAnswer: "b) Que a decisão correta nem sempre é a mais óbvia.",         comment: "A experiência pessoal do palestrante mostra que a realidade clínica e o contexto podem mudar a percepção do que seria uma conduta \"segura\" no papel, indicando que a decisão correta nem sempre é a mais óbvia.",         topic: "Tomada de Decisão e Contexto",       },       {         question: "40. Qual a principal conclusão da aula sobre a responsabilidade médica?",         options: [           "a) É um conceito absoluto.",           "b) É sempre baseada em regras rígidas.",           "c) É uma análise que deve ser feita caso a caso.",           "d) Depende apenas da formação do médico.",         ],         correctAnswer: "c) É uma análise que deve ser feita caso a caso.",         comment: "A aula conclui que a responsabilidade médica é uma análise de caso a caso, dependente do contexto e das circunstâncias específicas.",         topic: "Conclusão sobre a Responsabilidade Médica",       },     ];
+
+    function buildQuiz() {
+      const output = [];
+
+      questions.forEach((currentQuestion, questionNumber) => {
+        const options = [];
+        for (let i = 0; i < currentQuestion.options.length; i++) {
+          options.push(
+            `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+              <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+              ${currentQuestion.options[i]}
+            </label>`
+          );
+        }
+
+        output.push(
+          `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+            <div class="question">${currentQuestion.question}</div>
+            <div class="options">${options.join("")}</div>
+            <div class="comment" id="comment-${questionNumber}"></div>
+          </div>`
+        );
+      });
+
+      quizContainer.innerHTML = output.join("");
+    }
+
+    function showResults() {
+      wrongQuestionIndices = [];
+      errorCountByTopic = {};
+      totalAnsweredQuestionsByTopic = {};
+      currentWrongQuestionIndex = -1;
+      hasErrors = false;
+      isShowingErrors = false;
+      isShowingDiagnosis = false;
+
+      errorDiagnosisSection.style.display = 'none';
+      topicsToReviewList.innerHTML = '';
+      statusMessage.textContent = '';
+
+      // Busca por todas as perguntas: estáticas e dinâmicas
+      const allQuestionCards = document.querySelectorAll('.quiz-container .card, #newQuestionsContent .card');
+      let correctAnswersCount = 0;
+      let totalQuestionsAnswered = 0;
+
+      console.log('🔍 Verificando', allQuestionCards.length, 'perguntas...');
+
+      allQuestionCards.forEach((card, index) => {
+        const questionEl = card.querySelector('.question') || card.querySelector('p');
+        if (!questionEl) return;
+
+        const questionText = questionEl.textContent.trim();
+        const optionsContainer = card.querySelector('.options') || card;
+        const allOptions = optionsContainer.querySelectorAll('.option, label.option, label');
+        const userAnswerElement = optionsContainer.querySelector('.option.selected, label.selected');
+        const commentDiv = card.querySelector('.comment');
+
+        const questionTopic = card.dataset.topic || "Tópico não informado";
+        
+        console.log(`📝 Pergunta ${index + 1}: Tópico = "${questionTopic}"`);
+        console.log(`🔍 Encontradas ${allOptions.length} alternativas`);
+        
+        // Remove classes anteriores
+        allOptions.forEach(option => {
+          option.classList.remove('correct', 'incorrect', 'selected');
+        });
+        if (commentDiv) commentDiv.classList.remove('show');
+
+        let correctAnswerValue = null;
+        let questionComment = null;
+
+        // Verifica se é pergunta estática ou dinâmica
+        const isStatic = card.id && card.id.startsWith('question-');
+        if (isStatic) {
+          // Pergunta estática - busca nos dados originais
+          const questionData = questions.find(q => q.question.trim() === questionText);
+          if (questionData) {
+            correctAnswerValue = questionData.correctAnswer.trim();
+            questionComment = questionData.comment;
+          }
+        } else {
+          // Pergunta dinâmica - busca pela opção marcada como correta
+          const correctOpt = optionsContainer.querySelector('.option[data-answer="true"], label[data-answer="true"]');
+          if (correctOpt) {
+            correctAnswerValue = correctOpt.dataset.value?.trim() || correctOpt.textContent.trim();
+            console.log(`✅ Resposta correta encontrada: "${correctAnswerValue}"`);
+          } else {
+            console.log('❌ Nenhuma resposta correta encontrada para pergunta dinâmica');
+          }
+          
+          // Busca comentário no próprio card ou no div comment
+          const commentElement = card.querySelector('.comment');
+          if (commentElement && commentElement.textContent.trim()) {
+            questionComment = commentElement.textContent.trim();
+          }
+        }
+
+        // Processa resposta do usuário e aplica coloração
+        let userAnswer = null;
+        if (userAnswerElement) {
+          userAnswerElement.classList.add('selected');
+          userAnswer = userAnswerElement.dataset.value?.trim() || userAnswerElement.textContent.trim();
+          totalQuestionsAnswered++;
+          totalAnsweredQuestionsByTopic[questionTopic] = (totalAnsweredQuestionsByTopic[questionTopic] || 0) + 1;
+
+          console.log(`👤 Resposta do usuário: "${userAnswer}"`);
+          console.log(`🎯 Resposta correta: "${correctAnswerValue}"`);
+
+          // Verifica se a resposta está correta
+          if (userAnswer === correctAnswerValue) {
+            correctAnswersCount++;
+            console.log(`✅ Resposta correta!`);
+          } else {
+            hasErrors = true;
+            errorCountByTopic[questionTopic] = (errorCountByTopic[questionTopic] || 0) + 1;
+            console.log(`❌ Resposta incorreta para tópico: ${questionTopic}`);
+          }
+        }
+
+        // Aplica coloração: SEMPRE marca a correta de verde, e a errada de vermelho se foi marcada
+        allOptions.forEach(option => {
+          const optionValue = option.dataset.value?.trim() || option.textContent.trim();
+          
+          // Marca a resposta correta de verde SEMPRE
+          if (optionValue === correctAnswerValue) {
+            option.classList.add('correct');
+            console.log(`🟢 Marcando como correta: "${optionValue}"`);
+          }
+          
+          // Se o usuário marcou uma resposta E ela está errada, marca de vermelho
+          if (userAnswer && optionValue === userAnswer && userAnswer !== correctAnswerValue) {
+            option.classList.add('incorrect');
+            console.log(`🔴 Marcando como incorreta: "${optionValue}"`);
+          }
+        });
+
+        // Mostra comentário se disponível
+        if (commentDiv && questionComment) {
+          commentDiv.textContent = questionComment;
+          commentDiv.classList.add('show');
+        }
+      });
+
+      // Exibe resultados
+      resultsContainer.textContent = `Você acertou ${correctAnswersCount} de ${totalQuestionsAnswered} questões respondidas.`;
+
+      console.log('📊 Erros por tópico:', errorCountByTopic);
+      console.log('📊 Total por tópico:', totalAnsweredQuestionsByTopic);
+
+      // Gera diagnóstico de erros
+      if (hasErrors) {
+        for (const topic in errorCountByTopic) {
+          const errors = errorCountByTopic[topic];
+          const total = totalAnsweredQuestionsByTopic[topic] || 0;
+          if (total > 0) {
+            const percent = ((errors / total) * 100).toFixed(1);
+            const li = document.createElement('li');
+            li.textContent = `${topic}: ${percent}% de erros (${errors} de ${total} questões respondidas)`;
+            topicsToReviewList.appendChild(li);
+          }
+        }
+      } else {
+        const li = document.createElement('li');
+        li.textContent = "🥳 Parabéns! Você não teve erros nas questões respondidas.";
+        topicsToReviewList.appendChild(li);
+      }
+
+      errorDiagnosisSection.style.display = 'block';
+      generatedQuestionsSection.style.display = 'block';
+      generateNewQuestionsBtn.style.display = 'block';
+      scrollToDiagnosis();
+    }
+
+    function scrollToQuestion(index) {
+      const questionCard = document.getElementById(`question-${index}`);
+      if (questionCard) {
+        questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function scrollToDiagnosis() {
+        errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToGeneratedQuestions() {
+        generatedQuestionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Event listener para seleção de opções (funciona para estáticas e dinâmicas)
+    document.addEventListener("click", function (event) {
+      const clickedElement = event.target;
+      const optionElement = clickedElement.closest('.option');
+
+      if (optionElement) {
+          if (clickedElement.classList.contains("scissor-icon")) {
+              event.stopPropagation();
+              optionElement.classList.toggle("struck-through");
+          }
+          else {
+              const parentCard = optionElement.closest('.card');
+              const currentQuestionOptions = parentCard.querySelectorAll('.option');
+
+              currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+              optionElement.classList.add("selected");
+          }
+      }
+    });
+
+    generateNewQuestionsBtn.addEventListener("click", async function() {
+        statusMessage.textContent = '⏳ Gerando novas perguntas...';
+        generateNewQuestionsBtn.disabled = true;
+
+        const topics = Object.keys(errorCountByTopic).filter(topic => {
+            const errorsInTopic = errorCountByTopic[topic] || 0;
+            const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+            return errorsInTopic > 0 && totalAnsweredInTopic > 0;
+        });
+
+        const topicsToSend = topics.length > 0 ? topics : ["fisiologia celular", "biologia"];
+
+        try {
+            const response = await fetch('https://www.quizia.xyz/quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topicos: topicsToSend }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            newQuestionsContent.innerHTML = '';
+            if (data && data.html) {
+                console.log('📥 HTML recebido do Flask:', data.html);
+                
+                // Insere o HTML diretamente sem reconstrução complexa
+                newQuestionsContent.innerHTML = data.html.replace(/```html|```/g, '');
+                
+                // Adiciona tesouras e ajusta formatação apenas se necessário
+                newQuestionsContent.querySelectorAll('.card').forEach((card, cardIndex) => {
+                    // Garante que o elemento de pergunta tenha a classe correta
+                    const questionElement = card.querySelector('p');
+                    if (questionElement && !questionElement.classList.contains('question')) {
+                       questionElement.classList.add('question');
+                    }
+
+                    // Remove qualquer input de radio que possa existir e adiciona tesouras
+                    card.querySelectorAll('label').forEach((label) => {
+                        // Remove inputs de radio MAS preserva o atributo data-answer
+                        const radioInput = label.querySelector('input[type="radio"]');
+                        if (radioInput) {
+                            // PRESERVA o atributo data-answer do input no label
+                            if (radioInput.hasAttribute('data-answer')) {
+                                label.setAttribute('data-answer', radioInput.getAttribute('data-answer'));
+                            }
+                            radioInput.remove();
+                        }
+                        
+                        // Garante que tenha a classe option
+                        if (!label.classList.contains('option')) {
+                            label.classList.add('option');
+                        }
+
+                        // Garante que tenha data-value
+                        if (!label.dataset.value) {
+                            label.dataset.value = label.textContent.trim();
+                        }
+
+                        // Adiciona tesoura se não existir
+                        if (!label.querySelector('.scissor-icon')) {
+                            const scissorIcon = document.createElement('img');
+                            scissorIcon.src = 'tesouras.png';
+                            scissorIcon.className = 'scissor-icon';
+                            scissorIcon.onclick = function(e) {
+                                e.stopPropagation();
+                                label.classList.toggle('struck-through');
+                            };
+                            label.insertBefore(scissorIcon, label.firstChild);
+                        }
+                    });
+
+                    console.log(`🏷️ Card ${cardIndex}: data-topic = "${card.dataset.topic}"`);
+                    
+                    // Verifica se há opção correta marcada
+                    const correctOption = card.querySelector('label[data-answer="true"]');
+                    if (correctOption) {
+                        console.log(`✅ Opção correta encontrada: "${correctOption.dataset.value}"`);
+                    } else {
+                        console.log('❌ Nenhuma opção correta encontrada');
+                    }
+                });
+            } else {
+                newQuestionsContent.innerHTML = "<p>Não foi possível gerar novas perguntas para os tópicos selecionados.</p>";
+            }
+            
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '✅ Perguntas geradas com sucesso!';
+            setTimeout(() => { statusMessage.textContent = '' }, 3000);
+
+        } catch (error) {
+            console.error('Erro ao gerar novas perguntas:', error);
+            newQuestionsContent.innerHTML = `<p>Erro ao carregar novas perguntas: ${error.message}. Por favor, tente novamente.</p>`;
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '❌ Erro na requisição: ' + error.message;
+            setTimeout(() => { statusMessage.textContent = '' }, 5000);
+        } finally {
+            generateNewQuestionsBtn.disabled = false;
+        }
+    });
+
+    // Inicialização
+    buildQuiz();
+    errorDiagnosisSection.style.display = 'none';
+    generatedQuestionsSection.style.display = 'none';
+    generateNewQuestionsBtn.style.display = 'none';
+
+    // Event listener para o botão de verificar respostas
+    document.getElementById("verifyAnswersBtn").addEventListener("click", showResults);
+  </script>
+</body>
+</html>
