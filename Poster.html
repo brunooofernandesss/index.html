@@ -153,6 +153,44 @@
                 display: none; /* Esconde o pôster em modo retrato */
             }
         }
+
+        /* REGRAS DE IMPRESSÃO */
+        @media print {
+            body {
+                background-color: #ffffff; /* Fundo branco na impressão */
+            }
+            .poster-container {
+                box-shadow: none; /* Remove sombra na impressão */
+                margin: 0;
+                max-width: 100%;
+                border: none;
+            }
+             #orientation-lock-overlay {
+                display: none !important; /* Garante que o aviso não seja impresso */
+            }
+            .poster-header, .poster-block h2 {
+                -webkit-print-color-adjust: exact; /* Para Chrome/Safari */
+                print-color-adjust: exact; /* Padrão */
+            }
+            .poster-header {
+                background-color: #0a254e !important;
+            }
+            .poster-title {
+                 color: #ffd100 !important;
+            }
+            .poster-header, .poster-header p {
+                 color: #ffffff !important;
+            }
+            .poster-block h2 {
+                background-color: #0a254e !important;
+                color: #ffffff !important;
+            }
+            th {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                background-color: #e5e7eb !important;
+            }
+        }
     </style>
 </head>
 <body>
