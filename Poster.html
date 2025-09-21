@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pôster: Revisão Sistemática sobre Fotoestimulação</title>
+    <!-- Carrega o framework de estilo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para a página e o pôster */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .poster-container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            background-color: #ffffff;
+            border-radius: 0.25rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 1px solid #d1d5db;
+        }
+        /* -- CORES UNIP -- */
+        .poster-header {
+            background-color: #0a254e;
+            color: #ffffff;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .poster-title-section {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 1.5rem;
+        }
+        .poster-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #ffd100;
+        }
+        .poster-authors {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        .poster-affiliations {
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 300;
+        }
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            flex-shrink: 0;
+        }
+        .poster-grid {
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+        }
+        @media (min-width: 1024px) {
+            .poster-grid {
+                grid-template-columns: 1fr 1.5fr 1fr;
+            }
+        }
+        .poster-block {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .poster-block h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #0a254e;
+            padding: 0.75rem 1.25rem;
+            flex-shrink: 0;
+        }
+        .poster-block .content {
+             padding: 1.25rem;
+             flex-grow: 1;
+        }
+        .poster-block p, .poster-block ul {
+            font-size: 0.9rem; 
+            line-height: 1.6;
+            color: #374151;
+        }
+        .poster-block ul {
+            padding-left: 1.25rem;
+        }
+        .caption {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6b7281;
+            margin-top: 0.25rem;
+        }
+        table {
+            width: 100%;
+            font-size: 0.7rem; /* Fonte da tabela reduzida */
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 0.4rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #e5e7eb;
+            font-weight: 600;
+        }
+        
+        /* Estilos para o aviso de rotação */
+        #orientation-lock-overlay {
+            display: none; /* Oculto por padrão */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Exibe o aviso apenas em modo retrato */
+        @media (orientation: portrait) {
+            #orientation-lock-overlay {
+                display: flex;
+            }
+            .poster-container {
+                display: none; /* Esconde o pôster em modo retrato */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="orientation-lock-overlay">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-phone-landscape mb-4 inline-block" viewBox="0 0 16 16">
+              <path d="M1 4.5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-7zm1 0a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H2z"/>
+              <path d="M14 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"/>
+            </svg>
+            <h1 class="text-2xl font-bold">Por favor, gire seu dispositivo</h1>
+            <p class="mt-2">Este conteúdo é melhor visualizado no modo paisagem.</p>
+        </div>
+    </div>
+
+    <div class="poster-container">
+        <!-- Cabeçalho -->
+        <header class="poster-header">
+            <div class="logo-placeholder"><img src="https://www.unip.br/assets/img/logo/logo-unip.svg" alt="Logo UNIP"></div>
+            <div class="poster-title-section">
+                <h1 class="poster-title">Benefícios às Funções Cognitivas Usando Fotoestimulação Intermitente: Uma Revisão Sistemática</h1>
+                <p class="poster-authors">Bruno Fernandes Damasceno; Letícia Affonso Felicíssimo Riboli; Douglas Oliveira Peres</p>
+                <p class="poster-affiliations">Universidade Paulista (UNIP) – São José do Rio Pardo | Orientador: Prof. Dr. Fabiano Melo</p>
+            </div>
+            <div class="logo-placeholder"><img src="https://www.unip.br/assets/img/logo/logo-unip.svg" alt="Logo UNIP"></div>
+        </header>
+
+        <!-- Grade principal -->
+        <main class="poster-grid">
+            <!-- Coluna 1 (Esquerda) -->
+            <div class="flex flex-col gap-8">
+                <section class="poster-block">
+                    <h2>INTRODUÇÃO</h2>
+                    <div class="content">
+                        <p>A Fotoestimulação Intermitente (FI), que envolve exposição a luzes piscando, emerge como uma técnica promissora para modular a atividade cerebral. Diante dos desafios de doenças como Alzheimer e esquizofrenia, intervenções inovadoras e não invasivas são cruciais. Estudos indicam que a FI pode influenciar processos neurobiológicos, como a redução de placas amiloides. Esta revisão sistemática investiga os benefícios da FI nas funções cognitivas em humanos e ratos.</p>
+                    </div>
+                </section>
+                <section class="poster-block">
+                    <h2>OBJETIVOS</h2>
+                    <div class="content">
+                        <p><strong>Geral:</strong> Investigar os benefícios às funções cognitivas usando FI diária com luz branca ou colorida (RGB).</p>
+                        <p class="mt-2"><strong>Específicos:</strong> Sintetizar dados sobre os benefícios cognitivos da estimulação com luzes de diferentes cores e frequências.</p>
+                    </div>
+                </section>
+                <section class="poster-block">
+                    <h2>Link do PROSPERO</h2>
+                    <div class="content flex flex-col items-center justify-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.crd.york.ac.uk/prospero/display_record.php?ID=CRD42025105573" alt="QR Code para o PROSPERO" class="w-40 h-40">
+                        <p class="caption">CRD420251055738<br>CRD420251104517</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Coluna 2 (Centro) -->
+            <div class="flex flex-col gap-8">
+                <section class="poster-block">
+                    <h2>METODOLOGIA</h2>
+                    <div class="content">
+                        <p>Revisão sistemática com buscas em Medline (PubMed), NCBI e Nature, delineada pelo critério PECO. A seleção foi feita por três pesquisadores de forma cega, com avaliação de viés pela escala NewCastle-Ottawa. O trabalho foi registrado no PROSPERO.</p>
+                    </div>
+                </section>
+
+                <section class="poster-block">
+                    <h2>RESULTADOS</h2>
+                    <div class="content">
+                         <p class="text-sm">Foram incluídos 16 artigos. Os achados foram agrupados em 3 categorias temáticas, resumidos nas tabelas abaixo.</p>
+                         
+                         <p class="font-semibold mt-2 text-sm">Tabela 1. Achados em modelos de neurodegeneração.</p>
+                         <table>
+                            <thead>
+                                <tr><th>Estudo (Autor, Ano)</th><th>População/Modelo</th><th>Intervenção</th><th>Resultados Quantitativos</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Behrooz et al. (2024)</td>
+                                    <td>Ratos Wistar com DA (STZ)</td>
+                                    <td>Luz branca 40 Hz, 15 min/dia, 7 dias</td>
+                                    <td>Redução de ~50% nas placas Aβ (p < 0,01). Melhora da atividade dos complexos I e IV. Restauração do LTP.</td>
+                                </tr>
+                                <tr>
+                                    <td>Niu et al. (2023)</td>
+                                    <td>Camundongos com isquemia</td>
+                                    <td>Luz 40 Hz, 1h/dia, 30 dias</td>
+                                    <td>Aumento de neurônios sobreviventes (p < 0,05). Melhora no teste NOR (p < 0,01). Redução de IL-1β e TNF-α.</td>
+                                </tr>
+                            </tbody>
+                         </table>
+
+                         <p class="font-semibold mt-2 text-sm">Tabela 2. Achados neurofisiológicos e neuroquímicos.</p>
+                         <table>
+                             <thead>
+                                 <tr><th>Estudo (Autor, Ano)</th><th>População/Modelo</th><th>Intervenção</th><th>Resultados Quantitativos</th></tr>
+                             </thead>
+                             <tbody>
+                                 <tr>
+                                     <td>Zhou et al. (2024)</td>
+                                     <td>Camundongos</td>
+                                     <td>Luz branca 20, 40, 80 Hz, 30 min</td>
+                                     <td>Aumento máximo de adenosina em V1 com 40 Hz. Aumento do sono NREM e REM.</td>
+                                 </tr>
+                                 <tr>
+                                     <td>Sahin & Figueiro (2020)</td>
+                                     <td>Humanos (n=9)</td>
+                                     <td>Luz vermelha 40 Hz, 50 min</td>
+                                     <td>Aumento da potência de 40 Hz no EEG (p<0,05), correlacionado com redução da sonolência.</td>
+                                 </tr>
+                                 <tr>
+                                     <td>Noda et al. (2021)</td>
+                                     <td>Humanos (n=20)</td>
+                                     <td>Luz violeta e branca 40 Hz, 7 min</td>
+                                     <td>Luz violeta induziu menor aumento em delta e teta e maior acoplamento alfa-gama.</td>
+                                 </tr>
+                                  <tr>
+                                     <td>Konovalov et al. (1988)</td>
+                                     <td>Humanos (n=8)</td>
+                                     <td>Luz com freq. crescente</td>
+                                     <td>Aumento da expressividade da banda alfa no EEG.</td>
+                                 </tr>
+                             </tbody>
+                         </table>
+
+                         <p class="font-semibold mt-2 text-sm">Tabela 3. Achados em estudos com humanos.</p>
+                         <table>
+                            <thead>
+                                <tr><th>Estudo (Autor, Ano)</th><th>População/Modelo</th><th>Intervenção</th><th>Resultados</th></tr>
+                            </thead>
+                             <tbody>
+                                 <tr>
+                                     <td>Zhou et al. (2024)</td>
+                                     <td>Crianças com insônia (n=49)</td>
+                                     <td>Luz 40 Hz, 30 min pré-sono</td>
+                                     <td>Redução da latência e aumento do tempo total de sono (p < 0,001).</td>
+                                 </tr>
+                                 <tr>
+                                     <td>Gulbinaite et al. (2017)</td>
+                                     <td>Adultos (n=27)</td>
+                                     <td>Luz 10 Hz em tarefa de atenção</td>
+                                     <td>Efeito no desempenho previsto pela proximidade com a frequência alfa individual (IAF).</td>
+                                 </tr>
+                                 <tr>
+                                     <td>Ortega & López (2008)</td>
+                                     <td>Adultos (n=60)</td>
+                                     <td>Luz 50 Hz em percepção temporal</td>
+                                     <td>Flicker na fase de teste deslocou a função psicofísica para a esquerda (p < 0,05).</td>
+                                 </tr>
+                                  <tr>
+                                     <td>Carr (2020)</td>
+                                     <td>(Hipótese)</td>
+                                     <td>ABPS alfa + EMDR</td>
+                                     <td>Hipótese: Aumenta a eficácia do EMDR em esquizofrenia.</td>
+                                 </tr>
+                                  <tr>
+                                     <td>Halpin et al. (2023)</td>
+                                     <td>Pacientes com dor crônica</td>
+                                     <td>Estimulação alfa pré-sono</td>
+                                     <td>Intervenção aceitável, com percepção de benefícios para sono e dor.</td>
+                                 </tr>
+                                  <tr>
+                                     <td>Dowsett et al. (2020)</td>
+                                     <td>Adultos (n=10)</td>
+                                     <td>EEG móvel com luz 10 Hz</td>
+                                     <td>Viabilidade de registrar SSVEPs de alta qualidade durante o movimento.</td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                         
+                         <!-- Imagens Reais -->
+                         <div class="grid grid-cols-2 gap-2 mt-4">
+                             <img src="https://brunooofernandesss.github.io/index.html/IMG-20250912-WA0012.jpg" alt="Gráfico de Resultados 1" class="w-full h-full object-cover rounded-md border">
+                             <img src="https://brunooofernandesss.github.io/index.html/IMG-20250912-WA0011.jpg" alt="Gráfico de Resultados 2" class="w-full h-full object-cover rounded-md border">
+                             <img src="https://brunooofernandesss.github.io/index.html/IMG-20250912-WA0010.jpg" alt="Gráfico de Resultados 3" class="w-full h-full object-cover rounded-md border">
+                             <img src="https://brunooofernandesss.github.io/index.html/IMG-20250831-WA0012.jpg" alt="Gráfico de Resultados 4" class="w-full h-full object-cover rounded-md border">
+                         </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Coluna 3 (Direita) -->
+            <div class="flex flex-col gap-8">
+                <section class="poster-block">
+                    <h2>DISCUSSÃO</h2>
+                    <div class="content">
+                        <p>A FI se consolida como uma promissora modalidade de neuromodulação. Um dos achados mais robustos é o potencial neuroprotetor em modelos de Alzheimer, com redução da carga de placas Aβ e ativação microglial, sugerindo um mecanismo de depuração (clearance). Os mecanismos parecem ligados ao metabolismo energético (função mitocondrial) e à sinalização neuroquímica (aumento de adenosina, serotonina e dopamina). A capacidade da FI de modular a atividade elétrica cerebral (arrastamento de oscilações) é o pilar de seus efeitos cognitivos.</p>
+                    </div>
+                </section>
+                <section class="poster-block">
+                    <h2>CONCLUSÃO</h2>
+                    <div class="content">
+                        <p>Esta revisão fornece evidências de que a FI pode ter efeitos benéficos sobre funções cognitivas. A técnica surge como uma promissora intervenção terapêutica para o futuro, mas mais pesquisas, como ensaios clínicos randomizados em humanos, são necessárias para otimizar os protocolos e expandir sua aplicação clínica, com potencial de replicação no SUS.</p>
+                    </div>
+                </section>
+                <section class="poster-block">
+                    <h2>REFERÊNCIAS</h2>
+                    <div class="content">
+                        <ul class="text-xs list-none space-y-1">
+                            <li>BARZEGAR BEHROOZ, A. et al. Sci Rep, 2024.</li>
+                            <li>CARR, P. Med Hypotheses, 2020.</li>
+                            <li>GULBINAITE, R. et al. J Neurosci, 2017.</li>
+                            <li>HALPIN, S. J. et al. Pain Manag, 2023.</li>
+                            <li>NIU, Z. et al. Sci Rep, 2023.</li>
+                            <li>NODA, Y. et al. J Pers Med, 2021.</li>
+                            <li>SAHIN, L.; FIGUEIRO, M. G. J Alzheimers Dis, 2020.</li>
+                            <li>ZHOU, X. et al. Cell Res, 2024.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tenta travar a orientação em paisagem quando a página carrega
+        window.addEventListener('load', () => {
+            if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                screen.orientation.lock('landscape').catch(error => {
+                    // O erro é comum se o usuário não estiver em tela cheia ou se a permissão for negada.
+                    // A mensagem CSS cuidará disso.
+                    console.log('Orientation lock failed:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+
