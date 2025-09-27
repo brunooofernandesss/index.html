@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pôster UNIP: Revisão Sistemática sobre Fotoestimulação</title>
+    <!-- Carrega o framework de estilo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para a página e o pôster */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff; /* Fundo uniforme branco */
+        }
+        .poster-container {
+            width: 900px; /* Proporção 90x120 para visualização */
+            height: 1200px;
+            margin: 2rem auto;
+            padding: 40px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eee; /* Borda sutil para visualização na tela */
+            box-sizing: border-box;
+        }
+        
+        .poster-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 4px solid #0a254e;
+            padding-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .logo-unip {
+            width: 100px;
+            height: auto;
+            flex-shrink: 0;
+        }
+        .header-text { text-align: center; flex-grow: 1; padding: 0 20px;}
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a254e;
+            line-height: 1.1;
+        }
+        .header-text p {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .poster-main {
+            flex-grow: 1;
+            padding-top: 20px;
+            display: flex;
+            gap: 40px;
+        }
+        .column {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .poster-section {
+            page-break-inside: avoid;
+        }
+        .poster-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0a254e;
+            text-align: center;
+            border-bottom: 2px solid #0a254e;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        .poster-section .content {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #374151;
+        }
+        .poster-section .content ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+        .poster-section .content strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .poster-section table {
+            width: 100%;
+            font-size: 0.8rem;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .poster-section th, .poster-section td {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .poster-section th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        .caption {
+            font-size: 0.8rem;
+            text-align: center;
+            color: #6b7281;
+            margin-top: 8px;
+        }
+        .references ul {
+            list-style-type: none;
+            padding-left: 0;
+            font-size: 0.75rem;
+        }
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+
+        /* REGRAS DE IMPRESSÃO PARA FORMATO 90cm x 120cm RETRATO */
+        @media print {
+            @page {
+                size: 90cm 120cm;
+                margin: 0;
+            }
+            html, body {
+                width: 90cm;
+                height: 120cm;
+                background-color: #ffffff;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body { font-family: 'Inter', sans-serif; }
+            .poster-container {
+                width: 100%; height: 100%;
+                margin: 0; padding: 4cm;
+                box-shadow: none; border: none;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+            }
+            .poster-header {
+                padding-bottom: 2cm;
+                border-bottom-width: 10px;
+            }
+            .logo-unip { width: 12cm; }
+            .header-text h1 { font-size: 80pt; }
+            .header-text p { font-size: 40pt; }
+
+            .poster-main {
+                display: flex;
+                gap: 4cm;
+                padding-top: 2cm;
+                flex-grow: 1;
+            }
+            .column { 
+                display: flex;
+                flex-direction: column;
+                gap: 3cm; 
+                width: 50%;
+            }
+            .poster-section h2 {
+                font-size: 60pt;
+                border-bottom-width: 6px;
+                padding-bottom: 1cm;
+                margin-bottom: 1.5cm;
+            }
+            .poster-section .content { font-size: 36pt; line-height: 1.4; } /* Fonte principal para impressão */
+            .poster-section table { font-size: 24pt; }
+            .poster-section th, .poster-section td { padding: 0.5cm; }
+            .caption { font-size: 22pt; }
+            .references ul { font-size: 20pt; }
+
+            th {
+                background-color: #f3f4f6 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="poster-container">
+        <header class="poster-header">
+            <img src="https://www.unip.br/assets/img/logo/logo-unip.svg" alt="Logo UNIP" class="logo-unip">
+            <div class="header-text">
+                <h1>Benefícios Cognitivos da Fotoestimulação Intermitente Diária</h1>
+                <p>
+                    <strong>Bruno Fernandes Damasceno; Letícia Affonso Felicíssimo Riboli; Douglas Oliveira Peres</strong><br>
+                    Universidade Paulista (UNIP) – São José do Rio Pardo | Orientador: Prof. Dr. Fabiano Melo<br>
+                    E-mail para contato: bruno.damasceno4@aluno.unip.br
+                </p>
+            </div>
+        </header>
+
+        <main class="poster-main">
+            <div class="column">
+                <section class="poster-section">
+                    <h2>Introdução</h2>
+                    <div class="content">
+                        <p>A Fotoestimulação Intermitente (FI) é uma técnica não invasiva com potencial para modular a atividade cerebral, emergindo como uma ferramenta promissora para desordens neurodegenerativas e psiquiátricas, como Alzheimer e esquizofrenia. Esta revisão sistemática investiga os benefícios da FI nas funções cognitivas em humanos e ratos.</p>
+                    </div>
+                </section>
+                
+                <section class="poster-section">
+                    <h2>Metodologia</h2>
+                    <div class="content">
+                        <p>Revisão sistemática registrada no PROSPERO (CRD420251055738), com busca nas bases Medline, NCBI e Nature (critério PECO). A seleção de artigos foi realizada de forma cega por três pesquisadores, com avaliação de viés pela escala NewCastle-Ottawa.</p>
+                        <svg viewBox="0 0 400 550" class="w-full mt-4">
+                            <defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#374151" /></marker></defs>
+                            <g fill="none" stroke="#374151" stroke-width="2">
+                                <rect x="50" y="10" width="300" height="80" rx="5" fill="#eef2ff" /><path d="M 200 90 V 130" marker-end="url(#arrow)" />
+                                <rect x="50" y="130" width="300" height="100" rx="5" fill="#eef2ff" /><path d="M 200 230 V 270" marker-end="url(#arrow)" />
+                                <rect x="50" y="270" width="300" height="100" rx="5" fill="#eef2ff" /><path d="M 200 370 V 410" marker-end="url(#arrow)" />
+                                <rect x="50" y="410" width="300" height="80" rx="5" fill="#eef2ff" />
+                            </g>
+                            <g text-anchor="middle" font-family="Inter, sans-serif" fill="#1f2937">
+                                <text x="200" y="35" font-size="14" font-weight="bold">Identificação</text><text x="200" y="55" font-size="12">Registros (n = 147)</text><text x="200" y="70" font-size="10">(PubMed=82; Nature=65)</text>
+                                <text x="200" y="155" font-size="14" font-weight="bold">Triagem</text><text x="200" y="175" font-size="12">Após duplicatas (n = 65)</text><text x="200" y="190" font-size="12">Triados (n = 147)</text><text x="200" y="205" font-size="12">Excluídos (n = 126)</text>
+                                <text x="200" y="295" font-size="14" font-weight="bold">Elegibilidade</text><text x="200" y="315" font-size="12">Avaliados (n = 147)</text><text x="200" y="335" font-size="12">Excluídos (n = 126)</text>
+                                <text x="200" y="435" font-size="14" font-weight="bold">Inclusão</text><text x="200" y="455" font-size="12">Estudos incluídos (n = 21)</text><text x="200" y="470" font-size="10">(PubMed=16; Nature=5)</text>
+                            </g>
+                        </svg>
+                        <p class="caption">Figura 1. Fluxograma PRISMA 2020.</p>
+                    </div>
+                </section>
+                <section class="poster-section">
+                    <h2>Discussão</h2>
+                    <div class="content">
+                        <p>A FI consolida-se como uma promissora modalidade de neuromodulação. Os achados mais robustos incluem o potencial neuroprotetor em modelos de Alzheimer (redução de Aβ e ativação microglial) e a modulação de neurotransmissores (adenosina, serotonina, dopamina). A capacidade da FI de modular a atividade elétrica cerebral é o pilar de seus efeitos cognitivos.</p>
+                    </div>
+                </section>
+                 <section class="poster-section">
+                    <h2>Conclusão</h2>
+                    <div class="content">
+                        <p>Esta revisão fornece evidências dos efeitos benéficos da FI. A técnica surge como uma promissora intervenção terapêutica, mas mais pesquisas (ensaios clínicos randomizados) são necessárias para otimizar protocolos e expandir sua aplicação clínica.</p>
+                    </div>
+                </section>
+                <section class="poster-section">
+                    <h2>Link do PROSPERO</h2>
+                    <div class="content flex flex-col items-center justify-center">
+                        <img src="https://brunooofernandesss.github.io/index.html/frame.svg" alt="QR Code para PROSPERO" class="w-48 h-48">
+                        <p class="caption">CRD420251055738</p>
+                    </div>
+                </section>
+            </div>
+            <div class="column">
+                <section class="poster-section">
+                    <h2>Resultados</h2>
+                    <div class="content">
+                        <p>Foram incluídos 21 artigos. Os principais achados estão resumidos abaixo.</p>
+                        <strong>Tabela 1. Principais Achados da Revisão.</strong>
+                        <table>
+                           <thead>
+                               <tr><th>Categoria</th><th>Estudo</th><th>População</th><th>Principal Achado</th></tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td rowspan="2"><strong>Neurodegeneração</strong></td>
+                                   <td>Behrooz et al. (2024)</td><td>Ratos (DA)</td><td>FI a 40 Hz reduziu placas Aβ em ~50% e restaurou a função mitocondrial.</td>
+                               </tr>
+                               <tr>
+                                   <td>Niu et al. (2023)</td><td>Camundongos (Isquemia)</td><td>FI a 40 Hz aumentou a sobrevivência neuronal e melhorou a memória.</td>
+                               </tr>
+                               <tr>
+                                   <td rowspan="2"><strong>Neurofisiologia</strong></td>
+                                   <td>Zhou et al. (2024)</td><td>Camundongos</td><td>FI a 40 Hz induziu aumento de adenosina cortical, promovendo o sono.</td>
+                               </tr>
+                               <tr>
+                                   <td>Sahin & Figueiro (2020)</td><td>Humanos</td><td>Luz vermelha a 40 Hz aumentou a potência gama no EEG, reduzindo a sonolência.</td>
+                               </tr>
+                               <tr>
+                                   <td rowspan="2"><strong>Estudos em Humanos</strong></td>
+                                   <td>Zhou et al. (2024)</td><td>Crianças (Insônia)</td><td>FI a 40 Hz pré-sono reduziu a latência e aumentou o tempo total de sono.</td>
+                               </tr>
+                               <tr>
+                                   <td>Noda et al. (2021)</td><td>Adultos</td><td>Luz violeta a 40 Hz produziu neuromodulação distinta da luz branca.</td>
+                               </tr>
+                           </tbody>
+                        </table>
+                         <div class="image-container">
+                             <div>
+                                <img src="https://brunooofernandesss.github.io/index.html/IMG-20250912-WA0012.jpg" alt="Gráfico 1">
+                                <p class="caption">Figura 2 – Redução de Placas Aβ com FI a 40 Hz. <br>Fonte: Adaptado de Behrooz et al. (2024).</p>
+                             </div>
+                             <div>
+                                <img src="https://brunooofernandesss.github.io/index.html/IMG-20250831-WA0012.jpg" alt="Gráfico 2">
+                                <p class="caption">Figura 3 – Neuromodulação por Luz Violeta. <br>Fonte: Adaptado de Noda et al. (2021).</p>
+                             </div>
+                         </div>
+                    </div>
+                </section>
+                 <section class="poster-section references">
+                    <h2>Referências</h2>
+                    <div class="content">
+                        <ul>
+                            <li>BARZEGAR BEHROOZ, A. et al. Sci Rep, 2024.</li>
+                             <li>NODA, Y. et al. J Pers Med, 2021.</li>
+                            <li>NIU, Z. et al. Sci Rep, 2023.</li>
+                            <li>SAHIN, L.; FIGUEIRO, M. G. J Alzheimers Dis, 2020.</li>
+                            <li>ZHOU, X. et al. Cell Res, 2024.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
+
+
