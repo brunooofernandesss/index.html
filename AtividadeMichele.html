@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Caso: Rede de Atendimento em Saúde</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .svg-text {
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+        }
+        .svg-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .level-label {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        /* Estilo para impressão: esconde o botão de download */
+        @media print {
+            #pdf-button-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8" id="page-content">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-700">Análise de Caso Clínico</h1>
+            <p class="text-md text-gray-600 mt-2">Disciplina: Interação Comunitária I</p>
+        </header>
+
+        <!-- Botão para converter para PDF -->
+        <div id="pdf-button-container" class="text-center mb-8">
+            <button id="download-pdf" class="bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-teal-700 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="inline-block mr-2" viewBox="0 0 16 16">
+                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+                Converter para PDF
+            </button>
+        </div>
+
+        <main>
+            <!-- Questão 1: Fluxograma -->
+            <section id="questao1" class="mb-12 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-teal-800 mb-6 border-b-2 border-teal-200 pb-2">1. Fluxograma do Atendimento de Cláudio</h2>
+                <div class="w-full overflow-x-auto">
+                    <svg width="100%" height="1550" viewBox="0 0 800 1550" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Definições de Marcadores (Setas) -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568" />
+                            </marker>
+                        </defs>
+
+                        <!-- Legendas de Níveis de Atenção -->
+                        <text x="20" y="30" class="level-label" fill="#2c7a7b">NÍVEL PRIMÁRIO</text>
+                        <rect x="20" y="40" width="10" height="400" fill="#a7f3d0" rx="5"></rect>
+                        
+                        <text x="20" y="480" class="level-label" fill="#b7791f">NÍVEL SECUNDÁRIO</text>
+                        <rect x="20" y="490" width="10" height="200" fill="#fde68a" rx="5"></rect>
+
+                        <text x="20" y="720" class="level-label" fill="#c53030">NÍVEL TERCIÁRIO</text>
+                        <rect x="20" y="730" width="10" height="800" fill="#fecaca" rx="5"></rect>
+
+
+                        <!-- Caixas e Conectores do Fluxo -->
+                        <!-- Ponto Inicial -->
+                        <g transform="translate(400, 50)">
+                            <rect x="-120" y="0" width="240" height="50" rx="10" fill="#e2e8f0" stroke="#a0aec0" />
+                            <text x="0" y="30" text-anchor="middle" class="svg-title">Início: Dores Abdominais</text>
+                        </g>
+                        <line x1="400" y1="100" x2="400" y2="125" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <!-- Nível Primário: ESF -->
+                        <g transform="translate(400, 150)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#d1fae5" stroke="#34d399" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Consulta na ESF do Bairro</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Dr. João)</text>
+                        </g>
+                        <line x1="400" y1="210" x2="400" y2="235" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <!-- Nível Secundário: Diagnóstico -->
+                        <g transform="translate(400, 260)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fef3c7" stroke="#f59e0b" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Ultrassonografia Abdominal</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Inconclusivo)</text>
+                        </g>
+                        <line x1="400" y1="320" x2="400" y2="345" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <g transform="translate(400, 370)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fef3c7" stroke="#f59e0b" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Tomografia Abdominal</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Diagnóstico: Obstrução Intestinal)</text>
+                        </g>
+                        <line x1="400" y1="430" x2="400" y2="455" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <!-- Nível Terciário: Hospitalização -->
+                        <g transform="translate(400, 480)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Encaminhamento ao Hospital</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Laparatomia e Colostomia)</text>
+                        </g>
+                        <line x1="400" y1="540" x2="400" y2="565" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <g transform="translate(400, 590)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Pós-operatório e Parada Cardíaca</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Solicitação de vaga na UTI)</text>
+                        </g>
+                        <line x1="400" y1="650" x2="400" y2="675" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <g transform="translate(400, 700)">
+                            <rect x="-120" y="0" width="240" height="50" rx="10" fill="#dbeafe" stroke="#3b82f6" />
+                            <text x="0" y="30" text-anchor="middle" class="svg-title">Regulação Médica encontra leito</text>
+                        </g>
+                        <line x1="400" y1="750" x2="400" y2="775" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <g transform="translate(400, 800)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Internação na UTI (7 dias)</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">(Em outra cidade)</text>
+                        </g>
+                        <line x1="400" y1="860" x2="400" y2="885" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <g transform="translate(400, 910)">
+                            <rect x="-120" y="0" width="240" height="50" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="30" text-anchor="middle" class="svg-title">Transferência para a Clínica Médica</text>
+                        </g>
+                        <line x1="400" y1="960" x2="400" y2="985" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <g transform="translate(400, 1010)">
+                            <rect x="-120" y="0" width="240" height="50" rx="10" fill="#e2e8f0" stroke="#a0aec0" />
+                            <text x="0" y="30" text-anchor="middle" class="svg-title">Alta Hospitalar</text>
+                        </g>
+                        <line x1="400" y1="1060" x2="400" y2="1085" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <!-- Nível Primário: Pós-alta -->
+                        <g transform="translate(400, 1110)">
+                            <rect x="-120" y="0" width="240" height="80" rx="10" fill="#d1fae5" stroke="#34d399" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Visita Domiciliar da ESF</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">Cuidados de enfermagem, fisioterapia,</text>
+                             <text x="0" y="60" text-anchor="middle" class="svg-text">e nutricionista</text>
+                        </g>
+                        <line x1="400" y1="1190" x2="600" y2="1190" stroke="#4a5568" stroke-width="2" />
+                        <line x1="600" y1="1190" x2="600" y2="1225" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+
+                        <!-- Nível Terciário: Oncologia -->
+                        <g transform="translate(600, 1250)">
+                             <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Resultado da Biópsia: Câncer</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">Encaminhamento ao Oncologista</text>
+                        </g>
+                        <line x1="400" y1="1310" x2="400" y2="1335" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <g transform="translate(400, 1360)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#fee2e2" stroke="#ef4444" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Quimioterapia (6 meses)</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">Cirurgia para reverter colostomia</text>
+                        </g>
+                        <line x1="400" y1="1420" x2="400" y2="1445" stroke="#4a5568" stroke-width="2" marker-end="url(#arrowhead)" />
+                        
+                        <!-- Nível Primário: Acompanhamento -->
+                         <g transform="translate(400, 1470)">
+                            <rect x="-120" y="0" width="240" height="60" rx="10" fill="#d1fae5" stroke="#34d399" />
+                            <text x="0" y="25" text-anchor="middle" class="svg-title">Alta da Oncologia</text>
+                            <text x="0" y="45" text-anchor="middle" class="svg-text">Acompanhamento contínuo na ESF</text>
+                        </g>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Questão 2: Articulação Intersetorial -->
+            <section id="questao2" class="mb-12 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-teal-800 mb-4">2. Necessidade de Articulação Intersetorial</h2>
+                <div class="space-y-4 text-gray-700">
+                    <p>A articulação no caso de Cláudio foi predominantemente <strong>intrassetorial</strong>, ou seja, ocorreu dentro do próprio setor da saúde, entre os diferentes níveis de atenção (primário, secundário e terciário) e entre diferentes municípios. No entanto, a complexidade do caso evidencia a necessidade de uma <strong>articulação intersetorial</strong> para um cuidado integral, envolvendo outros setores além da saúde:</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li><strong>Assistência Social:</strong> Cláudio ficou cerca de 2 meses internado e mais 6 meses em quimioterapia, o que certamente o afastou do trabalho. Seria fundamental a articulação com o CRAS (Centro de Referência de Assistência Social) do seu município para avaliar a necessidade de benefícios sociais, como o auxílio-doença pelo INSS ou o Benefício de Prestação Continuada (BPC), caso se enquadrasse nos critérios.</li>
+                        <li><strong>Transporte:</strong> O deslocamento de sua cidade no interior até o local da quimioterapia por 6 meses exigiu uma logística de transporte. A articulação com a secretaria municipal de saúde para acesso ao Tratamento Fora de Domicílio (TFD) ou transporte sanitário é um exemplo clássico de ação intersetorial para garantir a continuidade do tratamento.</li>
+                        <li><strong>Educação e Trabalho:</strong> Dependendo da sua profissão, o retorno ao trabalho poderia exigir adaptações. A articulação com serviços de reabilitação profissional poderia ser necessária.</li>
+                    </ul>
+                    <p>Portanto, embora o caso foque na rede de saúde, uma abordagem completa para Cláudio exigiria a colaboração entre saúde, assistência social e transporte para garantir não apenas a sua recuperação física, mas também seu bem-estar social e financeiro.</p>
+                </div>
+            </section>
+
+            <!-- Questão 3: Rede de Atendimento -->
+            <section id="questao3" class="mb-12 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-teal-800 mb-4">3. Rede de Atendimento em Saúde Instaurada</h2>
+                <div class="space-y-4 text-gray-700">
+                    <p>A rede de atendimento instaurada para Cláudio foi complexa e demonstrou a capacidade do SUS de mobilizar diferentes pontos de atenção. Os componentes da Rede de Atenção à Saúde (RAS) acionados foram:</p>
+                    <ul class="list-disc list-inside space-y-3">
+                        <li>
+                            <strong>Atenção Primária à Saúde (APS):</strong>
+                            <ul class="list-circle list-inside ml-4">
+                                <li><strong>Estratégia Saúde da Família (ESF):</strong> Foi a porta de entrada de Cláudio no sistema, onde recebeu o primeiro atendimento, a primeira suspeita diagnóstica, e para onde retornou para o acompanhamento pós-alta e visita domiciliar, coordenando o cuidado contínuo.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Atenção Secundária (Especializada):</strong>
+                             <ul class="list-circle list-inside ml-4">
+                                <li><strong>Serviços de Apoio Diagnóstico e Terapêutico (SADT):</strong> Realização de exames de imagem (ultrassonografia e tomografia) e análise da biópsia (anatomopatológico).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Atenção Terciária (Hospitalar de Alta Complexidade):</strong>
+                             <ul class="list-circle list-inside ml-4">
+                                <li><strong>Hospital Geral:</strong> Com centro cirúrgico para a laparatomia e colostomia, e leitos de enfermaria (clínica cirúrgica e clínica médica).</li>
+                                <li><strong>Unidade de Terapia Intensiva (UTI):</strong> Cuidado intensivo após a parada cardiorrespiratória.</li>
+                                 <li><strong>Serviço de Oncologia de Alta Complexidade (UNACON/CACON):</strong> Para avaliação com oncologista, estadiamento do tumor e realização das sessões de quimioterapia.</li>
+                            </ul>
+                        </li>
+                         <li>
+                            <strong>Sistemas de Regulação:</strong>
+                             <ul class="list-circle list-inside ml-4">
+                                <li><strong>Central de Regulação de Leitos:</strong> Essencial para encontrar a vaga de UTI em outro município, demonstrando a regulação como um elo vital na rede.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Redes de Cuidado Transversal:</strong>
+                             <ul class="list-circle list-inside ml-4">
+                                <li><strong>Atenção Domiciliar:</strong> Ativada pela equipe da ESF para fornecer cuidados com a colostomia, curativos, fisioterapia e acompanhamento nutricional em casa.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Questão 4: Atendimento em Alagoas -->
+            <section id="questao4" class="mb-12 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-teal-800 mb-4">4. Simulação do Atendimento em Alagoas</h2>
+                <div class="space-y-4 text-gray-700">
+                    <p>Se Cláudio morasse em <strong>Alagoas</strong>, e fosse adscrito à área da <strong>USF Reginaldo (Porte II)</strong>, localizada no bairro do Poço em Maceió, seu percurso no sistema de saúde seria o seguinte:</p>
+                    <ol class="list-decimal list-inside space-y-3">
+                        <li><strong>Porta de Entrada:</strong> O atendimento inicial ocorreria na <strong>USF Reginaldo</strong>. A equipe de saúde da família faria a primeira avaliação, solicitaria exames e iniciaria a investigação diagnóstica. Por estar em Maceió, o acesso aos próximos níveis de atenção é mais direto.</li>
+                        <li><strong>Diagnóstico:</strong> A própria USF, através do sistema de regulação municipal de Maceió (CORA), agendaria os exames de ultrassom e tomografia em um dos serviços de imagem da capital, como o PAM Salgadinho ou clínicas conveniadas ao SUS.</li>
+                        <li><strong>Cirurgia de Urgência:</strong> Com o diagnóstico de obstrução, a regulação o encaminharia para o hospital de referência em urgência e trauma da capital, o <strong>Hospital Geral do Estado (HGE)</strong>, onde a cirurgia de laparotomia e a colostomia seriam realizadas.</li>
+                        <li><strong>Vaga de UTI:</strong> Após a intercorrência cardíaca, a solicitação de UTI seria gerenciada pela Central de Regulação do Estado, que buscaria um leito disponível no próprio HGE ou em outros hospitais da capital com leitos de UTI, como o Hospital Metropolitano ou o Hospital da Mulher.</li>
+                        <li><strong>Tratamento Oncológico:</strong> Com o diagnóstico de câncer, ele seria encaminhado para um dos centros de alta complexidade em oncologia (UNACON/CACON) em Maceió, como o <strong>Hospital Universitário Professor Alberto Antunes (HUPAA)</strong>, para dar início à quimioterapia e ao acompanhamento especializado. O deslocamento seria dentro da própria cidade, facilitando a logística.</li>
+                         <li><strong>Cuidado Domiciliar e Acompanhamento:</strong> Ao receber alta, ele voltaria a ser acompanhado pela equipe da <strong>USF Reginaldo</strong>, que organizaria as visitas domiciliares, o cuidado com a colostomia, e articularia com o NASF ou outros serviços da rede o suporte de fisioterapia e nutrição.</li>
+                    </ol>
+                    <p class="mt-4">Neste cenário, por já residir na capital, Cláudio teria a vantagem de um acesso geograficamente mais fácil aos serviços de média e alta complexidade, que estão concentrados em Maceió, otimizando os fluxos da rede de atenção.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 py-4 border-t">
+            <p class="text-sm text-gray-500">&copy; 2025 - Atividade de Interação Comunitária I</p>
+        </footer>
+
+    </div>
+
+    <!-- Biblioteca para gerar PDF a partir do HTML -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" xintegrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        document.getElementById('download-pdf').addEventListener('click', function() {
+            // Seleciona o elemento que será convertido em PDF
+            const element = document.getElementById('page-content');
+            
+            // Pega o elemento do botão para poder escondê-lo e mostrá-lo novamente
+            const buttonContainer = document.getElementById('pdf-button-container');
+
+            // Esconde o botão para que ele não apareça no arquivo PDF gerado
+            buttonContainer.style.display = 'none';
+
+            // Configurações para a criação do PDF
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5], // Margens [topo, esquerda, baixo, direita] em polegadas
+                filename:     'analise_caso_clinico_saude.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true }, // Aumenta a escala para melhor qualidade da imagem
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Tenta evitar quebras de página ruins
+            };
+
+            // Usa a biblioteca html2pdf para criar e baixar o PDF
+            html2pdf().from(element).set(opt).save().then(() => {
+                // Após o PDF ser salvo, mostra o botão novamente na página
+                buttonContainer.style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
