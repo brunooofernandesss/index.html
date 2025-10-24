@@ -236,28 +236,6 @@
         }
 
         function updateTaskOrder() {
-            const newOrder = [];
-            taskList.querySelectorAll('li').forEach(li => {
-                const index = parseInt(li.dataset.index, 10);
-                // A tarefa é recuperada do plannerData usando o índice original (data-index)
-                // É necessário encontrar a tarefa correta no plannerData[selectedDate] 
-                // para garantir que os dados de "completed" e horários sejam mantidos.
-                // A maneira mais robusta seria armazenar um ID único na LI, mas vamos manter
-                // a lógica baseada na posição para simplicidade e re-renderizar em seguida.
-                // Isso força uma re-renderização completa para garantir a integridade.
-            });
-            
-            // Reconstroi a lista de tarefas baseada na ordem atual do DOM
-            const orderedTasks = [];
-            taskList.querySelectorAll('li').forEach(li => {
-                // Recupera a tarefa original usando o índice antes de re-renderizar
-                const originalIndex = parseInt(li.dataset.originalIndex, 10); 
-                // Nota: O código original não tinha 'originalIndex', vou simplificar re-renderizando.
-                // No entanto, como o array é reordenado no DOM, a lógica abaixo é mais segura:
-                // Crie um novo array de tarefas na ordem do DOM.
-            });
-
-            // Para manter a funcionalidade do código original, re-renderizamos para corrigir os índices:
             const currentTasks = plannerData[selectedDate];
             const newOrderIndices = [...taskList.children].map(li => parseInt(li.dataset.index, 10));
             
@@ -299,39 +277,54 @@
         }
         
         // **********************************************
-        // FUNÇÃO DE INTEGRAÇÃO COM O GOOGLE CALENDAR
+        // FUNÇÃO DE INTEGRAÇÃO COM O GOOGLE CALENDAR (CORRIGIDA)
         // **********************************************
         function generateGoogleCalendarLink(task, date) {
             const baseURL = 'https://www.google.com/calendar/render?action=TEMPLATE';
             const text = encodeURIComponent(task.text);
             
-            // Formato de data e hora para o Google Calendar (YYYYMMDDTHHMMSS)
+            // Formato de data e hora para o Google Calendar: YYYYMMDDTHHMMSS (sem Z para hora local)
             let datesParam = '';
             
-            // Tratamento de fuso horário (UTC) - 'Z'
+            const dateOnlyFormatted = date.replace(/-/g, '');
+            
             if (task.startTime && task.endTime) {
-                // Se for um evento com início e fim, formatamos ambos
-                const startDateTime = date.replace(/-/g, '') + 'T' + task.startTime.replace(/:/g, '') + '00Z';
-                const endDateTime = date.replace(/-/g, '') + 'T' + task.endTime.replace(/:/g, '') + '00Z';
+                // Evento com início e fim exatos. Remove o 'Z' para tratar como hora local.
+                const startDateTime = dateOnlyFormatted + 'T' + task.startTime.replace(/:/g, '') + '00';
+                const endDateTime = dateOnlyFormatted + 'T' + task.endTime.replace(/:/g, '') + '00';
                 datesParam = `&dates=${startDateTime}/${endDateTime}`;
             } 
             else if (task.startTime) {
-                // Se for apenas início, define 1 hora de duração
-                const startDateTime = new Date(`${date}T${task.startTime}:00`);
-                const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); 
+                // Evento com apenas início. Define 1 hora de duração.
+                const startTimeFormatted = task.startTime.replace(/:/g, '') + '00';
+
+                // Cálculo para a hora de término (garantindo que se mantenha no mesmo dia)
+                const startHour = parseInt(task.startTime.split(':')[0]);
+                const startMinute = parseInt(task.startTime.split(':')[1]);
+                let endHour = startHour + 1;
+                let endMinute = startMinute;
+
+                // Caso o horário ultrapasse a meia-noite (raro, mas evita erro)
+                if (endHour >= 24) {
+                    endHour = 23;
+                    endMinute = 59; 
+                }
+
+                const endHourFormatted = String(endHour).padStart(2, '0');
+                const endMinuteFormatted = String(endMinute).padStart(2, '0');
+                const endTimeFormatted = endHourFormatted + endMinuteFormatted + '00';
+
+                const startDateTime = dateOnlyFormatted + 'T' + startTimeFormatted;
+                const endDateTime = dateOnlyFormatted + 'T' + endTimeFormatted;
                 
-                const startFormatted = startDateTime.toISOString().replace(/[-:]|\.\d{3}/g, '').slice(0, 15) + 'Z';
-                const endFormatted = endDateTime.toISOString().replace(/[-:]|\.\d{3}/g, '').slice(0, 15) + 'Z';
-                
-                datesParam = `&dates=${startFormatted}/${endFormatted}`;
+                datesParam = `&dates=${startDateTime}/${endDateTime}`;
             }
             else {
-                // Se não houver horário, marca como evento de dia inteiro (dia inicial / dia seguinte)
-                const startDateOnly = date.replace(/-/g, '');
+                // Evento de dia inteiro (dia inicial / dia seguinte)
                 const nextDay = new Date(date);
                 nextDay.setDate(nextDay.getDate() + 1);
                 const endDateOnly = nextDay.toISOString().split('T')[0].replace(/-/g, '');
-                datesParam = `&dates=${startDateOnly}/${endDateOnly}`;
+                datesParam = `&dates=${dateOnlyFormatted}/${endDateOnly}`;
             }
             
             const details = encodeURIComponent("Tarefa do Planner Avançado.");
