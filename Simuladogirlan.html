@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado Módulo 04: Metabolismo & Sistema Digestório</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 2rem; }
+        p.subtitle { opacity: 0.9; margin-top: 10px; }
+
+        .controls {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-download {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #1a252f;
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: #fafafa;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Badge for topics */
+        .badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Simulado Módulo 04</h1>
+        <p class="subtitle">Metabolismo, Nutrição, Histologia e Fisiologia Digestória</p>
+    </header>
+
+    <div class="controls">
+        <span>Progresso: <span id="progress-text">0/120</span></span>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <button class="btn btn-download" onclick="downloadJSON()">⬇ Baixar Respostas (JSON)</button>
+    </div>
+
+    <div id="questions-container">
+        </div>
+
+    <footer>
+        <p>Gere o arquivo JSON e envie para correção.</p>
+    </footer>
+</div>
+
+<script>
+    // Base de dados de 120 Questões baseadas no roteiro oficial
+    const questionsDB = [
+        // --- BLOCO 1: INTRODUÇÃO, NUTRIÇÃO E GERAL ---
+        { id: 1, topic: "Nutrição Básica", text: "Defina metabolismo basal e cite três variáveis fisiológicas que interferem diretamente nele." },
+        { id: 2, topic: "Nutrição Básica", text: "Qual a importância biológica da água no organismo humano e como ela atua na termorregulação?" },
+        { id: 3, topic: "Nutrição Básica", text: "Classifique as fibras alimentares em solúveis e insolúveis e explique o papel de cada uma no trato gastrointestinal." },
+        { id: 4, topic: "Nutrição Básica", text: "Descreva a estrutura da pirâmide alimentar brasileira vigente e qual a recomendação aproximada de macronutrientes para adultos." },
+        { id: 5, topic: "Nutrição Básica", text: "Diferencie bioquímica e nutricionalmente os macronutrientes dos micronutrientes." },
+        { id: 6, topic: "Nutrição Básica", text: "Explique a classificação dos alimentos conforme o nível de processamento (in natura, processados e ultraprocessados) e seu impacto na saúde." },
+        { id: 7, topic: "Carboidratos", text: "O que é índice glicêmico e carga glicêmica? Como esses conceitos influenciam na resposta insulínica?" },
+        { id: 8, topic: "Carboidratos", text: "Diferencie carboidratos simples de complexos e cite exemplos de fontes alimentares de cada." },
+        { id: 9, topic: "Psicossocial", text: "Descreva os aspectos psicossociais relacionados com o culto ao físico perfeito e possíveis transtornos de imagem." },
+        { id: 10, topic: "Endocrinologia/Esportes", text: "Explique o papel fisiológico e os riscos do uso de anabolizantes esteroides na massa muscular e no organismo sistêmico." },
+        
+        // --- BLOCO 2: HISTOLOGIA ---
+        { id: 11, topic: "Histologia - Adiposo", text: "Diferencie histologica e funcionalmente o tecido adiposo unilocular do multilocular." },
+        { id: 12, topic: "Histologia - Adiposo", text: "Qual a função da termogenina (UCP-1) nas mitocôndrias do tecido adiposo multilocular?" },
+        { id: 13, topic: "Histologia - Geral", text: "Descreva as quatro camadas gerais que compõem a parede dos órgãos ocos do trato gastrointestinal (mucosa até serosa/adventícia)." },
+        { id: 14, topic: "Histologia - Esôfago", text: "Caracterize o epitélio de revestimento do esôfago e explique sua importância funcional." },
+        { id: 15, topic: "Histologia - Estômago", text: "Descreva as células parietais e principais das glândulas gástricas, citando o que cada uma secreta." },
+        { id: 16, topic: "Histologia - Estômago", text: "Como o epitélio do estômago se protege contra a acidez do suco gástrico?" },
+        { id: 17, topic: "Histologia - Intestino Delgado", text: "O que são vilosidades e microvilosidades e qual sua função primordial no intestino delgado?" },
+        { id: 18, topic: "Histologia - Intestino Delgado", text: "Qual a função das Células de Paneth encontradas nas criptas de Lieberkühn?" },
+        { id: 19, topic: "Histologia - Intestino Grosso", text: "Compare a histologia do intestino grosso com a do delgado, focando na presença de células caliciformes." },
+        { id: 20, topic: "Histologia - Fígado", text: "Descreva a organização do lóbulo hepático clássico e o fluxo sanguíneo/biliar na tríade portal." },
+        { id: 21, topic: "Histologia - Fígado", text: "O que é o Espaço de Disse e qual sua importância nas trocas metabólicas entre hepatócitos e sangue?" },
+        { id: 22, topic: "Histologia - Pâncreas", text: "Diferencie histologicamente o pâncreas exócrino (ácinos) do pâncreas endócrino (ilhotas)." },
+        { id: 23, topic: "Histologia - Vesícula", text: "Descreva a estrutura da parede da vesícula biliar e como ela difere do restante do trato digestório." },
+        { id: 24, topic: "Citologia - Núcleo", text: "Descreva os componentes estruturais do núcleo celular (envelope, poros, cromatina, nucléolo)." },
+        { id: 25, topic: "Citologia - Transporte", text: "Explique o mecanismo de transporte através dos complexos de poros da membrana nuclear." },
+
+        // --- BLOCO 3: ANATOMIA ---
+        { id: 26, topic: "Anatomia - Geral", text: "Quais são os órgãos do sistema digestório supradiafragmáticos e infradiafragmáticos?" },
+        { id: 27, topic: "Anatomia - Cavidade", text: "Cite os 9 quadrantes (ou regiões) da cavidade abdominopélvica e um órgão encontrado em cada região." },
+        { id: 28, topic: "Anatomia - Peritônio", text: "Diferencie peritônio visceral de peritônio parietal." },
+        { id: 29, topic: "Anatomia - Peritônio", text: "Defina e explique a função dos omentos (maior e menor) e dos mesentérios." },
+        { id: 30, topic: "Anatomia - Irrigação", text: "Quais são os três troncos arteriais principais que irrigam o sistema digestório abdominal (aorta abdominal)?" },
+        { id: 31, topic: "Anatomia - Fígado", text: "Descreva a anatomia macroscópica do fígado, citando seus lobos e ligamentos principais." },
+        { id: 32, topic: "Anatomia - Vias Biliares", text: "Descreva o trajeto da bile desde os canalículos hepáticos até o duodeno." },
+        { id: 33, topic: "Anatomia - Pâncreas", text: "Quais são as partes anatômicas do pâncreas e sua relação com o duodeno e o baço?" },
+        { id: 34, topic: "Anatomia - Estômago", text: "Identifique as partes anatômicas do estômago (cárdia, fundo, corpo, antro, piloro)." },
+        { id: 35, topic: "Anatomia - Intestinos", text: "Diferencie anatomicamente o jejuno do íleo (vascularização, parede, gordura)." },
+
+        // --- BLOCO 4: METABOLISMO - Bioenergética e Carboidratos ---
+        { id: 36, topic: "Bioenergética", text: "O que é ATP e por que ele é considerado a 'moeda energética' da célula?" },
+        { id: 37, topic: "Bioenergética", text: "Descreva a estrutura e função mitocondrial na formação do gradiente eletroquímico." },
+        { id: 38, topic: "Glicólise", text: "Defina a via glicolítica, sua localização celular e qual o saldo líquido de ATP produzido." },
+        { id: 39, topic: "Glicólise", text: "Quais são as três enzimas reguladoras irreversíveis da glicólise?" },
+        { id: 40, topic: "Glicólise", text: "Qual o destino do piruvato em condições aeróbias e anaeróbias?" },
+        { id: 41, topic: "Ciclo de Krebs", text: "Qual a função principal do Ciclo do Ácido Cítrico (Krebs) e onde ele ocorre?" },
+        { id: 42, topic: "Ciclo de Krebs", text: "Como o Acetil-CoA entra no ciclo de Krebs e quais produtos são gerados em uma volta do ciclo?" },
+        { id: 43, topic: "Cadeia Respiratória", text: "Detalhe a cadeia transportadora de elétrons e sua importância na produção de ATP." },
+        { id: 44, topic: "Cadeia Respiratória", text: "O que é a fosforilação oxidativa e como a ATP sintase utiliza o gradiente de prótons?" },
+        { id: 45, topic: "Cadeia Respiratória", text: "O que são desacopladores da cadeia respiratória e qual seu efeito na termogênese?" },
+        { id: 46, topic: "Neoglicogênese", text: "Defina neoglicogênese e cite três substratos não-carboidratos que podem ser utilizados." },
+        { id: 47, topic: "Neoglicogênese", text: "Em quais órgãos ocorre a neoglicogênese e qual sua importância no jejum?" },
+        { id: 48, topic: "Neoglicogênese", text: "Explique como a neoglicogênese contorna as reações irreversíveis da glicólise." },
+        { id: 49, topic: "Metabolismo de Glicogênio", text: "Diferencie a glicogenólise hepática da glicogenólise muscular em termos de função para o organismo." },
+        { id: 50, topic: "Ciclo de Cori", text: "Descreva o Ciclo de Cori (ciclo do ácido lático) e sua importância durante o exercício intenso." },
+        { id: 51, topic: "Transporte de Glicose", text: "Diferencie os transportadores GLUT2 e GLUT4 quanto à localização e dependência de insulina." },
+        { id: 52, topic: "Insulina", text: "Descreva o processo de produção e secreção de insulina pelas células beta pancreáticas." },
+        { id: 53, topic: "Regulação", text: "Como a insulina e o glucagon regulam reciprocamente a glicólise e a neoglicogênese?" },
+        { id: 54, topic: "Via das Pentoses", text: "Qual a função da via das pentoses fosfato (geração de NADPH e ribose-5-fosfato)?" },
+        { id: 55, topic: "Digestão Carboidratos", text: "Descreva a digestão enzimática dos carboidratos desde a boca até a absorção no enterócito." },
+
+        // --- BLOCO 5: METABOLISMO - Lipídeos ---
+        { id: 56, topic: "Lipídeos - Digestão", text: "Como ocorre a emulsificação das gorduras e qual o papel dos sais biliares?" },
+        { id: 57, topic: "Lipídeos - Absorção", text: "Explique a formação dos quilomícrons no enterócito e sua entrada na circulação linfática." },
+        { id: 58, topic: "Lipólise", text: "Explique o processo de lipólise no tecido adiposo e qual enzima é hormônio-sensível." },
+        { id: 59, topic: "Beta-Oxidação", text: "O que é a beta-oxidação dos ácidos graxos e em qual compartimento celular ela ocorre?" },
+        { id: 60, topic: "Beta-Oxidação", text: "Como os ácidos graxos de cadeia longa são transportados para dentro da mitocôndria (lançadeira de carnitina)?" },
+        { id: 61, topic: "Corpos Cetônicos", text: "O que é cetogênese, onde ocorre e em quais situações metabólicas ela é ativada?" },
+        { id: 62, topic: "Corpos Cetônicos", text: "Por que o fígado produz corpos cetônicos mas não consegue utilizá-los como energia?" },
+        { id: 63, topic: "Colesterol", text: "Explique a regulação dos níveis sanguíneos de colesterol (síntese endógena vs. dieta)." },
+        { id: 64, topic: "Lipoproteínas", text: "Diferencie VLDL, LDL e HDL quanto à composição e função no transporte de lipídeos." },
+        { id: 65, topic: "Triglicerídeos", text: "Descreva a síntese de triglicerídeos (lipogênese) e em quais condições ela é favorecida." },
+        { id: 66, topic: "Ácidos Graxos", text: "Diferencie ácidos graxos saturados, insaturados e trans do ponto de vista estrutural e metabólico." },
+        { id: 67, topic: "Lipídeos - Regulação", text: "Qual o papel da insulina na regulação do armazenamento de gordura no tecido adiposo?" },
+
+        // --- BLOCO 6: METABOLISMO - Proteínas e Aminoácidos ---
+        { id: 68, topic: "Síntese Proteica", text: "Compreenda a síntese proteica, identificando transcrição e tradução." },
+        { id: 69, topic: "Digestão Proteínas", text: "Descreva a ativação de zimogênios (pepsinogênio, tripsinogênio) na digestão proteica." },
+        { id: 70, topic: "Absorção Aminoácidos", text: "Como os aminoácidos são absorvidos pelos enterócitos e transportados para o sangue?" },
+        { id: 71, topic: "Transaminação", text: "O que são reações de transaminação e qual o papel das transaminases (TGO/AST e TGP/ALT)?" },
+        { id: 72, topic: "Desaminação", text: "O que é desaminação oxidativa e qual sua relação com a produção de amônia?" },
+        { id: 73, topic: "Ciclo da Ureia", text: "Explique o ciclo da ureia: onde ocorre, qual sua função principal e a origem dos átomos de nitrogênio." },
+        { id: 74, topic: "Amônia", text: "Por que a amônia é tóxica para o sistema nervoso central e como ela é transportada no sangue (glutamina/alanina)?" },
+        { id: 75, topic: "Aminoácidos", text: "Diferencie aminoácidos glicogênicos de cetogênicos." },
+        { id: 76, topic: "Balanço Nitrogenado", text: "O que significa balanço nitrogenado positivo e negativo? Dê exemplos." },
+
+        // --- BLOCO 7: INTEGRAÇÃO METABÓLICA E FISIOLOGIA ---
+        { id: 77, topic: "Integração - Jejum", text: "Descreva as alterações metabólicas no fígado e tecido adiposo durante o jejum prolongado." },
+        { id: 78, topic: "Integração - Alimentado", text: "Quais as vias metabólicas predominantes no estado alimentado (pós-prandial)?" },
+        { id: 79, topic: "Exercício Físico", text: "Compreenda a fisiologia da contração muscular e a fonte de energia (fosfocreatina, glicólise, aeróbio) em diferentes tempos de exercício." },
+        { id: 80, topic: "Exercício Físico", text: "Relacione a integração anabólica e catabólica com a prática do exercício físico." },
+        { id: 81, topic: "Bile", text: "Compreenda o funcionamento do fígado e o processo de produção e secreção da bile (sais biliares, bilirrubina)." },
+        { id: 82, topic: "Álcool", text: "Descreva o metabolismo do etanol no fígado (ADH e MEOS) e suas consequências metabólicas (NADH alto)." },
+        { id: 83, topic: "Álcool", text: "Por que o consumo excessivo de álcool pode levar à esteatose hepática e hipoglicemia?" },
+        { id: 84, topic: "Síndrome Metabólica", text: "Defina Síndrome Metabólica e cite seus principais critérios diagnósticos." },
+        { id: 85, topic: "Diabetes", text: "Diferencie metabolicamente o Diabetes Mellitus Tipo 1 do Tipo 2." },
+        { id: 86, topic: "Diabetes", text: "Explique a cetoacidose diabética: por que ocorre e quais os sinais clínicos?" },
+        { id: 87, topic: "Regulação Gastrointestinal", text: "Qual a função da gastrina, secretina e colecistocinina (CCK) na digestão?" },
+        { id: 88, topic: "Fígado - Detox", text: "Explique as fases I e II da biotransformação de xenobióticos no fígado." },
+        
+        // --- BLOCO 8: APROFUNDAMENTO E CASOS CLÍNICOS ---
+        { id: 89, topic: "Estudo de Caso", text: "Em uma dieta 'Low Carb', quais vias metabólicas são ativadas para manter a glicemia?" },
+        { id: 90, topic: "Metabolismo", text: "Qual a relação entre a Vitamina B12 e o metabolismo de ácidos graxos de cadeia ímpar?" },
+        { id: 91, topic: "Metabolismo", text: "O que é resistência à insulina e como ela afeta o metabolismo lipídico?" },
+        { id: 92, topic: "Metabolismo", text: "Explique o papel do cortisol no metabolismo de carboidratos e proteínas durante o estresse." },
+        { id: 93, topic: "Fisiologia", text: "Como o sistema nervoso entérico controla a motilidade gastrointestinal?" },
+        { id: 94, topic: "Histologia", text: "Descreva o plexo de Meissner e o plexo de Auerbach: localização e função." },
+        { id: 95, topic: "Nutrição", text: "Qual a diferença entre kwashiorkor e marasmo em termos metabólicos e nutricionais?" },
+        { id: 96, topic: "Metabolismo", text: "Como a adrenalina afeta o metabolismo do glicogênio muscular e hepático?" },
+        { id: 97, topic: "Bioenergética", text: "O que são inibidores da cadeia respiratória (ex: cianeto, CO) e como causam morte celular?" },
+        { id: 98, topic: "Digestão", text: "Explique o mecanismo de absorção de vitamina B12 e o papel do Fator Intrínseco." },
+        { id: 99, topic: "Metabolismo", text: "Qual a função da Lipoproteína Lipase (LPL) nos capilares sanguíneos?" },
+        { id: 100, topic: "Metabolismo", text: "Descreva a regulação da Acetil-CoA Carboxilase na síntese de ácidos graxos." },
+        { id: 101, topic: "Fisiologia", text: "Descreva o reflexo de defecação e os músculos envolvidos." },
+        { id: 102, topic: "Anatomia", text: "O que é a circulação portal hepática e qual sua importância para a absorção de fármacos e nutrientes?" },
+        { id: 103, topic: "Metabolismo", text: "Explique o conceito de turnover proteico." },
+        { id: 104, topic: "Histologia", text: "Qual a estrutura e função das placas de Peyer no íleo?" },
+        { id: 105, topic: "Metabolismo", text: "Como o tecido adiposo atua como um órgão endócrino (leptina, adiponectina)?" },
+        { id: 106, topic: "Anatomia", text: "Descreva a anatomia do canal anal e a linha pectínea." },
+        { id: 107, topic: "Metabolismo", text: "O que são radicais livres (ROS), como são formados na mitocôndria e como a célula se defende?" },
+        { id: 108, topic: "Nutrição", text: "Explique o efeito térmico dos alimentos." },
+        { id: 109, topic: "Fisiologia", text: "O que é o complexo mioelétrico migratório (CMM)?" },
+        { id: 110, topic: "Metabolismo", text: "Qual a importância do NADPH gerado na via das pentoses para a síntese de ácidos graxos?" },
+        { id: 111, topic: "Metabolismo", text: "Descreva o metabolismo da frutose e por que seu excesso é lipogênico." },
+        { id: 112, topic: "Histologia", text: "Descreva as células DNES (sistema neuroendócrino difuso) do trato gastrointestinal." },
+        { id: 113, topic: "Anatomia", text: "Quais são as constrições anatômicas do esôfago?" },
+        { id: 114, topic: "Metabolismo", text: "Qual o papel da creatina fosfato no metabolismo muscular?" },
+        { id: 115, topic: "Metabolismo", text: "Como o exercício físico agudo altera a translocação de GLUT4?" },
+        { id: 116, topic: "Metabolismo", text: "Diferencie o metabolismo das fibras musculares tipo I (lentas) e tipo II (rápidas)." },
+        { id: 117, topic: "Fisiologia", text: "Explique o mecanismo de secreção de ácido clorídrico (HCl) pela célula parietal (bomba de prótons)." },
+        { id: 118, topic: "Metabolismo", text: "O que é glicação de proteínas e qual sua relação com a HbA1c no diabetes?" },
+        { id: 119, topic: "Metabolismo", text: "Descreva o destino metabólico do esqueleto carbônico dos aminoácidos." },
+        { id: 120, topic: "Integração", text: "Resuma como o módulo contribui para sua formação de médico generalista, integrando bioquímica e clínica." }
+    ];
+
+    const container = document.getElementById('questions-container');
+    const progressText = document.getElementById('progress-text');
+    const progressFill = document.getElementById('progress-fill');
+
+    // Renderizar questões
+    function renderQuestions() {
+        container.innerHTML = '';
+        questionsDB.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            card.innerHTML = `
+                <div class="q-header">
+                    <span class="badge">${q.topic}</span>
+                    <span>Questão ${q.id} de 120</span>
+                </div>
+                <div class="q-text">${q.text}</div>
+                <textarea 
+                    id="answer-${q.id}" 
+                    placeholder="Digite sua resposta aqui..." 
+                    oninput="updateProgress()"
+                ></textarea>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Atualizar barra de progresso
+    function updateProgress() {
+        let answeredCount = 0;
+        questionsDB.forEach(q => {
+            const val = document.getElementById(`answer-${q.id}`).value;
+            if (val.trim().length > 5) answeredCount++;
+        });
+
+        const percent = (answeredCount / 120) * 100;
+        progressFill.style.width = `${percent}%`;
+        progressText.innerText = `${answeredCount}/120 Respondidas`;
+    }
+
+    // Baixar JSON
+    function downloadJSON() {
+        const answers = [];
+        questionsDB.forEach(q => {
+            const userAnswer = document.getElementById(`answer-${q.id}`).value;
+            answers.push({
+                id: q.id,
+                topic: q.topic,
+                question: q.text,
+                user_answer: userAnswer
+            });
+        });
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(answers, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "respostas_simulado_modulo04.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    // Inicializar
+    renderQuestions();
+
+</script>
+
+</body>
+</html>
