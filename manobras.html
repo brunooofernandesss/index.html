@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado: Manobras Ortopédicas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .quiz-container {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            height: fit-content;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .question-block {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        /* Estilo para a imagem dentro da pergunta */
+        .question-text img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option-item {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1em;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: #e2e6ea;
+            border-color: #adb5bd;
+        }
+
+        .option-item.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-item.wrong {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+            border-left: 5px solid #17a2b8;
+            display: none; /* Escondido inicialmente */
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background-color: #17a2b8;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .btn-nav {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none; /* Escondido inicialmente */
+        }
+
+        .btn-nav:hover {
+            background-color: #0056b3;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Tela final */
+        .results-container {
+            text-align: center;
+            display: none;
+        }
+        
+        .final-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-view">
+        <h1>Simulado Ortopedia</h1>
+        <div class="score-display">Questão <span id="current-q-num">1</span> de <span id="total-q-num">30</span></div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <div class="question-block">
+            <div class="question-text" id="question-text"></div>
+            <ul class="options-list" id="options-list"></ul>
+        </div>
+
+        <div class="feedback-section" id="feedback-section">
+            <p id="feedback-comment"></p>
+            <span class="topic-tag" id="feedback-topic"></span>
+        </div>
+
+        <button class="btn-nav" id="next-btn" onclick="nextQuestion()">Próxima Questão</button>
+    </div>
+
+    <div id="results-view" class="results-container">
+        <h2>Simulado Finalizado!</h2>
+        <p>Sua pontuação foi:</p>
+        <div class="final-score" id="final-score-display"></div>
+        <button class="btn-nav" style="display:block" onclick="location.reload()">Reiniciar</button>
+    </div>
+</div>
+
+<script>
+// --- BANCO DE QUESTÕES (30 ITENS) ---
+const questions = [
+  {
+    question: `1. Observe a imagem. O examinador realiza a elevação passiva do membro superior (flexão). Qual teste é este e o que ele avalia?
+    <img src="https://brunooofernandesss.github.io/index.html/neer.jpg" alt="Teste de Neer">`,
+    options: [
+      "1. Teste de Neer - Impacto subacromial (Supraespinhal)",
+      "2. Teste de Hawkins-Kennedy - Lesão do Subescapular",
+      "3. Teste de Jobe - Instabilidade Glenoumeral",
+      "4. Teste de Yocum - Articulação Acromioclavicular",
+    ],
+    correctAnswer: "1. Teste de Neer - Impacto subacromial (Supraespinhal)",
+    comment: "O Teste de Neer avalia o conflito subacromial (impacto) das estruturas da cabeça do úmero contra o acrômio, especificamente o tendão supraespinhal e a bursa.",
+    topic: "Ombro: Síndrome do Impacto",
+  },
+  {
+    question: `2. Neste teste, o ombro é fletido a 90° com rotação interna forçada. Qual o nome e o que indica um sinal positivo?
+    <img src="https://brunooofernandesss.github.io/index.html/hawkins.jpg" alt="Teste de Hawkins-Kennedy">`,
+    options: [
+      "1. Teste de Jobe - Fraqueza muscular",
+      "2. Teste de Hawkins-Kennedy - Dor aguda por compressão do tendão supraespinhal",
+      "3. Teste de Gerber - Incapacidade de rotação interna",
+      "4. Teste de Patte - Dor na rotação externa",
+    ],
+    correctAnswer: "2. Teste de Hawkins-Kennedy - Dor aguda por compressão do tendão supraespinhal",
+    comment: "No Teste de Hawkins-Kennedy, a rotação interna forçada comprime o tendão do supraespinhal, gerando dor aguda em caso de síndrome do impacto.",
+    topic: "Ombro: Síndrome do Impacto",
+  },
+  {
+    question: `3. O paciente toca o ombro oposto e levanta o cotovelo contra resistência. Qual é este teste?
+    <img src="https://brunooofernandesss.github.io/index.html/yocum.jpg" alt="Teste de Yocum">`,
+    options: [
+      "1. Teste de Yocum",
+      "2. Teste de Neer",
+      "3. Teste de Phalen",
+      "4. Teste de Jobe",
+    ],
+    correctAnswer: "1. Teste de Yocum",
+    comment: "O Teste de Yocum é uma alternativa para avaliar o conflito subacromial e lesão do manguito rotador, sendo positivo se houver dor no ombro.",
+    topic: "Ombro: Síndrome do Impacto",
+  },
+  {
+    question: `4. Conhecido como 'Lata Vazia', este teste com os polegares para baixo avalia a integridade de qual tendão?
+    <img src="https://brunooofernandesss.github.io/index.html/jobe.jpg" alt="Teste de Jobe">`,
+    options: [
+      "1. Tendão do Bíceps",
+      "2. Tendão Subescapular",
+      "3. Tendão Supraespinhal",
+      "4. Tendão Infraespinhal",
+    ],
+    correctAnswer: "3. Tendão Supraespinhal",
+    comment: "O Teste de Jobe (Lata Vazia) isola o músculo Supraespinhal. Dor ou fraqueza significativa indica tendinopatia ou ruptura.",
+    topic: "Ombro: Manguito Rotador",
+  },
+  {
+    question: `5. Teste de Patte (rotação externa contra resistência a 90°). Qual músculo é o principal avaliado?
+    <img src="https://brunooofernandesss.github.io/index.html/patte.jpg" alt="Teste de Patte">`,
+    options: [
+      "1. Supraespinhal",
+      "2. Infraespinhal e Redondo Menor",
+      "3. Subescapular",
+      "4. Deltóide",
+    ],
+    correctAnswer: "2. Infraespinhal e Redondo Menor",
+    comment: "O Teste de Patte avalia a força de rotação externa, que é função primária do músculo infraespinhal e secundária do redondo menor.",
+    topic: "Ombro: Manguito Rotador",
+  },
+  {
+    question: `6. No Teste de Gerber, o paciente coloca a mão no dorso (lombar) e tenta afastá-la. A incapacidade sugere lesão de:
+    <img src="https://brunooofernandesss.github.io/index.html/gerber.jpg" alt="Teste de Gerber">`,
+    options: [
+      "1. Subescapular",
+      "2. Supraespinhal",
+      "3. Infraespinhal",
+      "4. Serrátil Anterior",
+    ],
+    correctAnswer: "1. Subescapular",
+    comment: "O Teste de Gerber (Lift-off test) avalia a capacidade de rotação interna ativa e a integridade do tendão do músculo Subescapular.",
+    topic: "Ombro: Manguito Rotador",
+  },
+  {
+    question: `7. Comparando as manobras de ombro, qual destes é específico para testar a rotação interna?
+    <img src="https://brunooofernandesss.github.io/index.html/gerber.jpg" alt="Teste de Gerber">`,
+    options: [
+      "1. Teste de Patte",
+      "2. Teste de Gerber",
+      "3. Teste de Jobe",
+      "4. Teste de Hawkins",
+    ],
+    correctAnswer: "2. Teste de Gerber",
+    comment: "Enquanto Patte testa a rotação externa, o Teste de Gerber isola a rotação interna colocando a mão no dorso.",
+    topic: "Ombro: Biomecânica",
+  },
+  {
+    question: `8. Um paciente com dor súbita próxima aos 90° de flexão passiva do braço apresenta sinal positivo para qual síndrome?
+    <img src="https://brunooofernandesss.github.io/index.html/neer.jpg" alt="Teste de Neer">`,
+    options: [
+      "1. Síndrome do Túnel do Carpo",
+      "2. Síndrome do Impacto",
+      "3. Instabilidade Patelofemoral",
+      "4. Epicondilite Lateral",
+    ],
+    correctAnswer: "2. Síndrome do Impacto",
+    comment: "Este é o sinal clássico do Teste de Neer, indicando Síndrome do Impacto ou Tendinopatia do Manguito Rotador.",
+    topic: "Ombro: Diagnóstico",
+  },
+  {
+    question: `9. O Squeeze Test (compressão lateral das cabeças dos metacarpos/metatarsos) é utilizado para identificar:
+    <img src="https://brunooofernandesss.github.io/index.html/squeeze.jpg" alt="Squeeze Test">`,
+    options: [
+      "1. Síndrome do Túnel do Carpo",
+      "2. Artrite Reumatoide ou Fraturas por Estresse",
+      "3. Tenossinovite de De Quervain",
+      "4. Epicondilite",
+    ],
+    correctAnswer: "2. Artrite Reumatoide ou Fraturas por Estresse",
+    comment: "O teste comprime as articulações. Dor intensa sugere inflamação sinovial (Artrite Reumatoide) ou fratura por estresse.",
+    topic: "Mão e Pé: Processos Inflamatórios",
+  },
+  {
+    question: `10. A manobra de Phalen é positiva quando há parestesia na distribuição de qual nervo?
+    <img src="https://brunooofernandesss.github.io/index.html/phalen.jpg" alt="Teste de Phalen">`,
+    options: [
+      "1. Nervo Radial",
+      "2. Nervo Ulnar",
+      "3. Nervo Mediano",
+      "4. Nervo Ciático",
+    ],
+    correctAnswer: "3. Nervo Mediano",
+    comment: "A flexão forçada dos punhos aumenta a pressão no túnel do carpo, comprimindo o nervo mediano.",
+    topic: "Punho: Síndrome do Túnel do Carpo",
+  },
+  {
+    question: `11. Quanto tempo o paciente deve manter a posição de flexão dos punhos no Teste de Phalen?
+    <img src="https://brunooofernandesss.github.io/index.html/phalen.jpg" alt="Teste de Phalen">`,
+    options: [
+      "1. 10 segundos",
+      "2. 30 segundos",
+      "3. 60 segundos",
+      "4. 2 minutos",
+    ],
+    correctAnswer: "3. 60 segundos",
+    comment: "O paciente deve manter os punhos em flexão forçada com as faces dorsais unidas por 60 segundos para validar o teste.",
+    topic: "Punho: Execução Técnica",
+  },
+  {
+    question: `12. O Sinal de Tinel no punho é pesquisado através de:
+    <img src="https://brunooofernandesss.github.io/index.html/tinel.jpg" alt="Sinal de Tinel">`,
+    options: [
+      "1. Compressão lateral",
+      "2. Percussão sobre o trajeto do nervo",
+      "3. Rotação do punho",
+      "4. Estiramento dos tendões",
+    ],
+    correctAnswer: "2. Percussão sobre o trajeto do nervo",
+    comment: "O examinador realiza uma percussão sobre o trajeto do nervo mediano. O sinal é positivo se houver sensação de choque ou parestesia.",
+    topic: "Punho: Semiologia Neurológica",
+  },
+  {
+    question: `13. Qual teste é patognomônico para a Tenossinovite de De Quervain?
+    <img src="https://brunooofernandesss.github.io/index.html/finkelstein.jpg" alt="Teste de Finkelstein">`,
+    options: [
+      "1. Teste de Phalen",
+      "2. Teste de Finkelstein",
+      "3. Teste de Cozen",
+      "4. Teste de Tinel",
+    ],
+    correctAnswer: "2. Teste de Finkelstein",
+    comment: "O Teste de Finkelstein reproduz a dor intensa e súbita característica da Tendinopatia de De Quervain.",
+    topic: "Punho: Tenossinovites",
+  },
+  {
+    question: `14. No Teste de Finkelstein, quais tendões estão sendo avaliados (inflamados)?
+    <img src="https://brunooofernandesss.github.io/index.html/finkelstein.jpg" alt="Teste de Finkelstein">`,
+    options: [
+      "1. Flexor superficial e profundo dos dedos",
+      "2. Abdutor longo e extensor curto do polegar",
+      "3. Extensor ulnar do carpo",
+      "4. Flexor radial do carpo",
+    ],
+    correctAnswer: "2. Abdutor longo e extensor curto do polegar",
+    comment: "A manobra avalia a inflamação no primeiro compartimento extensor, onde passam o abdutor longo e extensor curto do polegar.",
+    topic: "Punho: Anatomia",
+  },
+  {
+    question: `15. A execução correta do Teste de Finkelstein envolve:
+    <img src="https://brunooofernandesss.github.io/index.html/finkelstein.jpg" alt="Teste de Finkelstein">`,
+    options: [
+      "1. Mão aberta com desvio radial",
+      "2. Punho fechado com polegar dentro dos dedos e desvio ulnar",
+      "3. Flexão de punho por 60 segundos",
+      "4. Extensão de punho contra resistência",
+    ],
+    correctAnswer: "2. Punho fechado com polegar dentro dos dedos e desvio ulnar",
+    comment: "O paciente deve fechar o punho aprisionando o polegar, seguido de desvio ulnar forçado pelo examinador.",
+    topic: "Punho: Execução Técnica",
+  },
+  {
+    question: `16. O Teste de Cozen (extensão do punho contra resistência) avalia a epicondilite lateral. Qual a origem muscular acometida?
+    <img src="https://brunooofernandesss.github.io/index.html/cozen.jpg" alt="Teste de Cozen">`,
+    options: [
+      "1. Origem comum dos flexores",
+      "2. Origem comum dos extensores",
+      "3. Inserção do tríceps",
+      "4. Ligamento colateral ulnar",
+    ],
+    correctAnswer: "2. Origem comum dos extensores",
+    comment: "O objetivo do teste é avaliar a inflamação na origem comum dos músculos extensores no epicôndilo lateral.",
+    topic: "Cotovelo: Epicondilites",
+  },
+  {
+    question: `17. Dor forte no epicôndilo lateral durante o Teste de Cozen sugere qual patologia conhecida popularmente?
+    <img src="https://brunooofernandesss.github.io/index.html/cozen.jpg" alt="Teste de Cozen">`,
+    options: [
+      "1. Cotovelo de Tenista",
+      "2. Cotovelo de Golfista",
+      "3. Pulso de Aberto",
+      "4. Dedo em Gatilho",
+    ],
+    correctAnswer: "1. Cotovelo de Tenista",
+    comment: "A Epicondilite Lateral é popularmente conhecida como Cotovelo de Tenista.",
+    topic: "Cotovelo: Nomenclatura",
+  },
+  {
+    question: `18. No Teste de Patrick (FABER), o posicionamento do membro inferior forma um '4'. O que significa a sigla FABER?
+    <img src="https://brunooofernandesss.github.io/index.html/patrick.jpg" alt="Teste de Patrick">`,
+    options: [
+      "1. Flexão, Adução, Rotação Externa",
+      "2. Flexão, Abdução, Rotação Interna",
+      "3. Flexão, Abdução, Rotação Externa",
+      "4. Força, Amplitude, Balanço, Rotação",
+    ],
+    correctAnswer: "3. Flexão, Abdução, Rotação Externa",
+    comment: "FABER descreve a posição exata da manobra: Flexão, Abdução e Rotação Externa.",
+    topic: "Quadril: Anatomia Funcional",
+  },
+  {
+    question: `19. Durante o FABER, se o paciente referir dor na região posterior, qual articulação provavelmente está afetada?
+    <img src="https://brunooofernandesss.github.io/index.html/patrick.jpg" alt="Teste de Patrick">`,
+    options: [
+      "1. Articulação Coxofemoral",
+      "2. Articulação Sacroilíaca",
+      "3. Joelho",
+      "4. Sínfise Púbica",
+    ],
+    correctAnswer: "2. Articulação Sacroilíaca",
+    comment: "O teste avalia dor e restrição. Dor inguinal indica coxofemoral, enquanto dor posterior indica disfunção da Sacroilíaca.",
+    topic: "Quadril: Diagnóstico Diferencial",
+  },
+  {
+    question: `20. O Teste de Lasègue é considerado positivo para compressão radicular quando a dor surge em qual amplitude?
+    <img src="https://brunooofernandesss.github.io/index.html/lasegue.jpg" alt="Teste de Lasègue">`,
+    options: [
+      "1. 0° a 15°",
+      "2. 30° a 70°",
+      "3. Acima de 90°",
+      "4. Apenas na extensão total",
+    ],
+    correctAnswer: "2. 30° a 70°",
+    comment: "A dor ciática que irradia abaixo do joelho entre 30° e 70° de elevação é o sinal positivo clássico.",
+    topic: "Coluna Lombar: Radiculopatia",
+  },
+  {
+    question: `21. O Teste de Lasègue avalia a irritação de qual nervo e raízes?
+    <img src="https://brunooofernandesss.github.io/index.html/lasegue.jpg" alt="Teste de Lasègue">`,
+    options: [
+      "1. Nervo Femoral (L2-L4)",
+      "2. Nervo Ciático (L4, L5, S1)",
+      "3. Nervo Obturatório",
+      "4. Nervo Glúteo Superior",
+    ],
+    correctAnswer: "2. Nervo Ciático (L4, L5, S1)",
+    comment: "O objetivo é avaliar a irritação ou compressão do nervo ciático e suas raízes (L4, L5, S1), comum em hérnias discais.",
+    topic: "Coluna Lombar: Neuroanatomia",
+  },
+  {
+    question: `22. O Teste de Clarke avalia a articulação patelofemoral. Qual a ação do examinador?
+    <img src="https://brunooofernandesss.github.io/index.html/clarke.jpg" alt="Teste de Clarke">`,
+    options: [
+      "1. Tração da tíbia",
+      "2. Pressão da patela para posterior e inferior",
+      "3. Rotação do pé",
+      "4. Compressão lateral do joelho",
+    ],
+    correctAnswer: "2. Pressão da patela para posterior e inferior",
+    comment: "O examinador pressiona acima da patela em direção posterior e inferior enquanto pede ao paciente para contrair o quadríceps.",
+    topic: "Joelho: Síndrome Patelofemoral",
+  },
+  {
+    question: `23. O Sinal da Tecla de Piano é utilizado para diagnosticar:
+    <img src="https://brunooofernandesss.github.io/index.html/tecla.jpg" alt="Sinal da Tecla">`,
+    options: [
+      "1. Ruptura de ligamento",
+      "2. Derrame articular no joelho",
+      "3. Lesão meniscal",
+      "4. Fratura de patela",
+    ],
+    correctAnswer: "2. Derrame articular no joelho",
+    comment: "Ao comprimir a patela, se ela afundar e voltar como uma tecla, indica a presença de líquido (derrame articular).",
+    topic: "Joelho: Sinais Clínicos",
+  },
+  {
+    question: `24. Na execução do Teste da Gaveta Anterior, o joelho deve estar fletido a:
+    <img src="https://brunooofernandesss.github.io/index.html/gaveta.jpg" alt="Teste da Gaveta Anterior">`,
+    options: [
+      "1. 0° (estendido)",
+      "2. 20°",
+      "3. 90°",
+      "4. 45°",
+    ],
+    correctAnswer: "3. 90°",
+    comment: "Para o teste da Gaveta Anterior, o paciente deita-se com o joelho fletido a 90° e o pé fixo na maca.",
+    topic: "Joelho: Execução Técnica",
+  },
+  {
+    question: `25. Tanto o teste de Lachman quanto o da Gaveta Anterior avaliam a integridade de qual estrutura?
+    <img src="https://brunooofernandesss.github.io/index.html/gaveta.jpg" alt="Teste da Gaveta Anterior">`,
+    options: [
+      "1. Ligamento Cruzado Posterior",
+      "2. Ligamento Cruzado Anterior (LCA)",
+      "3. Meniscos",
+      "4. Ligamento Colateral Lateral",
+    ],
+    correctAnswer: "2. Ligamento Cruzado Anterior (LCA)",
+    comment: "Ambos os testes buscam identificar ruptura do LCA através da tração anterior da tíbia.",
+    topic: "Joelho: Ligamentos Cruzados",
+  },
+  {
+    question: `26. Qual a posição correta do joelho para realizar o Teste de Lachman?
+    <img src="https://brunooofernandesss.github.io/index.html/lachman.jpg" alt="Teste de Lachman">`,
+    options: [
+      "1. Flexão de 90°",
+      "2. Flexão entre 20° e 30°",
+      "3. Extensão total (0°)",
+      "4. Flexão máxima",
+    ],
+    correctAnswer: "2. Flexão entre 20° e 30°",
+    comment: "O teste de Lachman é realizado com o joelho em leve flexão, entre 20° e 30°, sendo mais sensível que a gaveta.",
+    topic: "Joelho: Execução Técnica",
+  },
+  {
+    question: `27. O que indica um sinal positivo no Teste de Lachman?
+    <img src="https://brunooofernandesss.github.io/index.html/lachman.jpg" alt="Teste de Lachman">`,
+    options: [
+      "1. Estalido audível",
+      "2. Dor na compressão",
+      "3. Deslizamento excessivo da tíbia com ponto final 'mole'",
+      "4. Travamento articular",
+    ],
+    correctAnswer: "3. Deslizamento excessivo da tíbia com ponto final 'mole'",
+    comment: "A ausência de um ponto final firme (end-point) na translação anterior da tíbia indica ruptura do LCA.",
+    topic: "Joelho: Sinais Clínicos",
+  },
+  {
+    question: `28. O Teste de McMurray utiliza rotação da tíbia e extensão para avaliar:
+    <img src="https://brunooofernandesss.github.io/index.html/mcmurray.jpg" alt="Teste de McMurray">`,
+    options: [
+      "1. Meniscos (Medial e Lateral)",
+      "2. Ligamentos Cruzados",
+      "3. Pata de Ganso",
+      "4. Tendão Patelar",
+    ],
+    correctAnswer: "1. Meniscos (Medial e Lateral)",
+    comment: "A manobra busca provocar dor ou estalido ao comprimir os meniscos através da rotação e extensão.",
+    topic: "Joelho: Lesões Meniscais",
+  },
+  {
+    question: `29. O Teste de Apley é realizado com o paciente em decúbito ventral. O que o examinador faz?
+    <img src="https://brunooofernandesss.github.io/index.html/apley.jpg" alt="Teste de Apley">`,
+    options: [
+      "1. Estende o joelho passivamente",
+      "2. Comprime o pé axialmente e realiza rotação",
+      "3. Percute a fossa poplítea",
+      "4. Abduz o quadril",
+    ],
+    correctAnswer: "2. Comprime o pé axialmente e realiza rotação",
+    comment: "O examinador flete o joelho a 90°, comprime o pé para baixo (carga axial) e roda a tíbia para testar os meniscos.",
+    topic: "Joelho: Execução Técnica",
+  },
+  {
+    question: `30. Qual a principal diferença de posicionamento entre os testes de McMurray e Apley?
+    <img src="https://brunooofernandesss.github.io/index.html/apley.jpg" alt="Teste de Apley">`,
+    options: [
+      "1. McMurray é sentado, Apley é deitado",
+      "2. McMurray é decúbito dorsal, Apley é decúbito ventral",
+      "3. Não há diferença",
+      "4. Apley é feito em pé",
+    ],
+    correctAnswer: "2. McMurray é decúbito dorsal, Apley é decúbito ventral",
+    comment: "Para McMurray o paciente deita de costas (dorsal), enquanto para Apley ele deita de barriga para baixo (ventral).",
+    topic: "Joelho: Comparativo",
+  },
+];
+
+// --- LÓGICA DO QUIZ ---
+let currentQuestionIndex = 0;
+let score = 0;
+let isAnswered = false;
+
+const qTextEl = document.getElementById('question-text');
+const optionsListEl = document.getElementById('options-list');
+const feedbackSection = document.getElementById('feedback-section');
+const feedbackComment = document.getElementById('feedback-comment');
+const feedbackTopic = document.getElementById('feedback-topic');
+const nextBtn = document.getElementById('next-btn');
+const currentQNum = document.getElementById('current-q-num');
+const totalQNum = document.getElementById('total-q-num');
+const quizView = document.getElementById('quiz-view');
+const resultsView = document.getElementById('results-view');
+const finalScoreDisplay = document.getElementById('final-score-display');
+
+totalQNum.innerText = questions.length;
+
+function loadQuestion() {
+    const q = questions[currentQuestionIndex];
+    currentQNum.innerText = currentQuestionIndex + 1;
+    
+    // Inserir texto + HTML da imagem
+    qTextEl.innerHTML = q.question;
+    
+    optionsListEl.innerHTML = '';
+    feedbackSection.style.display = 'none';
+    nextBtn.style.display = 'none';
+    isAnswered = false;
+
+    q.options.forEach((opt, index) => {
+        const li = document.createElement('li');
+        li.className = 'option-item';
+        li.innerText = opt;
+        li.onclick = () => checkAnswer(li, opt, q.correctAnswer, q.comment, q.topic);
+        optionsListEl.appendChild(li);
+    });
+}
+
+function checkAnswer(selectedLi, selectedText, correctText, comment, topic) {
+    if (isAnswered) return;
+    isAnswered = true;
+
+    // Lógica simples de comparação de string
+    const isCorrect = selectedText === correctText;
+    
+    if (isCorrect) {
+        selectedLi.classList.add('correct');
+        score++;
+        feedbackComment.innerHTML = `<strong>Correto!</strong> ${comment}`;
+        feedbackSection.style.borderLeftColor = '#28a745';
+        feedbackSection.style.backgroundColor = '#d4edda';
+        feedbackComment.style.color = '#155724';
+    } else {
+        selectedLi.classList.add('wrong');
+        feedbackComment.innerHTML = `<strong>Incorreto.</strong> ${comment}`;
+        feedbackSection.style.borderLeftColor = '#dc3545';
+        feedbackSection.style.backgroundColor = '#f8d7da';
+        feedbackComment.style.color = '#721c24';
+
+        // Destacar a correta
+        const options = optionsListEl.getElementsByTagName('li');
+        for (let li of options) {
+            if (li.innerText === correctText) {
+                li.classList.add('correct');
+            }
+        }
+    }
+
+    // Desabilitar cliques
+    const allOptions = optionsListEl.getElementsByTagName('li');
+    for (let li of allOptions) {
+        li.classList.add('disabled');
+        li.onclick = null;
+    }
+
+    feedbackTopic.innerText = `Tópico: ${topic}`;
+    feedbackTopic.style.backgroundColor = isCorrect ? '#28a745' : '#dc3545';
+    
+    feedbackSection.style.display = 'block';
+    nextBtn.style.display = 'block';
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    quizView.style.display = 'none';
+    resultsView.style.display = 'block';
+    finalScoreDisplay.innerText = `${score} / ${questions.length}`;
+}
+
+// Iniciar o quiz
+loadQuestion();
+
+</script>
+
+</body>
+</html>
