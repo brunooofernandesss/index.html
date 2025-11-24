@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estresse Psicossocial e Desfechos Obstétricos</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:wght@400;600;700;800&display=swap');
+
+        :root {
+            --primary-color: #1a3c5e; /* Azul profundo acadêmico */
+            --secondary-color: #4a6fa5;
+            --bg-color: #ffffff;
+            --section-bg: #f8f9fa;
+            --text-color: #222;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .paper-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            padding: 70px 90px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 2px; /* Visual mais "papel" */
+        }
+
+        /* Tipografia */
+        h1 {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 800;
+            color: var(--primary-color);
+            font-size: 2.4em;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 0.5em;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.5em;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 8px;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #555;
+            margin-top: 1.5em;
+        }
+
+        p {
+            margin-bottom: 1.5em;
+            text-align: justify;
+            font-size: 1.05em;
+        }
+
+        /* Estilo para Referências */
+        .ref-section {
+            background-color: var(--section-bg);
+            padding: 25px 40px;
+            margin: 30px -40px; /* Estende um pouco nas laterais */
+            border-top: 1px solid #e1e4e8;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .ref-section h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.2em;
+            border-bottom: none;
+        }
+
+        .references ol {
+            padding-left: 20px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9em;
+            color: #444;
+        }
+
+        .references li {
+            margin-bottom: 12px;
+            padding-left: 10px;
+        }
+
+        /* Estilo para Resumos */
+        .abstract-container {
+            background-color: #fff;
+            border: 1px solid #eee;
+            padding: 30px;
+            margin: 40px 0;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .abstract-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-color);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .keywords {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* Divisor do Artigo */
+        .article-divider {
+            margin: 60px 0 40px 0;
+            text-align: center;
+            border-top: 2px dashed #ccc;
+            padding-top: 40px;
+        }
+        
+        .article-label {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            text-transform: uppercase;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 0.9em;
+            border-radius: 20px;
+        }
+
+        sup {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 0.75em;
+            margin-left: 1px;
+        }
+
+        /* Responsividade e Impressão */
+        @media print {
+            body { background: white; padding: 0; }
+            .paper-container { shadow: none; padding: 0; max-width: 100%; }
+            .ref-section { background: white; border: none; padding: 0; margin: 20px 0; }
+            h2 { border-bottom: 1px solid black; }
+        }
+
+        @media (max-width: 768px) {
+            .paper-container { padding: 40px 25px; }
+            .ref-section { margin: 20px -20px; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+
+    <!-- TÍTULO GERAL -->
+    <h1>Estresse Psicossocial, Pobreza e Vulnerabilidade Social: Impactos nos Desfechos Obstétricos</h1>
+
+    <!-- 1. INTRODUÇÃO GERAL -->
+    <h2>Introdução Geral</h2>
+    <p>
+        O estresse psicossocial vivenciado durante a gestação transcende a esfera puramente emocional; ele se configura como um complexo amálgama de tensões econômicas, sociais e biológicas que reverberam diretamente na saúde materno-infantil. Estudos contemporâneos têm consolidado a associação entre altos níveis de estresse e desfechos obstétricos adversos, com destaque para o parto prematuro e o baixo peso ao nascer [1]. Evidências robustas indicam que a percepção subjetiva do estresse, notadamente nos estágios iniciais da gravidez, atua como um catalisador de riscos, alterando a homeostase necessária para o pleno desenvolvimento fetal.
+    </p>
+    <p>
+        Contudo, seria reducionista analisar o estresse materno sob uma ótica isolada. Do ponto de vista fisiológico, o estresse pré-natal desencadeia uma cascata de alterações endócrinas e imunológicas — incluindo a elevação do cortisol e a modulação de marcadores inflamatórios — que impactam a unidade materno-fetal [2]. Essa resposta biológica, entretanto, é amplificada ou mitigada pelo cenário onde a gestante está inserida. O contexto socioeconômico emerge, portanto, não apenas como pano de fundo, mas como um determinante fundamental das iniquidades em saúde.
+    </p>
+    <p>
+        Em populações marcadas pela vulnerabilidade, observa-se o fenômeno das "paisagens de estressores" (<em>stressor landscapes</em>), onde a exposição cumulativa a adversidades molda os desfechos de saúde [3]. A intersecção de fatores como baixa escolaridade, insegurança alimentar [4] e insuficiência de renda cria um ciclo vicioso que potencializa, de maneira expressiva, a probabilidade de intercorrências gestacionais [5]. Trajetórias de ansiedade e depressão, quando não amparadas, somam-se a esse cenário, agravando o prognóstico perinatal [6].
+    </p>
+    <p>
+        Diante dessa complexidade, o presente trabalho objetiva analisar as evidências disponíveis acerca da relação intrínseca entre estresse psicossocial, pobreza e vulnerabilidade social nos desfechos obstétricos. A relevância desta análise reside na urgência de subsidiar políticas públicas e práticas clínicas que não apenas tratem os sintomas, mas que integrem o cuidado psicossocial ao enfrentamento das desigualdades estruturais que permeiam a maternidade.
+    </p>
+
+    <!-- 2. REFERÊNCIAS DA INTRODUÇÃO GERAL -->
+    <div class="ref-section">
+        <h3>Referências da Introdução Geral</h3>
+        <div class="references">
+            <ol>
+                <li>ABRAMSKY, T. et al. Psychosocial stress and preterm birth: An umbrella review of cohort studies. <strong>The Lancet Global Health</strong>, [s. l.], v. 7, n. 12, p. e1636-e1644, 2019.</li>
+                <li>COUSSONS-READ, M. E. Effects of prenatal stress on pregnancy and human development. <strong>Obstetric Medicine</strong>, [s. l.], v. 6, n. 2, p. 52-57, 2013.</li>
+                <li>KONING, S. M.; EHRENTHAL, D. B. Stressor landscapes, birth weight, and prematurity at the intersection of race and income: elucidating birth contexts through patterned life events. <strong>SSM - Population Health</strong>, [s. l.], v. 8, p. 100460, 2019.</li>
+                <li>HARMEL, B.; HÖFELMANN, D. A. Mental distress and food insecurity in pregnancy: Associação entre sofrimento mental e insegurança alimentar na gestação. <strong>Ciência & Saúde Coletiva</strong>, Rio de Janeiro, v. 27, n. 5, p. 2045-2055, 2022.</li>
+                <li>GAMA, S. G. N. et al. Desigualdades socioeconômicas e resultados perinatais: Revisão sistemática da literatura brasileira. <strong>Cadernos de Saúde Pública</strong>, Rio de Janeiro, v. 38, Supl. 1, p. e00057821, 2022.</li>
+                <li>LALANI, S. et al. Anxiety and depression trajectories during pregnancy and preterm birth: A longitudinal study in Pakistan. <strong>PLOS One</strong>, [s. l.], v. 16, n. 11, p. e0259838, 2021.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 3. RESUMOS (ENTRE INTRO GERAL E ARTIGO) -->
+    <div class="abstract-container">
+        <span class="abstract-title">Resumo</span>
+        <p><strong>Objetivo:</strong> Analisar, por meio de revisão narrativa, as evidências científicas acerca da relação entre estresse psicossocial, pobreza e vulnerabilidade social nos desfechos obstétricos, especialmente no parto pré-termo e no baixo peso ao nascer. <strong>Métodos:</strong> Trata-se de uma revisão narrativa da literatura, realizada a partir de pesquisas em bases de dados nacionais e internacionais, contemplando artigos que abordassem fatores psicossociais maternos, determinantes sociais da saúde e resultados gestacionais adversos. Foram incluídos estudos teóricos, revisões sistemáticas e pesquisas empíricas relacionadas ao tema. <strong>Revisão bibliográfica:</strong> A literatura aponta que sintomas de estresse, ansiedade e depressão durante a gestação estão associados ao aumento do risco de parto pré-termo e baixo peso ao nascer, com efeitos mediados por escolaridade, suporte familiar, raça e nível socioeconômico. Condições de pobreza, insegurança alimentar e situação de rua intensificam esses riscos, enquanto fatores protetores como maior escolaridade e rede de apoio reduzem a vulnerabilidade. Mecanismos fisiológicos identificados incluem a ativação do eixo hipotálamo-hipófise-adrenal (HPA), alterações inflamatórias e possíveis modificações epigenéticas. <strong>Conclusão:</strong> O estresse psicossocial relacionado à vulnerabilidade social impacta negativamente os desfechos obstétricos. Estratégias multissetoriais que combinem políticas públicas de redução das desigualdades com intervenções psicossociais contínuas são essenciais para a promoção da saúde materno-infantil.</p>
+        <div class="keywords">Palavras-chave: Estresse Psicossocial, Vulnerabilidade Social, Gestação, Desfechos Obstétricos, Prematuridade.</div>
+        
+        <br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><br>
+
+        <span class="abstract-title">Abstract</span>
+        <p><strong>Objective:</strong> To analyze, through a narrative review, the scientific evidence on the relationship between psychosocial stress, poverty, and social vulnerability in obstetric outcomes, especially preterm birth and low birth weight. <strong>Methods:</strong> This is a narrative literature review, conducted through searches in national and international databases, including articles that addressed maternal psychosocial factors, social determinants of health, and adverse pregnancy outcomes. The review included theoretical studies, systematic reviews, and empirical research related to the topic. <strong>Literature Review:</strong> The literature indicates that symptoms of stress, anxiety, and depression during pregnancy are associated with increased risk of preterm birth and low birth weight, with effects mediated by education, family support, race, and socioeconomic status. Conditions such as poverty, food insecurity, and homelessness intensify these risks, while protective factors such as higher education and social support networks reduce vulnerability. Identified physiological mechanisms include activation of the hypothalamic-pituitary-adrenal (HPA) axis, inflammatory alterations, and possible epigenetic modifications. <strong>Conclusion:</strong> Psychosocial stress related to social vulnerability negatively impacts obstetric outcomes. Multisectoral strategies that combine public policies aimed at reducing inequalities with continuous psychosocial interventions are essential to promote maternal and child health.</p>
+        <div class="keywords">Keywords: Psychosocial Stress, Social Vulnerability, Pregnancy, Obstetric Outcomes.</div>
+        
+        <br><hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"><br>
+
+        <span class="abstract-title">Resumen</span>
+        <p><strong>Objetivo:</strong> Analizar, mediante una revisión narrativa, la evidencia científica sobre la relación entre estrés psicosocial, pobreza y vulnerabilidad social en los resultados obstétricos, especialmente en el parto prematuro y el bajo peso al nacer. <strong>Métodos:</strong> Se trata de una revisión narrativa de la literatura, realizada a partir de búsquedas en bases de datos nacionales e internacionales, incluyendo artículos que abordaran factores psicosociales maternos, determinantes sociales de la salud y resultados gestacionales adversos. <strong>Revisión bibliográfica:</strong> La literatura señala que los síntomas de estrés, ansiedad y depresión durante la gestación se asocian con un mayor riesgo de parto prematuro y bajo peso al nacer, con efectos mediados por escolaridad, apoyo familiar, raza y nivel socioeconómico. Condiciones como pobreza, inseguridad alimentaria y situación de calle intensifican estos riesgos. <strong>Conclusión:</strong> El estrés psicosocial relacionado con la vulnerabilidad social impacta negativamente en los resultados obstétricos. Estrategias multisectoriales que combinen políticas públicas de reducción de desigualdades con intervenciones psicosociales continuas son fundamentales.</p>
+        <div class="keywords">Palabras Clave: Estrés Psicosocial, Vulnerabilidad Social, Gestación, Desenlaces Obstétricos.</div>
+    </div>
+
+    <!-- DIVISOR VISUAL PARA O ARTIGO -->
+    <div class="article-divider">
+        <span class="article-label">Artigo Original</span>
+    </div>
+
+    <!-- 4. ARTIGO PROPRIAMENTE DITO -->
+    <h2>Introdução</h2>
+    <p>
+        O estresse psicossocial durante a gestação — compreendido como o conjunto de tensões emocionais, econômicas e sociais vividas pela mulher — tem sido associado a desfechos obstétricos adversos, especialmente parto prematuro (pré-termo) e baixo peso ao nascer (LBW). Shapiro et al. [13] apontam que a percepção subjetiva de estresse, especialmente no início da gestação, tende a apresentar associações mais robustas com parto prematuro, com razões de risco moderadas entre 1,2 e 2,1. Resultados semelhantes foram encontrados por Nkansah-Amankra et al. [10], que evidenciaram a influência do ambiente socioeconômico como amplificador do impacto do estresse materno, sobretudo em comunidades com maiores índices de pobreza.
+    </p>
+    <p>
+        Além do estresse individual, o contexto socioeconômico mais amplo parece exercer papel determinante nos desfechos obstétricos. Maher et al. [8] demonstraram em uma coorte internacional que a presença simultânea de fatores como baixa escolaridade e baixa renda aumenta significativamente o risco de parto prematuro e hipertensão gestacional. Da mesma forma, Koning e Ehrenthal [5] introduzem o conceito de "paisagens de estressores", mostrando que a exposição cumulativa a adversidades sociais e econômicas eleva as chances de parto prematuro, baixo peso ao nascer e muito baixo peso ao nascer (VLBW), especialmente em gestantes de baixa renda.
+    </p>
+    <p>
+        Do ponto de vista dos mecanismos biológicos, estudos experimentais e clínicos sugerem que o estresse pré-natal pode afetar tanto a mãe quanto o feto por meio de alterações endócrinas e imunológicas. Coussons-Read [2] destaca que níveis elevados de cortisol e alterações em marcadores inflamatórios estão associados a maior risco de parto prematuro. Wadhwa et al. [15] complementam que os efeitos do estresse não são uniformes, mas variam conforme o momento da gestação em que a mulher é exposta e sua vulnerabilidade individual.
+    </p>
+    <p>
+        Em diferentes contextos socioeconômicos, evidências apontam que desigualdades estruturais reforçam os riscos. Estudos conduzidos na América Latina [3, 7] identificaram que fatores como insegurança alimentar, desigualdade de acesso a serviços de saúde e baixa escolaridade materna se associam a desfechos obstétricos desfavoráveis, ressaltando que a pobreza é um determinante central das iniquidades em saúde materno-infantil. Em coortes europeias, resultados semelhantes foram observados por estudos longitudinais realizados na Escócia [1], reforçando que os padrões de desigualdade e estresse psicossocial transcendem barreiras geográficas.
+    </p>
+    <p>
+        Apesar do crescente corpo de evidências, ainda persistem lacunas importantes: muitos estudos priorizam variáveis clínicas e macroeconômicas (como local de residência), enquanto os mecanismos subjacentes que interligam fatores psicossociais, pobreza e desfechos obstétricos, especialmente em contextos culturais e socioeconômicos distintos, permanecem pouco explorados [2, 13]. Ainda são escassos os estudos que avaliem conjuntamente fatores subjetivos (como percepção de estresse), biológicos (por exemplo, marcadores endócrinos ou inflamatórios) e sociais (nível individual de educação, renda e suporte) — especialmente em estudos com abordagem integrativa e longitudinal.
+    </p>
+    <p>
+        Portanto, compreender como o estresse psicossocial, a pobreza e a vulnerabilidade social influenciam os desfechos obstétricos é essencial para subsidiar políticas públicas e práticas clínicas mais integradas. Esta revisão narrativa busca sintetizar as evidências disponíveis, destacando os mecanismos pelos quais tais fatores impactam a saúde materna e fetal, e apontando as lacunas de conhecimento que ainda necessitam ser investigadas.
+    </p>
+
+    <h2>Métodos</h2>
+    <p>
+        Trata-se de uma revisão narrativa da literatura com foco na associação entre estresse psicossocial durante a gestação e os desfechos perinatais adversos, especialmente parto pré-termo e baixo peso ao nascer. A seleção dos estudos foi intencional, com base na relevância teórica e empírica dos artigos para a compreensão dos mecanismos fisiológicos, fatores contextuais e desigualdades sociais associadas ao tema. Foram incluídos 10 artigos publicados entre 2010 e 2024, provenientes de bases como PubMed, SciELO e BioMed Central.
+    </p>
+    <p>
+        Os critérios de inclusão consideraram: (i) estudos originais ou revisões com foco em estresse psicossocial materno e seus efeitos na gestação; (ii) abordagens que discutissem mecanismos biopsicossociais e/ou desigualdades sociais; (iii) artigos disponíveis em texto completo em inglês, português ou espanhol. A análise dos dados seguiu uma abordagem qualitativa de síntese temática, agrupando os achados em três eixos: (1) mecanismos fisiológicos do estresse materno; (2) fatores psicossociais e contextuais associados aos desfechos; e (3) desigualdades sociais e interseccionalidades.
+    </p>
+
+    <h2>Resultados</h2>
+    <p>
+        A análise dos estudos selecionados revelou achados consistentes sobre a associação entre estresse psicossocial na gestação e desfechos adversos. Os mecanismos fisiológicos mais recorrentes incluíram a ativação do eixo HPA, aumento de mediadores inflamatórios e alterações hormonais com impacto na função placentária [2, 13]. Fatores contextuais como pobreza, insegurança alimentar, e privação de vizinhança mostraram-se determinantes importantes para o agravamento do estresse materno [4, 5, 10].
+    </p>
+    <p>
+        A literatura também aponta a relevância de mediadores como suporte social, racismo estrutural e acesso a serviços de saúde, especialmente em contextos de alta vulnerabilidade [12, 15]. Revisões sistemáticas recentes indicam que o status socioeconômico baixo está fortemente relacionado ao aumento do risco de parto pré-termo, com efeitos mediados apenas parcialmente por fatores comportamentais ou médicos [8, 9]. Por fim, modelos que combinam fatores médicos e psicossociais apresentam maior poder preditivo para desfechos como prematuridade e baixo peso [14].
+    </p>
+
+    <h2>Discussão</h2>
+    <p>
+        O parto pré-termo e o baixo peso ao nascer constituem determinantes críticos de morbidade e mortalidade neonatal, cujas raízes se estendem para além das causas puramente biológicas. A literatura contemporânea tem convergido para o entendimento de que fatores psicossociais maternos — incluindo estresse, ansiedade e depressão — interagem de maneira sinérgica com desigualdades sociais estruturais, como renda, raça, educação e suporte familiar. A análise integrada dos estudos selecionados revela como essas diferentes dimensões de estresse, moduladas por fatores sociodemográficos e contextuais, amplificam os riscos obstétricos.
+    </p>
+    <p>
+        No que tange aos mecanismos biológicos do estresse materno, Wadhwa et al. [15] reforçam que a ativação crônica do eixo hipotálamo-hipófise-adrenal (HPA), aliada a respostas inflamatórias exacerbadas, cria um ambiente intrauterino hostil, predispondo ao parto prematuro. Entretanto, a resposta ao estresse não é estática. Pesonen et al. [11] observaram um aspecto temporal relevante: enquanto a depressão e a ansiedade no terceiro trimestre se associaram à redução da duração da gestação, a presença de afeto positivo materno no mesmo período correlacionou-se a gestações mais longas. Curiosamente, embora o impacto na duração da gestação tenha sido significativo, o efeito direto sobre o peso ao nascer mostrou-se clinicamente pequeno neste estudo específico, sugerindo que diferentes vias patofisiológicas podem estar envolvidas em cada desfecho.
+    </p>
+    <p>
+        A complexidade aumenta quando inserimos a variável da interseccionalidade. O conceito de "paisagens de estressores" elucidado por Koning e Ehrenthal [5] demonstra que mulheres de cor e aquelas vivendo em situação de pobreza enfrentam taxas desproporcionalmente maiores de desfechos adversos. Não se trata apenas de eventos isolados, mas do acúmulo de estressores ao longo da vida que, ao interagirem com raça e condição socioeconômica, intensificam a vulnerabilidade biológica da gestante.
+    </p>
+    <p>
+        Ademais, a literatura sugere a necessidade de abandonar medidas pontuais em favor de análises de trajetória. Lalani et al. [6], em um estudo longitudinal no Paquistão, enfatizam que a alteração nos sintomas de ansiedade e depressão ao longo da gestação possui maior valor preditivo do que uma única mensuração. A mudança no perfil de sintomas correlacionou-se com o parto pré-termo, mediada pelo estresse percebido. Neste contexto, fatores como escolaridade e configuração familiar atuam como mediadores cruciais; mulheres com maior nível educacional apresentaram menor risco, e a presença de uma família extensa funcionou como uma rede de amortecimento ("buffer") contra os impactos deletérios do estresse psicológico.
+    </p>
+    <p>
+        Apesar dos avanços, limitações metodológicas persistem. A heterogeneidade nos instrumentos de aferição de estresse e nos tempos de mensuração dificulta a comparação direta entre os estudos [11]. Contudo, a convergência dos achados permite concluir que o risco associado ao estresse materno não é uniforme; ele depende da intensidade, duração e dos modificadores contextuais. A implicação prática é imediata: intervenções focadas apenas em triagens pontuais podem falhar em identificar gestantes em risco. Políticas de saúde pública eficazes devem, portanto, incorporar abordagens estruturais — como redução da desigualdade de renda e fortalecimento de redes sociais — integradas a intervenções psicossociais contínuas.
+    </p>
+
+    <h2>Conclusão</h2>
+    <p>
+        O estresse psicossocial relacionado à vulnerabilidade social impacta negativamente os desfechos obstétricos, necessitando de uma abordagem que combine intervenções psicossociais contínuas com políticas públicas de mitigação das desigualdades. A adoção de estratégias multissetoriais constitui a via mais promissora para a promoção efetiva da saúde materno-infantil.
+    </p>
+
+    <!-- 5. REFERÊNCIAS DO ARTIGO -->
+    <div class="ref-section">
+        <h3>Referências do Artigo</h3>
+        <div class="references">
+            <ol>
+                <li>ABRAMSKY, T. et al. Psychosocial stress and preterm birth: An umbrella review of cohort studies. <strong>The Lancet Global Health</strong>, [s. l.], v. 7, n. 12, p. e1636-e1644, 2019.</li>
+                <li>COUSSONS-READ, M. E. Effects of prenatal stress on pregnancy and human development. <strong>Obstetric Medicine</strong>, [s. l.], v. 6, n. 2, p. 52-57, 2013.</li>
+                <li>GAMA, S. G. N. et al. Desigualdades socioeconômicas e resultados perinatais: Revisão sistemática da literatura brasileira. <strong>Cadernos de Saúde Pública</strong>, Rio de Janeiro, v. 38, Supl. 1, p. e00057821, 2022.</li>
+                <li>HARMEL, B.; HÖFELMANN, D. A. Mental distress and food insecurity in pregnancy: Associação entre sofrimento mental e insegurança alimentar na gestação. <strong>Ciência & Saúde Coletiva</strong>, Rio de Janeiro, v. 27, n. 5, p. 2045-2055, 2022.</li>
+                <li>KONING, S. M.; EHRENTHAL, D. B. Stressor landscapes, birth weight, and prematurity at the intersection of race and income: elucidating birth contexts through patterned life events. <strong>SSM - Population Health</strong>, [s. l.], v. 8, p. 100460, 2019.</li>
+                <li>LALANI, S. et al. Anxiety and depression trajectories during pregnancy and preterm birth: A longitudinal study in Pakistan. <strong>PLOS One</strong>, [s. l.], v. 16, n. 11, p. e0259838, 2021.</li>
+                <li>LEAL, M. C. et al. Racial disparities in pregnancy and birth outcomes in Brazil: A systematic review. <strong>International Journal for Equity in Health</strong>, [s. l.], v. 21, n. 1, p. 112, 2022.</li>
+                <li>MAHER, G. M. et al. Association between socioeconomic status with pregnancy and neonatal outcomes: an international multicentre cohort. <strong>Acta Obstetricia et Gynecologica Scandinavica</strong>, [s. l.], v. 102, n. 11, p. 1459-1468, 2023.</li>
+                <li>MCHALE, P. et al. Mediators of socioeconomic inequalities in preterm birth: a systematic review. <strong>BMC Public Health</strong>, [s. l.], v. 22, n. 1, p. 1134, 2022.</li>
+                <li>NKANSAH-AMANKRA, S. et al. Effects of maternal stress on low birth weight and preterm birth outcomes across neighborhoods of South Carolina, 2000–2003. <strong>Maternal and Child Health Journal</strong>, [s. l.], v. 14, n. 2, p. 215-226, 2010.</li>
+                <li>PESONEN, A. K. et al. Maternal affective symptoms in pregnancy and birth outcomes: A prospective study. <strong>PLOS One</strong>, [s. l.], v. 11, n. 2, p. e0148113, 2016.</li>
+                <li>SANTOS, K. C. C. et al. Maternity and motherhood in street situation: integrative review. <strong>Ciência & Saúde Coletiva</strong>, Rio de Janeiro, v. 29, n. 10, p. e010982023, 2024.</li>
+                <li>SHAPIRO, G. D. et al. Psychosocial stress in pregnancy and preterm birth: associations and mechanisms. <strong>Journal of Perinatal Medicine</strong>, [s. l.], v. 41, n. 6, p. 631-645, 2013.</li>
+                <li>SHAW, S. H.; HERBERS, J. E.; CUTULI, J. J. Medical and psychosocial risk profiles for low birthweight and preterm birth. <strong>Women’s Health Issues</strong>, [s. l.], v. 29, n. 5, p. 400-406, 2019.</li>
+                <li>WADHWA, P. D. et al. The contribution of maternal stress to preterm birth: issues and considerations. <strong>Clinics in Perinatology</strong>, [s. l.], v. 38, n. 3, p. 351-384, 2011.</li>
+            </ol>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+
