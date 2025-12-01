@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Simulado do Módulo 06</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .quiz-container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .options {
+      margin-top: 15px;
+    }
+
+    /* Estilos unificados para todas as opções (estáticas e dinâmicas) */
+    .option, label.option, label, #newQuestionsContent label {
+      display: flex; /* Para alinhar imagem e texto */
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      position: relative; /* Para posicionar a tesoura */
+    }
+
+    /* FORÇA a remoção de inputs de radio em QUALQUER lugar */
+    .option input[type="radio"], 
+    label input[type="radio"],
+    #newQuestionsContent input[type="radio"],
+    #newQuestionsContent label input[type="radio"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+
+    .option:hover, 
+    label.option:hover, 
+    label:hover,
+    #newQuestionsContent label:hover {
+      background-color: #e9e9e9;
+    }
+
+    .option.selected, 
+    label.option.selected, 
+    label.selected,
+    #newQuestionsContent label.selected {
+      background-color: #d1e7dd;
+      border-color: #28a745;
+    }
+
+    .option.correct, 
+    label.option.correct, 
+    label.correct,
+    #newQuestionsContent label.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+    }
+
+    .option.incorrect, 
+    label.option.incorrect, 
+    label.incorrect,
+    #newQuestionsContent label.incorrect {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .submit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .results {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .scissor-icon {
+      margin-right: 10px; /* Espaço entre a tesoura e o texto da opção */
+      width: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      height: 20px; /* Ajuste conforme o tamanho da sua imagem */
+      opacity: 0.5; /* Transparência como no original */
+      cursor: pointer;
+    }
+
+    .scissor-icon.hidden {
+      display: none;
+    }
+
+    .struck-through {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .comment {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-left: 4px solid #007bff;
+      font-style: italic;
+      color: #555;
+      display: none; /* Escondido por padrão */
+    }
+    .comment.show {
+      display: block; /* Mostrado quando ativado */
+    }
+
+    /* Estilos para o botão de navegação de erro / diagnóstico */
+    .error-nav-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #dc3545; /* Vermelho para erro */
+      color: white;
+      border: none;
+      border-radius: 50%; /* Torna o botão redondo */
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none; /* Escondido por padrão */
+      flex-direction: column; /* Para empilhar o ícone e o contador */
+      padding: 5px; /* Ajuste o padding para acomodar texto maior */
+      box-sizing: border-box; /* Garante que padding não aumente o tamanho total */
+      text-align: center;
+    }
+
+    .error-nav-btn:hover {
+      background-color: #c82333;
+    }
+
+    .error-nav-btn .arrow-icon {
+      font-size: 30px; /* Tamanho da seta */
+      line-height: 1; /* Ajuste para centralizar */
+    }
+
+    .error-nav-btn .button-text {
+      font-size: 12px; /* Tamanho do texto abaixo da seta */
+      line-height: 1;
+      margin-top: 2px; /* Espaço entre a seta e o texto */
+    }
+
+    /* Estilos para a seção de diagnóstico de erros */
+    .error-diagnosis-section {
+        margin-top: 50px;
+        padding: 30px;
+        background-color: #ffe0b2; /* Um laranja claro ou similar */
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        display: none; /* Escondido por padrão */
+        text-align: center;
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .error-diagnosis-section h2 {
+        color: #e65100; /* Laranja mais escuro */
+        margin-bottom: 20px;
+        font-size: 1.8em;
+    }
+
+    .error-diagnosis-section ul {
+        list-style: none; /* Remove marcadores de lista */
+        padding: 0;
+        margin: 0;
+    }
+
+    .error-diagnosis-section li {
+        background-color: #ff9800; /* Laranja */
+        color: white;
+        padding: 8px 15px;
+        margin: 8px 0;
+        border-radius: 5px;
+        display: inline-block; /* Para que os itens fiquem lado a lado */
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .error-diagnosis-section li:last-child {
+        margin-right: 0;
+    }
+ .card-bloco {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1 style="text-align:center; margin-bottom: 30px;">Simulado do Módulo 06</h1>
+    <div class="card-bloco" id="quiz"></div>
+    <button class="submit-btn" id="verifyAnswersBtn">Verificar Respostas</button>
+
+    <button class="generate-questions-btn submit-btn" id="generateNewQuestionsBtn" style="display:none;">
+      Gerar Novas Perguntas
+    </button>
+
+    <div class="results card-bloco" id="results"></div>
+    <div id="statusMessage" style="text-align: center; margin-top: 10px; font-weight: bold; color: #007bff;"></div>
+
+    <div class="error-diagnosis-section card-bloco" id="errorDiagnosis">
+      <h2>Diagnóstico de Erros</h2>
+      <p>Parece que você precisa revisar os seguintes assuntos:</p>
+      <ul id="topicsToReview"></ul>
+    </div>
+
+    <div class="generated-questions-section card-bloco" id="generatedQuestionsSection" style="display:none;">
+      <h2>Novas Perguntas Geradas</h2>
+      <div id="newQuestionsContent"></div>
+    </div>
+  </div>
+  
+  <button class="error-nav-btn" id="errorNavBtn" style="display:none;">
+    <span class="arrow-icon"></span>
+    <span class="button-text"></span>
+  </button>
+
+  <script>
+    const quizContainer = document.getElementById("quiz");
+    const resultsContainer = document.getElementById("results");
+    const errorNavBtn = document.getElementById("errorNavBtn");
+    const arrowIcon = errorNavBtn.querySelector(".arrow-icon");
+    const buttonText = errorNavBtn.querySelector(".button-text");
+    const errorDiagnosisSection = document.getElementById("errorDiagnosis");
+    const topicsToReviewList = document.getElementById("topicsToReview");
+    const generateNewQuestionsBtn = document.getElementById("generateNewQuestionsBtn");
+    const generatedQuestionsSection = document.getElementById("generatedQuestionsSection");
+    const newQuestionsContent = document.getElementById("newQuestionsContent");
+    const statusMessage = document.getElementById("statusMessage");
+
+    let wrongQuestionIndices = [];
+    let errorCountByTopic = {};
+    let totalAnsweredQuestionsByTopic = {};
+    let currentWrongQuestionIndex = -1;
+    let hasErrors = false;
+    let isShowingErrors = false;
+    let isShowingDiagnosis = false;
+
+    // Inicializa a visibilidade das seções no carregamento
+    errorDiagnosisSection.style.display = 'none';
+    topicsToReviewList.innerHTML = '';
+    statusMessage.textContent = '';
+
+    const questions = [       {         question: "1. Com base na origem embrionária da hipófise, a Adeno-hipófise (ou Hipófise Anterior) origina-se de uma evaginação do ectoderma do teto da cavidade oral. Qual o nome dado a essa estrutura embrionária?",         options: [           "A) Divertículo Neuro-hipofisário",           "B) Bolsa de Rathke",           "C) Infundíbulo",           "D) Eminência Mediana",         ],         correctAnswer: "B) Bolsa de Rathke",         comment: "O arquivo sobre Histologia da Hipófise explica que a Adeno-hipófise é formada a partir de uma evaginação do ectoderma do teto da cavidade oral, conhecida como estomodeu, em direção ao cérebro. Essa estrutura recebe o nome de Bolsa de Rathke. Já a Neuro-hipófise tem origem no neuroectoderma, a partir de um divertículo no assoalho do diencéfalo.",         topic: "Histologia da Hipófise - Origem Embrionária",       },       {         question: "2. Na lâmina histológica da Adeno-hipófise (Pars Distalis), observam-se células com citoplasma pouco corado ou não corado. Como são classificadas essas células?",         options: [           "A) Acidófilas",           "B) Basófilas",           "C) Cromófobas",           "D) Pituícitos",         ],         correctAnswer: "C) Cromófobas",         comment: "Na Pars Distalis da adeno-hipófise, as células são classificadas de acordo com a afinidade tintorial de seus grânulos citoplasmáticos. As células cromófobas são aquelas que não se coram intensamente ou têm citoplasma pálido, geralmente por terem poucos grânulos de secreção ou estarem em repouso. As cromófilas, que se coram bem, dividem-se em acidófilas (afinidade por corantes ácidos) e basófilas (afinidade por corantes básicos).",         topic: "Histologia da Adeno-hipófise - Pars Distalis",       },       {         question: "3. A Neuro-hipófise (Pars Nervosa) não é considerada uma glândula endócrina verdadeira, mas sim um local de armazenamento. Quais estruturas representam o acúmulo de neurossecreção nas terminações axonais desta região?",         options: [           "A) Corpos de Herring",           "B) Células de Leydig",           "C) Folículos de Graaf",           "D) Células Foliculoestelares",         ],         correctAnswer: "A) Corpos de Herring",         comment: "A Pars Nervosa da neuro-hipófise armazena hormônios (ocitocina e ADH) produzidos no hipotálamo. Esses hormônios viajam pelos axônios e se acumulam nas terminações nervosas dilatadas, formando estruturas visíveis ao microscópio chamadas Corpos de Herring.",         topic: "Histologia da Neuro-hipófise - Pars Nervosa",       },       {         question: "4. Qual é a função específica das células da glia denominadas Pituícitos, encontradas na Neuro-hipófise?",         options: [           "A) Secreção de FSH e LH",           "B) Produção de melatonina",           "C) Sustentação",           "D) Revestimento da Bolsa de Rathke",         ],         correctAnswer: "C) Sustentação",         comment: "Os pituícitos são células gliais específicas da neuro-hipófise. Ao contrário dos neurônios, elas não conduzem impulsos nervosos, mas desempenham um papel fundamental de sustentação e suporte metabólico para os axônios dos neurônios hipotalâmicos que terminam nessa região.",         topic: "Histologia da Neuro-hipófise - Pituícitos",       },       {         question: "5. As células acidófilas da Pars Distalis são responsáveis pela secreção de quais hormônios principais?",         options: [           "A) TSH e ACTH",           "B) FSH e LH",           "C) GH (Somatotrofina) e Prolactina",           "D) ADH e Ocitocina",         ],         correctAnswer: "C) GH (Somatotrofina) e Prolactina",         comment: "As células acidófilas da Pars Distalis secretam hormônios proteicos simples. Especificamente, os somatotrofos secretam o hormônio do crescimento (GH) e os lactotrofos (ou mamotrofos) secretam a prolactina. TSH, FSH e LH são glicoproteínas secretadas por células basófilas.",         topic: "Histologia da Adeno-hipófise - Secreção Hormonal",       },       {         question: "6. Nos túbulos seminíferos, qual célula é responsável pela formação da barreira hematotesticular através de junções oclusivas?",         options: [           "A) Célula de Leydig",           "B) Célula de Sertoli",           "C) Espermatogônia B",           "D) Célula Mióide",         ],         correctAnswer: "B) Célula de Sertoli",         comment: "A barreira hematotesticular é uma estrutura crucial formada por junções oclusivas (tight junctions) entre as membranas laterais de Células de Sertoli adjacentes. Essa barreira isola as células germinativas em desenvolvimento (compartimento adluminal) do sistema imunológico (compartimento basal), protegendo-as de ataques autoimunes, já que espermatozoides possuem antígenos novos.",         topic: "Histologia do Testículo - Barreira Hematotesticular",       },       {         question: "7. O epitélio que reveste o ducto do epidídimo é classificado como:",         options: [           "A) Simples cúbico com cílios",           "B) Estratificado pavimentoso",           "C) Pseudoestratificado colunar com estereocílios",           "D) De transição",         ],         correctAnswer: "C) Pseudoestratificado colunar com estereocílios",         comment: "O ducto do epidídimo possui um epitélio pseudoestratificado colunar característico. Suas células principais apresentam longas microvilosidades imóveis chamadas estereocílios, que aumentam significativamente a área de superfície para absorção de fluido testicular, concentrando os espermatozoides.",         topic: "Histologia do Sistema Reprodutor Masculino - Epidídimo",       },       {         question: "8. Qual é a principal função das Células de Leydig, localizadas no tecido intersticial entre os túbulos seminíferos?",         options: [           "A) Produção de espermatozoides",           "B) Fagocitose de corpos residuais",           "C) Secreção de testosterona",           "D) Produção de líquido seminal rico em frutose",         ],         correctAnswer: "C) Secreção de testosterona",         comment: "As Células de Leydig (ou células intersticiais) estão localizadas no tecido conjuntivo frouxo entre os túbulos seminíferos. Elas são células endócrinas que, sob estimulação do hormônio LH da hipófise, produzem e secretam testosterona, o principal andrógeno masculino.",         topic: "Histologia do Testículo - Células de Leydig",       },       {         question: "9. A túnica albugínea do testículo é constituída histologicamente por:",         options: [           "A) Tecido conjuntivo frouxo",           "B) Tecido conjuntivo denso rico em fibras colágenas",           "C) Músculo liso",           "D) Epitélio germinativo",         ],         correctAnswer: "B) Tecido conjuntivo denso rico em fibras colágenas",         comment: "A túnica albugínea é a cápsula fibrosa resistente que envolve o testículo. Histologicamente, é formada por tecido conjuntivo denso modelado, muito rico em fibras colágenas, o que confere proteção e mantém a pressão interna necessária para o funcionamento testicular.",         topic: "Histologia do Testículo - Túnicas",       },       {         question: "10. Qual glândula acessória masculina é responsável por produzir cerca de 70% do volume seminal, com uma secreção rica em frutose?",         options: [           "A) Próstata",           "B) Glândula Bulbouretral",           "C) Vesícula Seminal",           "D) Epidídimo",         ],         correctAnswer: "C) Vesícula Seminal",         comment: "As vesículas seminais são glândulas acessórias que produzem a maior parte do volume do ejaculado (cerca de 70%). Sua secreção é alcalina, viscosa e rica em frutose (fonte de energia para os espermatozoides), prostaglandinas e proteínas de coagulação.",         topic: "Anatomia e Histologia - Glândulas Acessórias",       },       {         question: "11. Na histologia da próstata, o que pode ser encontrado frequentemente no lúmen das glândulas tubuloalveolares, especialmente em homens mais velhos?",         options: [           "A) Corpos de Herring",           "B) Concreções prostáticas (corpos amiláceos)",           "C) Folículos de Graaf",           "D) Cristais de Reinke",         ],         correctAnswer: "B) Concreções prostáticas (corpos amiláceos)",         comment: "As concreções prostáticas, ou corpos amiláceos, são estruturas calcificadas formadas por glicoproteínas e restos celulares que se acumulam no lúmen das glândulas prostáticas. Sua presença aumenta com a idade e é um achado histológico característico e normal da próstata.",         topic: "Histologia da Próstata",       },       {         question: "12. O pênis é formado por três cilindros de tecido erétil. Qual deles contém a uretra peniana?",         options: [           "A) Corpo Cavernoso Direito",           "B) Corpo Cavernoso Esquerdo",           "C) Corpo Esponjoso",           "D) Túnica Dartos",         ],         correctAnswer: "C) Corpo Esponjoso",         comment: "O pênis possui dois corpos cavernosos (dorsais) e um corpo esponjoso (ventral). A uretra peniana (ou esponjosa) percorre longitudinalmente o centro do corpo esponjoso, que se expande na extremidade distal para formar a glande.",         topic: "Anatomia do Pênis",       },       {         question: "13. Qual é a sequência correta de maturação da linhagem espermatogênica no epitélio seminífero?",         options: [           "A) Espermatócito I -> Espermatogônia -> Espermátide -> Espermatozoide",           "B) Espermatogônia -> Espermatócito I -> Espermatócito II -> Espermátide -> Espermatozoide",           "C) Espermátide -> Espermatogônia -> Espermatócito -> Espermatozoide",           "D) Espermatogônia -> Espermátide -> Espermatócito -> Espermatozoide",         ],         correctAnswer: "B) Espermatogônia -> Espermatócito I -> Espermatócito II -> Espermátide -> Espermatozoide",         comment: "A espermatogênese segue uma ordem precisa: as espermatogônias (diploides) se dividem por mitose. Algumas se diferenciam em Espermatócitos Primários (I), que sofrem a Meiose I gerando Espermatócitos Secundários (II). Estes sofrem Meiose II gerando Espermátides (haploides), que se diferenciam em Espermatozoides.",         topic: "Gametogênese Masculina - Espermatogênese",       },       {         question: "14. O que caracteriza o processo de Espermiogênese?",         options: [           "A) Divisão mitótica das espermatogônias",           "B) Diferenciação das espermátides em espermatozoides (formação do acrossomo, flagelo e perda de citoplasma)",           "C) Migração das células germinativas do saco vitelino",           "D) Secreção de testosterona",         ],         correctAnswer: "B) Diferenciação das espermátides em espermatozoides (formação do acrossomo, flagelo e perda de citoplasma)",         comment: "A espermiogênese é a fase final da espermatogênese onde não ocorre divisão celular, mas sim uma profunda diferenciação morfológica. A espermátide arredondada se transforma no espermatozoide alongado através da formação do acrossomo, condensação nuclear, desenvolvimento do flagelo e eliminação do excesso de citoplasma.",         topic: "Gametogênese Masculina - Espermiogênese",       },       {         question: "15. As glândulas bulbouretrais (de Cowper) estão localizadas no diafragma urogenital e sua secreção tem a função de:",         options: [           "A) Nutrir o espermatozoide com frutose",           "B) Lubrificar a uretra e limpar resíduos de urina",           "C) Ativar a motilidade do espermatozoide",           "D) Produzir hormônios andrógenos",         ],         correctAnswer: "B) Lubrificar a uretra e limpar resíduos de urina",         comment: "As glândulas bulbouretrais secretam um muco claro e alcalino antes da ejaculação. Essa secreção lubrifica a uretra peniana e neutraliza a acidez de resíduos de urina, preparando o canal para a passagem segura dos espermatozoides.",         topic: "Anatomia e Histologia - Glândulas Acessórias",       },       {         question: "16. O epitélio da mucosa vaginal acumula glicogênio sob estímulo de estrogênios. Qual é a função biológica desse acúmulo?",         options: [           "A) Nutrir o óvulo fertilizado",           "B) Ser metabolizado por lactobacilos para produzir ácido lático e manter o pH ácido",           "C) Lubrificar o canal vaginal durante o coito",           "D) Formar o tampão mucoso",         ],         correctAnswer: "B) Ser metabolizado por lactobacilos para produzir ácido lático e manter o pH ácido",         comment: "O glicogênio acumulado nas células epiteliais da vagina é liberado quando essas células descamam. Bactérias da flora normal (lactobacilos) fermentam esse glicogênio produzindo ácido lático. Isso mantém o pH vaginal ácido, criando uma barreira química contra infecções por patógenos.",         topic: "Histologia do Sistema Reprodutor Feminino - Vagina",       },       {         question: "17. Qual camada do útero sofre descamação durante a menstruação?",         options: [           "A) Perimétrio",           "B) Miométrio",           "C) Camada Basal do Endométrio",           "D) Camada Funcional do Endométrio",         ],         correctAnswer: "D) Camada Funcional do Endométrio",         comment: "O endométrio é dividido em camada basal (profunda, que regenera a mucosa) e camada funcional (superficial). É a camada funcional que responde às variações hormonais do ciclo, crescendo e, na ausência de gravidez, sofrendo necrose e descamação, o que constitui o fluxo menstrual.",         topic: "Histologia do Útero - Endométrio",       },       {         question: "18. Na tuba uterina, o epitélio é simples cilíndrico (colunar). Quais são os dois tipos celulares principais encontrados neste epitélio?",         options: [           "A) Células ciliadas e células secretoras (peg cells)",           "B) Células de Leydig e Sertoli",           "C) Células parietais e principais",           "D) Células caliciformes e enterócitos",         ],         correctAnswer: "A) Células ciliadas e células secretoras (peg cells)",         comment: "A mucosa da tuba uterina possui um epitélio simples colunar composto por células ciliadas, cujos cílios batem em direção ao útero para transportar o óvulo/embrião, e células secretoras (não ciliadas ou intercalares), que produzem fluido nutritivo para o óvulo e espermatozoides.",         topic: "Histologia da Tuba Uterina",       },       {         question: "19. Qual é a característica histológica distintiva de um Folículo Secundário (ou Antral) no ovário?",         options: [           "A) Uma única camada de células achatadas",           "B) Formação de uma cavidade contendo líquido folicular (Antro)",           "C) Ausência de zona pelúcida",           "D) Presença do corpo lúteo",         ],         correctAnswer: "B) Formação de uma cavidade contendo líquido folicular (Antro)",         comment: "A transição de folículo primário para secundário (antral) é marcada pelo aparecimento de espaços cheios de líquido entre as células da granulosa. Esses espaços coalescem para formar uma cavidade única e grande chamada antro folicular, preenchida por líquido rico em hormônios e fatores de crescimento.",         topic: "Histologia do Ovário - Foliculogênese",       },       {         question: "20. Após a ovulação, as células da granulosa e da teca interna do folículo rompido se reorganizam para formar:",         options: [           "A) Folículo Primordial",           "B) Corpo Albicans",           "C) Corpo Lúteo",           "D) Cisto Ovariano",         ],         correctAnswer: "C) Corpo Lúteo",         comment: "Imediatamente após a ovulação, sob influência do LH, o folículo colapsado se transforma no corpo lúteo. As células da granulosa e da teca interna sofrem luteinização, tornando-se células glandulares que secretam grandes quantidades de progesterona e estrogênio para sustentar uma possível gravidez.",         topic: "Fisiologia Ovariana - Corpo Lúteo",       },       {         question: "21. O que é o Corpo Albicans?",         options: [           "A) Um folículo pré-ovulatório",           "B) A cicatriz de tecido conjuntivo denso deixada pela degeneração do corpo lúteo",           "C) Um tumor ovariano",           "D) A região medular do ovário",         ],         correctAnswer: "B) A cicatriz de tecido conjuntivo denso deixada pela degeneração do corpo lúteo",         comment: "Se não ocorrer fecundação, o corpo lúteo degenera (luteólise). As células glandulares morrem e são substituídas por tecido cicatricial fibroso (colágeno), formando uma estrutura branca e inativa chamada Corpo Albicans.",         topic: "Histologia do Ovário - Corpo Albicans",       },       {         question: "22. Qual estrutura anatômica do útero corresponde à porção superior em forma de cúpula, acima da entrada das tubas uterinas?",         options: [           "A) Istmo",           "B) Colo (Cérvice)",           "C) Fundo",           "D) Corpo",         ],         correctAnswer: "C) Fundo",         comment: "Anatomicamente, o útero é dividido em colo, istmo, corpo e fundo. O fundo do útero é a região arredondada e superior, situada acima do plano das aberturas das tubas uterinas.",         topic: "Anatomia do Útero",       },       {         question: "23. A parede do útero é formada por três camadas. Qual delas é constituída por pacotes de músculo liso em diferentes direções?",         options: [           "A) Endométrio",           "B) Miométrio",           "C) Perimétrio",           "D) Paramétrio",         ],         correctAnswer: "B) Miométrio",         comment: "O miométrio é a camada média e mais espessa da parede uterina. É composto por feixes de músculo liso entrelaçados em várias direções (longitudinal, circular, oblíqua) e tecido conjuntivo vascularizado, permitindo a grande distensão na gravidez e as fortes contrações no parto.",         topic: "Histologia do Útero - Miométrio",       },       {         question: "24. Na transição do colo do útero (cérvice), ocorre uma mudança de epitélio (junção escamo-colunar). Qual é o epitélio da ectocérvice (parte voltada para a vagina)?",         options: [           "A) Simples colunar",           "B) Estratificado pavimentoso",           "C) Pseudoestratificado ciliado",           "D) Cúbico simples",         ],         correctAnswer: "B) Estratificado pavimentoso",         comment: "A cérvice tem duas partes: endocérvice (canal) e ectocérvice (face externa vaginal). A ectocérvice precisa resistir ao ambiente vaginal e atrito, por isso possui epitélio estratificado pavimentoso (escamoso), contínuo com o da vagina.",         topic: "Histologia do Colo Uterino",       },       {         question: "25. Qual ligamento fixa o ovário à parede lateral da pelve e contém os vasos sanguíneos ovarianos (artéria e veia ovarianas)?",         options: [           "A) Ligamento Próprio do Ovário",           "B) Ligamento Redondo",           "C) Ligamento Suspensor do Ovário",           "D) Ligamento Largo",         ],         correctAnswer: "C) Ligamento Suspensor do Ovário",         comment: "O ligamento suspensor do ovário é uma prega de peritônio que se estende da parede pélvica ao polo superior do ovário. Ele é anatomicamente crucial pois carrega os vasos ovarianos (artéria e veia), linfáticos e nervos para a gônada.",         topic: "Anatomia do Sistema Reprodutor Feminino - Ligamentos",       },       {         question: "26. O processo de capacitação do espermatozoide é essencial para a fertilização. Onde ele ocorre?",         options: [           "A) No epidídimo",           "B) Na vesícula seminal",           "C) No trato reprodutor feminino",           "D) Na próstata",         ],         correctAnswer: "C) No trato reprodutor feminino",         comment: "Embora a maturação ocorra no epidídimo, a capacitação é um processo bioquímico final que acontece apenas dentro do trato reprodutor feminino (útero e tubas). Envolve a remoção de glicoproteínas da membrana do espermatozoide, tornando-o hiperativo e capaz de fecundar.",         topic: "Fisiologia da Fertilização - Capacitação",       },       {         question: "27. A reação acrossômica permite que o espermatozoide atravesse qual estrutura do óvulo?",         options: [           "A) A membrana plasmática diretamente",           "B) A zona pelúcida",           "C) O citoplasma",           "D) O núcleo",         ],         correctAnswer: "B) A zona pelúcida",         comment: "Quando o espermatozoide se liga à zona pelúcida, o acrossomo (vesícula na cabeça) libera enzimas digestivas (como hialuronidase e acrosina). Essas enzimas digerem a matriz glicoproteica da zona pelúcida, permitindo que o espermatozoide a atravesse e chegue à membrana do óvulo.",         topic: "Fisiologia da Fertilização - Reação Acrossômica",       },       {         question: "28. O bloqueio à poliespermia (entrada de mais de um espermatozoide) é garantido principalmente pela:",         options: [           "A) Reação cortical (liberação de grânulos corticais)",           "B) Degeneração do acrossomo",           "C) Formação do corpo lúteo",           "D) Divisão meiótica",         ],         correctAnswer: "A) Reação cortical (liberação de grânulos corticais)",         comment: "Assim que o primeiro espermatozoide funde sua membrana com a do óvulo, ocorre a reação cortical: grânulos corticais sob a membrana do óvulo liberam enzimas que alteram a estrutura da zona pelúcida (reação de zona), impedindo que outros espermatozoides se liguem ou penetrem.",         topic: "Fisiologia da Fertilização - Bloqueio à Poliespermia",       },       {         question: "29. O blastocisto é a estrutura que se implanta no útero. Ele é composto por uma massa celular interna e uma camada externa. A camada externa é chamada de:",         options: [           "A) Embrioblasto",           "B) Trofoblasto",           "C) Blastocele",           "D) Âmnio",         ],         correctAnswer: "B) Trofoblasto",         comment: "O blastocisto possui duas populações celulares distintas: o trofoblasto, que é a camada epitelial externa responsável pela implantação e formação da placenta, e o embrioblasto (massa celular interna), que dará origem ao embrião.",         topic: "Embriologia - 1ª Semana",       },       {         question: "30. Durante a implantação, o trofoblasto se diferencia em duas camadas. Qual camada é multinucleada, invasiva e responsável pela produção de hCG?",         options: [           "A) Citotrofoblasto",           "B) Sinciciotrofoblasto",           "C) Mesoderma extraembrionário",           "D) Epiblasto",         ],         correctAnswer: "B) Sinciciotrofoblasto",         comment: "Ao contatar o endométrio, as células do trofoblasto se fundem para formar o sinciciotrofoblasto, uma massa multinucleada sem limites celulares. Esta estrutura é altamente invasiva, erodindo o tecido materno para a nidação, e secreta o hormônio hCG para manter a gravidez.",         topic: "Embriologia - Implantação",       },       {         question: "31. A Gastrulação, que ocorre na 3ª semana, é o processo que forma:",         options: [           "A) O blastocisto",           "B) O tubo neural apenas",           "C) As três camadas germinativas (Ectoderma, Mesoderma, Endoderma)",           "D) A placenta completa",         ],         correctAnswer: "C) As três camadas germinativas (Ectoderma, Mesoderma, Endoderma)",         comment: "A gastrulação é o evento chave da 3ª semana, onde o disco embrionário bilaminar se transforma em trilaminar. Células do epiblasto migram pela linha primitiva para formar o endoderma, mesoderma e ectoderma, que darão origem a todos os tecidos do corpo.",         topic: "Embriologia - 3ª Semana (Gastrulação)",       },       {         question: "32. Qual estrutura induz a formação do tubo neural (neurulação) e define o eixo do embrião?",         options: [           "A) Linha Primitiva",           "B) Notocorda",           "C) Saco Vitelino",           "D) Alantoide",         ],         correctAnswer: "B) Notocorda",         comment: "A notocorda é um bastão celular mesodérmico que define o eixo longitudinal do embrião e fornece rigidez. Sua função mais importante é induzir o ectoderma sobrejacente a se espessar e formar a placa neural, iniciando a neurulação (formação do sistema nervoso).",         topic: "Embriologia - Neurulação",       },       {         question: "33. O Ectoderma dá origem a quais das seguintes estruturas?",         options: [           "A) Músculos e ossos",           "B) Sistema Nervoso e Epiderme",           "C) Trato gastrointestinal e pulmões",           "D) Rins e gônadas",         ],         correctAnswer: "B) Sistema Nervoso e Epiderme",         comment: "O folheto ectodérmico (camada mais externa) diferencia-se principalmente em estruturas de contato com o mundo externo (epiderme, pelos, unhas) e no sistema nervoso (central e periférico), através do neuroectoderma.",         topic: "Embriologia - Derivados dos Folhetos",       },       {         question: "34. O Mesoderma dá origem a:",         options: [           "A) Sistema Nervoso",           "B) Revestimento do intestino",           "C) Músculos, ossos, sangue e rins",           "D) Cabelos e unhas",         ],         correctAnswer: "C) Músculos, ossos, sangue e rins",         comment: "O mesoderma (camada média) forma os tecidos de sustentação e movimento (ossos, cartilagens, músculos), o sistema cardiovascular (coração, vasos, sangue) e o sistema urogenital (rins, gônadas e ductos).",         topic: "Embriologia - Derivados dos Folhetos",       },       {         question: "35. A anomalia congênita conhecida como Hipospádia refere-se a:",         options: [           "A) Ausência de testículos",           "B) Abertura da uretra na face ventral (inferior) do pênis",           "C) Abertura da uretra na face dorsal (superior) do pênis",           "D) Pênis muito pequeno",         ],         correctAnswer: "B) Abertura da uretra na face ventral (inferior) do pênis",         comment: "Hipospádia é um defeito no fechamento das pregas uretrais durante o desenvolvimento, fazendo com que o óstio da uretra se localize na face ventral (embaixo) do pênis, em vez da ponta da glande. A abertura na face dorsal chama-se epispádia.",         topic: "Embriologia Clínica - Malformações",       },       {         question: "36. A placenta humana é formada por uma componente fetal e um materno. Quais são eles, respectivamente?",         options: [           "A) Âmnio e Miométrio",           "B) Córion Viloso (Frondoso) e Decídua Basal",           "C) Córion Liso e Decídua Capsular",           "D) Saco Vitelino e Decídua Parietal",         ],         correctAnswer: "B) Córion Viloso (Frondoso) e Decídua Basal",         comment: "A placenta é um órgão misto. A parte fetal é derivada do Córion Frondoso (vilosidades que crescem e se ramificam). A parte materna é formada pela Decídua Basal (parte do endométrio modificado onde ocorreu a implantação).",         topic: "Embriologia - Placenta",       },       {         question: "37. O que é a reação decidual?",         options: [           "A) A rejeição do feto pelo sistema imune",           "B) A transformação das células do endométrio (estroma) em células ricas em glicogênio e lipídeos",           "C) A formação do cordão umbilical",           "D) A ruptura da bolsa amniótica",         ],         correctAnswer: "B) A transformação das células do endométrio (estroma) em células ricas em glicogênio e lipídeos",         comment: "Sob ação da progesterona, as células do estroma endometrial aumentam de volume e acumulam nutrientes (glicogênio e lipídeos), tornando-se células deciduais. Isso prepara o útero para nutrir o embrião e controlar a invasão do trofoblasto.",         topic: "Embriologia - Reação Decidual",       },       {         question: "38. O cordão umbilical normal contém:",         options: [           "A) 2 veias e 1 artéria",           "B) 2 artérias e 1 veia",           "C) 1 artéria e 1 veia",           "D) 2 artérias e 2 veias",         ],         correctAnswer: "B) 2 artérias e 1 veia",         comment: "O cordão umbilical possui duas artérias umbilicais (que levam sangue pobre em oxigênio do feto para a placenta) e uma veia umbilical (que traz sangue oxigenado da placenta para o feto), envolvidos pela Geléia de Wharton.",         topic: "Histologia e Embriologia - Cordão Umbilical",       },       {         question: "39. Qual é o tecido conjuntivo mucoso característico que envolve os vasos do cordão umbilical?",         options: [           "A) Geléia de Wharton",           "B) Cartilagem hialina",           "C) Tecido adiposo",           "D) Reticular denso",         ],         correctAnswer: "A) Geléia de Wharton",         comment: "A Geléia de Wharton é um tecido conjuntivo mucoso especializado, rico em ácido hialurônico e com poucas fibras, que protege os vasos umbilicais contra compressão, garantindo o fluxo sanguíneo contínuo para o feto.",         topic: "Histologia - Tecido Conjuntivo Mucoso",       },       {         question: "40. Qual hormônio produzido pelo sinciciotrofoblasto é a base para os testes de gravidez?",         options: [           "A) Progesterona",           "B) Estriol",           "C) hCG (Gonadotrofina Coriônica Humana)",           "D) hPL (Lactogênio Placentário)",         ],         correctAnswer: "C) hCG (Gonadotrofina Coriônica Humana)",         comment: "O hCG é produzido pelo sinciciotrofoblasto logo após a implantação. Sua função é manter o corpo lúteo ativo (produzindo progesterona) para sustentar a gravidez inicial. Ele é detectável na urina e sangue, sendo o marcador padrão de gravidez.",         topic: "Fisiologia da Gestação - Hormônios",       },       {         question: "41. Qual a função da barreira placentária?",         options: [           "A) Misturar completamente o sangue materno e fetal",           "B) Separar o sangue materno do fetal, permitindo trocas seletivas",           "C) Produzir líquido amniótico",           "D) Impedir a passagem de qualquer anticorpo",         ],         correctAnswer: "B) Separar o sangue materno do fetal, permitindo trocas seletivas",         comment: "A barreira placentária (membrana placentária) impede a mistura direta do sangue materno e fetal, mas é permeável o suficiente para permitir a difusão de gases, nutrientes, excretas e anticorpos IgG, atuando como um filtro seletivo.",         topic: "Fisiologia da Placenta - Barreira",       },       {         question: "42. As células de Hofbauer, encontradas nas vilosidades coriônicas, são:",         options: [           "A) Células musculares",           "B) Macrófagos placentários",           "C) Células produtoras de hCG",           "D) Células nervosas",         ],         correctAnswer: "B) Macrófagos placentários",         comment: "Células de Hofbauer são macrófagos fetais encontrados no estroma das vilosidades coriônicas da placenta. Elas têm função imune de defesa e participam da remodelação do estroma placentário.",         topic: "Histologia da Placenta",       },       {         question: "43. No ciclo menstrual, a fase folicular é caracterizada pelo aumento de qual hormônio hipofisário que estimula o crescimento dos folículos?",         options: [           "A) LH",           "B) FSH",           "C) Progesterona",           "D) hCG",         ],         correctAnswer: "B) FSH",         comment: "O FSH (Hormônio Folículo Estimulante) é secretado pela hipófise no início do ciclo. Ele atua nos ovários recrutando e estimulando o crescimento e maturação dos folículos ovarianos na fase folicular.",         topic: "Fisiologia do Ciclo Menstrual - Fase Folicular",       },       {         question: "44. O pico de qual hormônio é o gatilho imediato para a ovulação?",         options: [           "A) FSH",           "B) Progesterona",           "C) LH (Hormônio Luteinizante)",           "D) Inibina",         ],         correctAnswer: "C) LH (Hormônio Luteinizante)",         comment: "Cerca de 24 a 36 horas antes da ovulação, os altos níveis de estrogênio causam um feedback positivo na hipófise, gerando um aumento súbito e massivo de LH (pico de LH). Esse pico induz a retomada da meiose e a ruptura do folículo (ovulação).",         topic: "Fisiologia do Ciclo Menstrual - Ovulação",       },       {         question: "45. Durante a fase lútea (pós-ovulatória), qual é o principal hormônio secretado pelo corpo lúteo?",         options: [           "A) Estrogênio apenas",           "B) Progesterona",           "C) LH",           "D) GnRH",         ],         correctAnswer: "B) Progesterona",         comment: "Após a ovulação, o folículo se transforma em corpo lúteo, que passa a secretar grandes quantidades de progesterona (e também estrogênio). A progesterona prepara o endométrio (fase secretora) para receber o embrião.",         topic: "Fisiologia do Ciclo Menstrual - Fase Lútea",       },       {         question: "46. Se não houver fecundação, o corpo lúteo regride, levando à queda de progesterona. Qual é a consequência uterina imediata?",         options: [           "A) Implantação",           "B) Menstruação (descamação do endométrio)",           "C) Ovulação",           "D) Espessamento do muco cervical",         ],         correctAnswer: "B) Menstruação (descamação do endométrio)",         comment: "A queda nos níveis de progesterona (devido à morte do corpo lúteo) causa constrição das artérias espiraladas do endométrio, isquemia e necrose da camada funcional, resultando na descamação e sangramento menstrual.",         topic: "Fisiologia do Ciclo Menstrual - Menstruação",       },       {         question: "47. Qual é o papel do hormônio hPL (Lactogênio Placentário Humano) no metabolismo materno?",         options: [           "A) Diminuir a glicose no sangue",           "B) Aumentar a resistência materna à insulina, disponibilizando mais glicose para o feto",           "C) Provocar contrações uterinas",           "D) Inibir a produção de leite",         ],         correctAnswer: "B) Aumentar a resistência materna à insulina, disponibilizando mais glicose para o feto",         comment: "O hPL tem ação anti-insulínica. Ele torna as células da mãe menos sensíveis à insulina, o que mantém os níveis de glicose no sangue materno mais elevados. Isso garante que haja glicose suficiente disponível para ser transportada para o feto, que depende dela para crescer.",         topic: "Neuroendocrinologia da Gestação - hPL",       },       {         question: "48. A puberdade é iniciada pela reativação do eixo H-H-G. O que caracteriza a \"Adrenarca\"?",         options: [           "A) Aumento de FSH e LH",           "B) Primeira menstruação",           "C) Aumento da produção de andrógenos pelo córtex da adrenal",           "D) Crescimento dos testículos",         ],         correctAnswer: "C) Aumento da produção de andrógenos pelo córtex da adrenal",         comment: "Adrenarca é o amadurecimento do córtex da glândula adrenal, que passa a produzir andrógenos (como DHEAS). Isso ocorre independente das gônadas e é responsável pelo aparecimento de pelos pubianos (pubarca) e axilares e pelo odor corporal.",         topic: "Fisiologia da Puberdade - Adrenarca",       },       {         question: "49. Qual é o primeiro sinal físico visível da puberdade (Gonadarca) nas meninas, segundo os critérios de Tanner?",         options: [           "A) Menarca",           "B) Telarca (broto mamário)",           "C) Pubarca",           "D) Acne",         ],         correctAnswer: "B) Telarca (broto mamário)",         comment: "A Telarca (aparecimento do broto mamário - Estágio M2 de Tanner) é o primeiro sinal clínico da ativação do eixo gonadal (produção de estrogênio) nas meninas, ocorrendo geralmente entre 8 e 13 anos.",         topic: "Fisiologia da Puberdade - Tanner Feminino",       },       {         question: "50. Qual é o primeiro sinal físico da puberdade nos meninos?",         options: [           "A) Mudança na voz",           "B) Crescimento de pelos faciais",           "C) Aumento do volume testicular (> 4mL)",           "D) Estirão de crescimento",         ],         correctAnswer: "C) Aumento do volume testicular (> 4mL)",         comment: "Nos meninos, o primeiro sinal de puberdade é o aumento do volume dos testículos (maior que 4mL ou 2,5cm de diâmetro), causado pelo crescimento dos túbulos seminíferos sob estímulo do FSH.",         topic: "Fisiologia da Puberdade - Tanner Masculino",       },       {         question: "51. O feto é considerado um aloenxerto (possui material genético paterno estranho à mãe). Qual molécula expressa pelo trofoblasto ajuda a inibir a resposta das células NK maternas?",         options: [           "A) HLA de classe I (A e B)",           "B) HLA-G",           "C) Imunoglobulina A",           "D) Citocinas inflamatórias",         ],         correctAnswer: "B) HLA-G",         comment: "O trofoblasto não expressa os antígenos HLA clássicos (A e B) que causariam rejeição. Em vez disso, expressa HLA-G, uma molécula não clássica que interage com receptores inibitórios nas células Natural Killer (NK) uterinas, impedindo que elas ataquem a placenta.",         topic: "Imunologia da Reprodução - Tolerância Materno-Fetal",       },       {         question: "52. A barreira hematotesticular cria um \"sítio imunologicamente privilegiado\" no testículo. Qual é o objetivo principal desse privilégio?",         options: [           "A) Proteger as células de Leydig",           "B) Impedir que o sistema imune ataque os espermatozoides (que possuem antígenos novos/estranhos)",           "C) Evitar a entrada de testosterona no túbulo",           "D) Aumentar a temperatura testicular",         ],         correctAnswer: "B) Impedir que o sistema imune ataque os espermatozoides (que possuem antígenos novos/estranhos)",         comment: "As células germinativas meióticas e haploides (espermatozoides) só aparecem na puberdade, muito tempo depois que o sistema imune 'aprendeu' o que é próprio do corpo. Portanto, elas têm antígenos estranhos. A barreira impede que anticorpos e células imunes entrem nos túbulos e ataquem essas células.",         topic: "Imunologia da Reprodução - Privilégio Imune Masculino",       },       {         question: "53. Durante a gestação, ocorre um desvio no perfil de resposta imunológica materna. Qual é a mudança predominante para proteger o feto?",         options: [           "A) Aumento de resposta Th1 (inflamatória)",           "B) Desvio para resposta Th2 (anti-inflamatória/protetora)",           "C) Ativação massiva de linfócitos T citotóxicos",           "D) Supressão total do sistema imune",         ],         correctAnswer: "B) Desvio para resposta Th2 (anti-inflamatória/protetora)",         comment: "Para tolerar o feto, o sistema imune materno muda seu perfil de citocinas. A resposta Th1 (celular/inflamatória), que seria agressiva ao feto, é suprimida, e a resposta Th2 (humoral/anti-inflamatória) é favorecida, criando um ambiente protetor.",         topic: "Imunologia da Reprodução - Perfil Th1/Th2",       },       {         question: "54. No corte histológico do ovário, onde se localizam preferencialmente os folículos ovarianos?",         options: [           "A) Na região medular",           "B) Na região cortical",           "C) Na túnica albugínea",           "D) No hilo ovariano",         ],         correctAnswer: "B) Na região cortical",         comment: "O ovário é dividido em medula (central, com vasos e nervos) e córtex (periférico). É no estroma da região cortical que se encontram os folículos ovarianos em diversos estágios de desenvolvimento.",         topic: "Histologia do Ovário",       },       {         question: "55. Qual a diferença entre o folículo primário unilamelar e o folículo primordial?",         options: [           "A) O primordial não tem ovócito.",           "B) O primordial tem células foliculares achatadas; o primário unilamelar tem células cúbicas.",           "C) O primário tem antro.",           "D) O primordial tem zona pelúcida visível.",         ],         correctAnswer: "B) O primordial tem células foliculares achatadas; o primário unilamelar tem células cúbicas.",         comment: "O folículo primordial (em repouso) possui uma única camada de células foliculares pavimentosas (achatadas) ao redor do ovócito. Quando ativado para crescer, torna-se primário unilamelar, e essas células tornam-se cúbicas.",         topic: "Histologia do Ovário - Folículos",       },       {         question: "56. O que são os \"estereocílios\" encontrados no epidídimo?",         options: [           "A) Cílios verdadeiros com motilidade",           "B) Microvilosidades longas e imóveis que aumentam a absorção",           "C) Flagelos de espermatozoides aderidos",           "D) Células basais",         ],         correctAnswer: "B) Microvilosidades longas e imóveis que aumentam a absorção",         comment: "Apesar do nome, estereocílios não são cílios verdadeiros (não têm microtúbulos nem se movem). São microvilosidades muito longas que aumentam a superfície de contato para que o epitélio do epidídimo possa reabsorver fluido e concentrar o esperma.",         topic: "Histologia do Epidídimo",       },       {         question: "57. Na próstata, as glândulas estão organizadas em três zonas. Qual zona é a mais propensa ao desenvolvimento de câncer (carcinoma)?",         options: [           "A) Zona Central",           "B) Zona de Transição",           "C) Zona Periférica",           "D) Zona Fibromuscular anterior",         ],         correctAnswer: "C) Zona Periférica",         comment: "A próstata tem zonas distintas. A Zona de Transição (periuretral) é onde ocorre a Hiperplasia Benigna (HPB). A Zona Periférica (maior parte da glândula) é o local de origem de cerca de 70% dos cânceres de próstata.",         topic: "Histologia e Patologia da Próstata",       },       {         question: "58. Qual a função da enzima IDO (Indoleamina 2,3-dioxigenase) na interface materno-fetal?",         options: [           "A) Produzir progesterona",           "B) Degradar o triptofano, inibindo a proliferação de linfócitos T maternos que poderiam atacar o feto",           "C) Aumentar a vascularização",           "D) Romper a bolsa amniótica",         ],         correctAnswer: "B) Degradar o triptofano, inibindo a proliferação de linfócitos T maternos que poderiam atacar o feto",         comment: "A IDO é uma enzima expressa no trofoblasto que degrada o aminoácido triptofano. Como os linfócitos T precisam de triptofano para proliferar e atacar, a 'fome' de triptofano induzida pela IDO suprime a resposta imune materna local.",         topic: "Imunologia da Reprodução - Mecanismos de Tolerância",       },       {         question: "59. A artéria uterina é um ramo direto de qual artéria?",         options: [           "A) Aorta Abdominal",           "B) Ilíaca Externa",           "C) Ilíaca Interna",           "D) Pudenda",         ],         correctAnswer: "C) Ilíaca Interna",         comment: "A vascularização principal do útero vem da artéria uterina, que é um ramo visceral da artéria ilíaca interna (hipogástrica), irrigando o útero e se anastomosando com as artérias ovariana e vaginal.",         topic: "Anatomia - Vascularização Pélvica",       },       {         question: "60. A artéria ovariana tem origem em qual vaso?",         options: [           "A) Ilíaca Interna",           "B) Aorta Abdominal",           "C) Artéria Renal",           "D) Ilíaca Comum",         ],         correctAnswer: "B) Aorta Abdominal",         comment: "As artérias gonadais (ovarianas na mulher, testiculares no homem) originam-se diretamente da Aorta Abdominal, logo abaixo das artérias renais. Isso ocorre porque as gônadas se formam no abdome alto e descem durante o desenvolvimento.",         topic: "Anatomia - Vascularização Gonadal",       },       {         question: "61. O que é a \"menarca\"?",         options: [           "A) O início do desenvolvimento das mamas",           "B) A primeira menstruação",           "C) O aparecimento de pelos pubianos",           "D) O fim dos ciclos menstruais",         ],         correctAnswer: "B) A primeira menstruação",         comment: "Menarca é o termo médico para o primeiro fluxo menstrual da vida de uma mulher, marcando um ponto importante na puberdade feminina.",         topic: "Fisiologia da Puberdade - Termos",       },       {         question: "62. Qual hormônio é responsável pelo \"resgate\" do corpo lúteo em caso de gravidez, impedindo sua degeneração?",         options: [           "A) LH",           "B) FSH",           "C) hCG",           "D) Estrogênio",         ],         correctAnswer: "C) hCG",         comment: "O corpo lúteo tem vida curta se não houver gravidez. Se houver fecundação, o embrião produz hCG. O hCG é estruturalmente semelhante ao LH e se liga aos receptores do corpo lúteo, mantendo-o vivo e produzindo progesterona.",         topic: "Fisiologia da Gestação - Resgate do Corpo Lúteo",       },       {         question: "63. Na fase secretora do ciclo uterino, as glândulas endometriais tornam-se:",         options: [           "A) Retas e curtas",           "B) Tortuosas e repletas de secreção (glicogênio)",           "C) Atróficas",           "D) Ausentes",         ],         correctAnswer: "B) Tortuosas e repletas de secreção (glicogênio)",         comment: "Sob estímulo da progesterona na fase pós-ovulatória, as glândulas do endométrio crescem, tornam-se espiraladas (tortuosas) e começam a secretar glicogênio e muco para nutrir um possível embrião. É a fase secretora.",         topic: "Histologia do Endométrio - Fase Secretora",       },       {         question: "64. O acrossomo do espermatozoide é derivado de qual organela celular?",         options: [           "A) Mitocôndria",           "B) Complexo de Golgi",           "C) Retículo Endoplasmático",           "D) Centríolo",         ],         correctAnswer: "B) Complexo de Golgi",         comment: "Durante a espermiogênese, vesículas do Complexo de Golgi se fundem para formar a vesícula acrossômica, que cobre o núcleo do espermatozoide e contém as enzimas necessárias para a fertilização.",         topic: "Espermiogênese - Acrossomo",       },       {         question: "65. Onde as mitocôndrias se organizam no espermatozoide maduro?",         options: [           "A) Na cabeça",           "B) Na peça intermediária da cauda",           "C) Na peça principal",           "D) No acrossomo",         ],         correctAnswer: "B) Na peça intermediária da cauda",         comment: "As mitocôndrias migram e se organizam em uma bainha espiral ao redor do axonema na peça intermediária da cauda. Elas fornecem o ATP necessário para o batimento do flagelo.",         topic: "Estrutura do Espermatozoide",       },       {         question: "66. Qual é a constituição cromossômica de um espermatócito primário?",         options: [           "A) Haploide (n)",           "B) Diploide (2n)",           "C) Triploide (3n)",           "D) Nulo",         ],         correctAnswer: "B) Diploide (2n)",         comment: "O espermatócito primário é resultado da mitose e diferenciação da espermatogônia. Ele ainda não sofreu a primeira divisão da meiose, portanto mantém o número diploide de cromossomos (46,XY).",         topic: "Gametogênese - Ploidia",       },       {         question: "67. Qual célula resulta da primeira divisão meiótica na espermatogênese?",         options: [           "A) Espermatogônia B",           "B) Espermatócito Secundário",           "C) Espermátide",           "D) Espermatozoide",         ],         correctAnswer: "B) Espermatócito Secundário",         comment: "A Meiose I é a divisão reducional. O espermatócito primário (2n) se divide e gera dois espermatócitos secundários, que são haploides (n) mas ainda têm cromossomos duplicados.",         topic: "Gametogênese - Meiose",       },       {         question: "68. O que é a Espermiação?",         options: [           "A) A divisão da espermatogônia",           "B) A liberação dos espermatozoides maduros da célula de Sertoli para o lúmen do túbulo",           "C) A entrada do espermatozoide no óvulo",           "D) A capacitação",         ],         correctAnswer: "B) A liberação dos espermatozoides maduros da célula de Sertoli para o lúmen do túbulo",         comment: "Espermiação é o processo final nos túbulos seminíferos onde as espermátides alongadas (agora espermatozoides) se desprendem do citoplasma da célula de Sertoli e são liberadas no lúmen tubular.",         topic: "Gametogênese - Termos",       },       {         question: "69. Qual a função das células mioides peritubulares nos testículos?",         options: [           "A) Produzir testosterona",           "B) Contração para ajudar na movimentação do fluido tubular",           "C) Fagocitose",           "D) Formar a barreira hematotesticular",         ],         correctAnswer: "B) Contração para ajudar na movimentação do fluido tubular",         comment: "As células mioides envolvem os túbulos seminíferos. Elas têm propriedades contráteis e, com suas contrações peristálticas, ajudam a mover os espermatozoides e o fluido testicular em direção à rede testicular, já que os espermatozoides ainda não têm mobilidade própria.",         topic: "Histologia do Testículo - Células Mioides",       },       {         question: "70. O epitélio germinativo do ovário é, na verdade:",         options: [           "A) A fonte dos óvulos",           "B) Um epitélio simples cúbico ou pavimentoso que reveste a superfície do ovário (mesotélio modificado)",           "C) A camada que produz hormônios",           "D) A túnica albugínea",         ],         correctAnswer: "B) Um epitélio simples cúbico ou pavimentoso que reveste a superfície do ovário (mesotélio modificado)",         comment: "O nome 'epitélio germinativo' é um termo histórico incorreto. Hoje sabe-se que ele não dá origem às células germinativas (óvulos). Ele é apenas o revestimento epitelial superficial do ovário, contínuo com o peritônio.",         topic: "Histologia do Ovário - Epitélio de Revestimento",       },       {         question: "71. O que caracteriza a Teca Interna do folículo ovariano?",         options: [           "A) Camada fibrosa de suporte",           "B) Camada vascularizada e produtora de andrógenos (precursores de estrogênio)",           "C) Epitélio avascular",           "D) Camada de células musculares",         ],         correctAnswer: "B) Camada vascularizada e produtora de andrógenos (precursores de estrogênio)",         comment: "A Teca Interna é uma camada celular altamente vascularizada com função endócrina. Sob estímulo do LH, ela produz andrógenos (como androstenediona), que são transferidos para as células da granulosa para serem convertidos em estrogênio.",         topic: "Histologia do Ovário - Teca Interna",       },       {         question: "72. O que é o Cumulus Oophorus?",         options: [           "A) A cicatriz da ovulação",           "B) O grupo de células da granulosa que ancora o ovócito à parede do folículo",           "C) A cavidade cheia de líquido",           "D) A membrana basal",         ],         correctAnswer: "B) O grupo de células da granulosa que ancora o ovócito à parede do folículo",         comment: "Nos folículos antrais, o ovócito não flutua livremente. Ele fica em uma posição excêntrica, rodeado por um montículo de células da granulosa que o conecta à parede do folículo. Esse montículo é o Cumulus Oophorus.",         topic: "Histologia do Ovário - Folículo Antral",       },       {         question: "73. Qual hormônio hipotalâmico regula todo o sistema reprodutor?",         options: [           "A) FSH",           "B) GnRH (Hormônio Liberador de Gonadotrofinas)",           "C) Oxitocina",           "D) Dopamina",         ],         correctAnswer: "B) GnRH (Hormônio Liberador de Gonadotrofinas)",         comment: "O GnRH é o 'maestro' do eixo reprodutivo. Ele é liberado em pulsos pelo hipotálamo e estimula a hipófise anterior a secretar FSH e LH, que por sua vez controlam as gônadas.",         topic: "Neuroendocrinologia - Eixo H-H-G",       },       {         question: "74. A secreção de FSH pela hipófise é inibida principalmente por qual substância produzida pelas células de Sertoli (homem) e Granulosa (mulher)?",         options: [           "A) Testosterona",           "B) Inibina",           "C) Activina",           "D) LH",         ],         correctAnswer: "B) Inibina",         comment: "A Inibina é um hormônio proteico produzido pelas gônadas (Sertoli no homem, Granulosa na mulher) que exerce um feedback negativo seletivo e potente sobre a secreção de FSH na hipófise.",         topic: "Fisiologia Endócrina - Feedback",       },       {         question: "75. Na fase menstrual, o que causa a isquemia e necrose do endométrio funcional?",         options: [           "A) Aumento de estrogênio",           "B) Vasoconstrição das artérias espiraladas devido à queda de progesterona",           "C) Aumento de LH",           "D) Infecção",         ],         correctAnswer: "B) Vasoconstrição das artérias espiraladas devido à queda de progesterona",         comment: "Quando o corpo lúteo morre, a progesterona cai. Isso causa espasmos (vasoconstrição) nas artérias espiraladas que nutrem o endométrio funcional. A falta de sangue (isquemia) leva à morte do tecido e sua descamação (menstruação).",         topic: "Fisiologia Menstrual - Mecanismo da Menstruação",       },       {         question: "76. Qual a função das fímbrias na tuba uterina?",         options: [           "A) Produzir óvulos",           "B) Capturar o ovócito liberado pelo ovário durante a ovulação",           "C) Fechar a tuba para evitar gravidez",           "D) Secretar hormônios",         ],         correctAnswer: "B) Capturar o ovócito liberado pelo ovário durante a ovulação",         comment: "As fímbrias são projeções em forma de franja no infundíbulo da tuba. Na ovulação, elas se movimentam ativamente sobre o ovário para 'varrer' e capturar o ovócito e o fluido folicular para dentro da tuba.",         topic: "Anatomia da Tuba Uterina",       },       {         question: "77. A fertilização ocorre geralmente em qual parte da tuba uterina?",         options: [           "A) Infundíbulo",           "B) Ampola",           "C) Istmo",           "D) Parte Uterina",         ],         correctAnswer: "B) Ampola",         comment: "A ampola é a porção mais longa e dilatada da tuba uterina. É o local anatômico onde o espermatozoide geralmente encontra e fertiliza o óvulo.",         topic: "Anatomia e Fisiologia - Fertilização",       },       {         question: "78. O que é a zona pelúcida?",         options: [           "A) Uma camada de células foliculares",           "B) Uma matriz glicoproteica que envolve o ovócito",           "C) A membrana do núcleo do óvulo",           "D) O citoplasma do óvulo",         ],         correctAnswer: "B) Uma matriz glicoproteica que envolve o ovócito",         comment: "A zona pelúcida é uma cápsula acelular espessa, rica em glicoproteínas, que envolve o ovócito. Ela é essencial para o reconhecimento específico da espécie pelo espermatozoide e para a reação acrossômica.",         topic: "Embriologia - Estrutura do Óvulo",       },       {         question: "79. Qual a ploidia de uma ovogônia?",         options: [           "A) Haploide (n)",           "B) Diploide (2n)",           "C) Triploide",           "D) Tetraploide",         ],         correctAnswer: "B) Diploide (2n)",         comment: "As ovogônias são as células germinativas primordiais femininas que se multiplicam por mitose durante a vida fetal. Como células somáticas precursoras, elas possuem o conjunto completo de cromossomos (2n).",         topic: "Gametogênese Feminina - Ploidia",       },       {         question: "80. Em que fase da meiose o ovócito secundário estaciona até ser fertilizado?",         options: [           "A) Prófase I",           "B) Metáfase II",           "C) Anáfase I",           "D) Telófase II",         ],         correctAnswer: "B) Metáfase II",         comment: "O ovócito liberado na ovulação não completou a meiose. Ele progride até a Metáfase da Meiose II e para. A meiose só será concluída se houver penetração do espermatozoide.",         topic: "Gametogênese Feminina - Meiose",       },       {         question: "81. O que são gêmeos dizigóticos?",         options: [           "A) Gêmeos idênticos de um único ovo",           "B) Gêmeos fraternos resultantes da fertilização de dois óvulos por dois espermatozoides",           "C) Gêmeos siameses",           "D) Clones",         ],         correctAnswer: "B) Gêmeos fraternos resultantes da fertilização de dois óvulos por dois espermatozoides",         comment: "Gêmeos dizigóticos (bivitelinos) ocorrem quando a mulher ovula dois óvulos no mesmo ciclo e ambos são fertilizados por espermatozoides diferentes. Eles são geneticamente como irmãos comuns.",         topic: "Embriologia - Gemelaridade",       },       {         question: "82. O sinciciotrofoblasto é caracterizado por:",         options: [           "A) Ser uma camada de células cúbicas individuais",           "B) Ser uma massa multinucleada sem limites celulares distintos",           "C) Estar localizado internamente ao citotrofoblasto",           "D) Não ter função hormonal",         ],         correctAnswer: "B) Ser uma massa multinucleada sem limites celulares distintos",         comment: "O termo 'sincício' refere-se a uma massa citoplasmática contendo vários núcleos sem divisão celular. O sinciciotrofoblasto é a camada externa invasiva da placenta que deriva da fusão de células do citotrofoblasto.",         topic: "Histologia da Placenta - Trofoblasto",       },       {         question: "83. Qual a origem do sangue encontrado no espaço interviloso da placenta?",         options: [           "A) Fetal",           "B) Materno",           "C) Misto",           "D) Do líquido amniótico",         ],         correctAnswer: "B) Materno",         comment: "O espaço interviloso é a lacuna onde as vilosidades coriônicas do feto flutuam. Esse espaço é preenchido por sangue materno que jorra das artérias espiraladas do útero, permitindo as trocas sem mistura direta de sangue.",         topic: "Fisiologia da Placenta - Circulação",       },       {         question: "84. A veia umbilical transporta:",         options: [           "A) Sangue pobre em oxigênio do feto para a placenta",           "B) Sangue rico em oxigênio e nutrientes da placenta para o feto",           "C) Urina fetal",           "D) Sangue materno",         ],         correctAnswer: "B) Sangue rico em oxigênio e nutrientes da placenta para o feto",         comment: "Na circulação fetal, a nomenclatura segue o coração do feto: vasos que chegam ao coração são veias. A veia umbilical traz sangue oxigenado e rico em nutrientes da placenta para o corpo do feto.",         topic: "Circulação Fetal - Cordão Umbilical",       },       {         question: "85. As artérias umbilicais transportam:",         options: [           "A) Sangue rico em oxigênio",           "B) Sangue pobre em oxigênio e rico em CO2 do feto para a placenta",           "C) Nutrientes para o feto",           "D) Anticorpos",         ],         correctAnswer: "B) Sangue pobre em oxigênio e rico em CO2 do feto para a placenta",         comment: "As artérias umbilicais saem do feto levando sangue venoso (com excretas e CO2) de volta para a placenta para ser oxigenado e filtrado.",         topic: "Circulação Fetal - Cordão Umbilical",       },       {         question: "86. O hormônio ocitocina é produzido no _______ e liberado pela _______.",         options: [           "A) Ovário; Útero",           "B) Hipotálamo; Neuro-hipófise",           "C) Adeno-hipófise; Hipotálamo",           "D) Placenta; Feto",         ],         correctAnswer: "B) Hipotálamo; Neuro-hipófise",         comment: "A ocitocina é sintetizada nos corpos celulares dos neurônios dos núcleos paraventriculares do hipotálamo. Ela viaja pelos axônios até a neuro-hipófise (posterior), onde fica armazenada e é secretada.",         topic: "Neuroendocrinologia - Ocitocina",       },       {         question: "87. Qual o efeito da Ocitocina no parto?",         options: [           "A) Relaxar o colo do útero apenas",           "B) Estimular contrações rítmicas e fortes do miométrio",           "C) Anestesiar a dor",           "D) Parar o sangramento",         ],         correctAnswer: "B) Estimular contrações rítmicas e fortes do miométrio",         comment: "A ocitocina é o principal agente uterotônico. Ela se liga a receptores no miométrio, desencadeando contrações musculares fortes e rítmicas necessárias para a expulsão do feto.",         topic: "Fisiologia do Parto - Ocitocina",       },       {         question: "88. A Relaxina tem qual função principal no parto?",         options: [           "A) Contrair o útero",           "B) Relaxar os ligamentos pélvicos e a sínfise púbica para facilitar a passagem do feto",           "C) Estimular leite",           "D) Aumentar a pressão arterial",         ],         correctAnswer: "B) Relaxar os ligamentos pélvicos e a sínfise púbica para facilitar a passagem do feto",         comment: "A relaxina é produzida pelo corpo lúteo e placenta. Sua função no parto é 'amolecer' as articulações da pelve e o colo do útero, aumentando a flexibilidade do canal de parto para a passagem do bebê.",         topic: "Fisiologia do Parto - Relaxina",       },       {         question: "89. O Hormônio Anti-Mülleriano (AMH) na mulher adulta é um marcador de:",         options: [           "A) Gravidez",           "B) Reserva Ovariana (quantidade de folículos restantes)",           "C) Ovulação iminente",           "D) Menopausa já estabelecida",         ],         correctAnswer: "B) Reserva Ovariana (quantidade de folículos restantes)",         comment: "O AMH é produzido pelas células da granulosa dos folículos em crescimento (pré-antrais e antrais pequenos). Como a quantidade desses folículos é proporcional ao estoque total de óvulos, o nível de AMH no sangue reflete a reserva ovariana.",         topic: "Fisiologia Ovariana - Marcadores",       },       {         question: "90. Na diferenciação sexual masculina, o hormônio Anti-Mülleriano (AMH) produzido por Sertoli causa:",         options: [           "A) Desenvolvimento do útero",           "B) Regressão dos Ductos de Müller (Paramesonéfricos)",           "C) Desenvolvimento dos Ductos de Wolff",           "D) Descida dos testículos",         ],         correctAnswer: "B) Regressão dos Ductos de Müller (Paramesonéfricos)",         comment: "No embrião masculino, as células de Sertoli produzem AMH. Esse hormônio causa a degeneração dos Ductos de Müller, que no sexo feminino dariam origem ao útero e tubas. Sem AMH, o sistema feminino se desenvolve por padrão.",         topic: "Embriologia - Diferenciação Sexual",       },       {         question: "91. A testosterona estimula os Ductos de Wolff (Mesonéfricos) a se diferenciarem em:",         options: [           "A) Útero e vagina",           "B) Epidídimo, Ducto Deferente e Vesícula Seminal",           "C) Próstata e uretra",           "D) Pênis e escroto",         ],         correctAnswer: "B) Epidídimo, Ducto Deferente e Vesícula Seminal",         comment: "A testosterona produzida pelas células de Leydig fetais atua localmente (parácrina) para estabilizar e diferenciar os Ductos de Wolff nas estruturas internas do trato reprodutor masculino.",         topic: "Embriologia - Diferenciação Masculina",       },       {         question: "92. A genitália externa masculina (pênis, escroto) se desenvolve sob ação de qual hormônio?",         options: [           "A) Testosterona direta",           "B) Di-hidrotestosterona (DHT)",           "C) Estrogênio",           "D) AMH",         ],         correctAnswer: "B) Di-hidrotestosterona (DHT)",         comment: "Para formar a genitália externa masculina, a testosterona deve ser convertida em um andrógeno muito mais potente, a Di-hidrotestosterona (DHT), pela enzima 5-alfa-redutase nos tecidos alvo.",         topic: "Embriologia - Diferenciação Externa",       },       {         question: "93. O que é Criptorquidia?",         options: [           "A) Ausência de testículo",           "B) Falha na descida dos testículos para o escroto",           "C) Câncer de testículo",           "D) Testículo muito grande",         ],         correctAnswer: "B) Falha na descida dos testículos para o escroto",         comment: "Criptorquidia é a condição onde um ou ambos os testículos não completam sua migração da cavidade abdominal para o escroto antes do nascimento, permanecendo no abdome ou canal inguinal.",         topic: "Patologia/Embriologia - Criptorquidia",       },       {         question: "94. Qual a função do líquido amniótico relacionada ao desenvolvimento pulmonar?",         options: [           "A) Não tem função",           "B) O feto 'respira' (deglute/inala) o líquido, o que é essencial para a expansão e maturação dos alvéolos",           "C) O líquido bloqueia os pulmões",           "D) O líquido traz oxigênio",         ],         correctAnswer: "B) O feto 'respira' (deglute/inala) o líquido, o que é essencial para a expansão e maturação dos alvéolos",         comment: "O feto realiza movimentos respiratórios, aspirando líquido amniótico. Essa pressão hidrostática e fatores de crescimento no líquido são cruciais para o desenvolvimento estrutural dos pulmões. Sem líquido (oligohidrâmnio), ocorre hipoplasia pulmonar.",         topic: "Fisiologia Fetal - Líquido Amniótico",       },       {         question: "95. O que é Oligohidrâmnio?",         options: [           "A) Excesso de líquido amniótico",           "B) Pouco líquido amniótico",           "C) Líquido amniótico infectado",           "D) Ruptura da bolsa",         ],         correctAnswer: "B) Pouco líquido amniótico",         comment: "Oligohidrâmnio é o volume reduzido de líquido amniótico. Como a urina fetal é a principal fonte de líquido na segunda metade da gestação, isso geralmente indica problemas renais no feto (agenesia renal, obstrução) ou ruptura de membranas.",         topic: "Patologia Obstétrica - Líquido Amniótico",       },       {         question: "96. Ocitocina e ADH são produzidos em quais núcleos hipotalâmicos?",         options: [           "A) Arqueado e Ventromedial",           "B) Supraóptico e Paraventricular",           "C) Supraquiasmático",           "D) Mamilares",         ],         correctAnswer: "B) Supraóptico e Paraventricular",         comment: "Os neurônios magnocelulares que produzem esses hormônios estão localizados nos núcleos Supraóptico (principalmente ADH) e Paraventricular (principalmente Ocitocina) do hipotálamo.",         topic: "Neuroendocrinologia - Hipotálamo",       },       {         question: "97. O sistema porta-hipofisário conecta:",         options: [           "A) O hipotálamo à neuro-hipófise",           "B) O hipotálamo à adeno-hipófise",           "C) A hipófise ao ovário",           "D) A placenta ao feto",         ],         correctAnswer: "B) O hipotálamo à adeno-hipófise",         comment: "O sistema porta-hipofisário é uma rede vascular que transporta hormônios liberadores e inibidores do hipotálamo diretamente para a adeno-hipófise, sem diluí-los na circulação sistêmica, garantindo uma regulação rápida e eficaz.",         topic: "Neuroendocrinologia - Vascularização",       },       {         question: "98. A prolactina é inibida tonicamente por qual neurotransmissor hipotalâmico?",         options: [           "A) Serotonina",           "B) Dopamina",           "C) GnRH",           "D) Ocitocina",         ],         correctAnswer: "B) Dopamina",         comment: "Diferente dos outros hormônios hipofisários que são estimulados, a prolactina é mantida sob inibição constante pela dopamina liberada pelo hipotálamo. A amamentação ou estrogênio inibem a dopamina, liberando a prolactina.",         topic: "Neuroendocrinologia - Prolactina",       },       {         question: "99. Qual a característica do muco cervical durante a ovulação (fase estrogênica)?",         options: [           "A) Espesso e opaco",           "B) Fluido, transparente e elástico (filante)",           "C) Sanguinolento",           "D) Ausente",         ],         correctAnswer: "B) Fluido, transparente e elástico (filante)",         comment: "Sob influência do estrogênio, o muco cervical torna-se abundante, aquoso, cristalino e elástico (filância). Isso facilita a passagem e sobrevivência dos espermatozoides no trato reprodutor.",         topic: "Fisiologia do Ciclo Menstrual - Muco Cervical",       },       {         question: "100. O epitélio de revestimento do ovário é contínuo com:",         options: [           "A) O epitélio da tuba",           "B) O mesotélio (peritônio) visceral",           "C) O endométrio",           "D) A vagina",         ],         correctAnswer: "B) O mesotélio (peritônio) visceral",         comment: "O epitélio superficial do ovário (antigamente chamado germinativo) é uma modificação do mesotélio peritoneal que reveste a cavidade abdominal, sendo contínuo com o mesovário.",         topic: "Histologia do Ovário",       },       {         question: "101. As células mióides peritubulares no testículo têm características semelhantes a:",         options: [           "A) Músculo liso",           "B) Epitélio",           "C) Neurônios",           "D) Macrófagos",         ],         correctAnswer: "A) Músculo liso",         comment: "As células mióides formam camadas ao redor dos túbulos seminíferos. Elas possuem filamentos contráteis e funcionam como células musculares lisas, ajudando a impulsionar os espermatozoides (que ainda são imóveis) e o fluido tubular.",         topic: "Histologia do Testículo - Células Mioides",       },       {         question: "102. A túnica vaginal que envolve o testículo é derivada de:",         options: [           "A) Peritônio",           "B) Pele",           "C) Músculo oblíquo",           "D) Fáscia transversal",         ],         correctAnswer: "A) Peritônio",         comment: "Quando o testículo desce do abdome para o escroto, ele 'arrasta' consigo uma extensão do peritônio parietal, formando o Processo Vaginal, que depois se fecha e forma a Túnica Vaginal ao redor do testículo.",         topic: "Anatomia do Testículo - Camadas",       },       {         question: "103. O que é a rede testicular (Rete Testis)?",         options: [           "A) Uma rede de nervos",           "B) Uma rede de canais anastomosados no mediastino do testículo que coleta espermatozoides dos túbulos retos",           "C) A rede vascular",           "D) O sistema linfático",         ],         correctAnswer: "B) Uma rede de canais anastomosados no mediastino do testículo que coleta espermatozoides dos túbulos retos",         comment: "A Rete Testis é um labirinto de canais revestidos por epitélio cúbico localizados no mediastino do testículo. Ela recebe os espermatozoides de todos os túbulos seminíferos (via túbulos retos) e os direciona para os ductos eferentes.",         topic: "Histologia do Testículo - Vias",       },       {         question: "104. Os ductos eferentes conectam:",         options: [           "A) A rede testicular ao epidídimo",           "B) O epidídimo ao canal deferente",           "C) A vesícula seminal à uretra",           "D) O testículo à próstata",         ],         correctAnswer: "A) A rede testicular ao epidídimo",         comment: "Os ductos eferentes (cerca de 12 a 20) são pequenos canais que saem da rede testicular, perfuram a túnica albugínea e formam a cabeça do epidídimo, conectando o testículo a ele.",         topic: "Anatomia das Vias Espermáticas",       },       {         question: "105. Qual a função das células ciliadas nos ductos eferentes e tuba uterina?",         options: [           "A) Filtrar impurezas",           "B) Movimentar o conteúdo (espermatozoides/fluido ou óvulo) em uma direção",           "C) Absorver líquido",           "D) Sentir o pH",         ],         correctAnswer: "B) Movimentar o conteúdo (espermatozoides/fluido ou óvulo) em uma direção",         comment: "Cílios são estruturas motoras. Nos ductos eferentes e na tuba, o batimento ciliar cria um fluxo de fluido que ajuda a transportar os gametas (espermatozoides ou óvulo) na direção correta.",         topic: "Histologia - Epitélios Ciliados",       },       {         question: "106. A ampola do ducto deferente é:",         options: [           "A) A parte final dilatada antes de se unir à vesícula seminal",           "B) O início do ducto",           "C) A parte que sai do epidídimo",           "D) A parte dentro da próstata",         ],         correctAnswer: "A) A parte final dilatada antes de se unir à vesícula seminal",         comment: "O ducto deferente se alarga em sua porção terminal, posterior à bexiga, formando a ampola. É onde ele se une ao ducto da vesícula seminal para formar o ducto ejaculatório.",         topic: "Anatomia do Ducto Deferente",       },       {         question: "107. O ducto ejaculatório é formado pela união de:",         options: [           "A) Ducto deferente e Uretra",           "B) Ducto da vesícula seminal e Ducto deferente (ampola)",           "C) Epidídimo e Testículo",           "D) Próstata e Bexiga",         ],         correctAnswer: "B) Ducto da vesícula seminal e Ducto deferente (ampola)",         comment: "O ducto ejaculatório é um canal curto formado pela convergência da ampola do ducto deferente com o ducto da vesícula seminal. Ele atravessa a próstata e desemboca na uretra prostática.",         topic: "Anatomia - Vias Espermáticas",       },       {         question: "108. Em qual zona da próstata ocorre a maioria das Hiperplasias Benignas (HPB)?",         options: [           "A) Zona Periférica",           "B) Zona de Transição",           "C) Zona Central",           "D) Zona Anterior",         ],         correctAnswer: "B) Zona de Transição",         comment: "A Zona de Transição envolve a uretra prostática. É nela que ocorre o crescimento nodular benigno (HPB), que por sua localização acaba comprimindo a uretra e causando sintomas urinários.",         topic: "Patologia/Anatomia da Próstata",       },       {         question: "109. Qual a coloração típica das células de Leydig na microscopia H&E?",         options: [           "A) Basofílica (azul)",           "B) Acidófila (rosa) e vacuolizada (pálida) devido aos lipídeos",           "C) Negra",           "D) Transparente",         ],         correctAnswer: "B) Acidófila (rosa) e vacuolizada (pálida) devido aos lipídeos",         comment: "Células produtoras de esteroides (como testosterona) têm muito retículo endoplasmático liso (acidófilo) e gotículas de lipídeos (precursores hormonais), que são dissolvidas na preparação, deixando o citoplasma com aspecto vacuolizado/pálido.",         topic: "Histologia do Testículo - Coloração",       },       {         question: "110. O que é o estroma ovariano?",         options: [           "A) O epitélio",           "B) O tecido conjuntivo que preenche o ovário entre os folículos",           "C) A cápsula",           "D) Os vasos",         ],         correctAnswer: "B) O tecido conjuntivo que preenche o ovário entre os folículos",         comment: "Estroma é o tecido de sustentação. No ovário, o estroma cortical é um tecido conjuntivo muito celular, com células fusiformes (fibroblastos-like), que envolve e sustenta os folículos ovarianos.",         topic: "Histologia do Ovário - Estroma",       },       {         question: "111. Qual a diferença entre o epitélio da vagina e do útero?",         options: [           "A) Vagina é simples, Útero é estratificado",           "B) Vagina é estratificado pavimentoso, Útero é simples colunar",           "C) Ambos são iguais",           "D) Vagina tem glândulas, Útero não",         ],         correctAnswer: "B) Vagina é estratificado pavimentoso, Útero é simples colunar",         comment: "A vagina, sendo um canal de cópula e parto, precisa de proteção contra atrito, por isso tem epitélio estratificado. O útero precisa secretar e nutrir, por isso tem epitélio simples cilíndrico (no endométrio).",         topic: "Histologia Comparada - Vagina vs Útero",       },       {         question: "112. O que são as glândulas de Bartholin (Vestibulares Maiores)?",         options: [           "A) Glândulas na entrada da vagina que produzem muco lubrificante",           "B) Glândulas que produzem leite",           "C) Glândulas sudoríparas",           "D) Glândulas endócrinas",         ],         correctAnswer: "A) Glândulas na entrada da vagina que produzem muco lubrificante",         comment: "Localizadas no vestíbulo vaginal, as glândulas de Bartholin são homólogas às bulbouretrais masculinas. Elas secretam muco durante a excitação sexual para lubrificar a entrada da vagina.",         topic: "Anatomia da Vulva",       },       {         question: "113. O clitóris é homólogo a qual estrutura masculina?",         options: [           "A) Escroto",           "B) Corpos cavernosos do pênis",           "C) Próstata",           "D) Testículo",         ],         correctAnswer: "B) Corpos cavernosos do pênis",         comment: "Embriologicamente, o tubérculo genital dá origem ao pênis no homem e ao clitóris na mulher. Ambos contêm corpos cavernosos de tecido erétil sensível.",         topic: "Embriologia Comparada - Genitália Externa",       },       {         question: "114. O que é a nidação?",         options: [           "A) A fecundação",           "B) A implantação do blastocisto no endométrio",           "C) A ovulação",           "D) O parto",         ],         correctAnswer: "B) A implantação do blastocisto no endométrio",         comment: "Nidação é o termo técnico para a implantação. Ocorre quando o blastocisto adere e penetra no endométrio materno, iniciando a gravidez.",         topic: "Embriologia - Termos",       },       {         question: "115. Qual a duração média da espermatogênese humana?",         options: [           "A) 24 horas",           "B) 14 dias",           "C) 64-74 dias",           "D) 9 meses",         ],         correctAnswer: "C) 64-74 dias",         comment: "O ciclo completo de produção de um espermatozoide, desde a espermatogônia até a liberação no lúmen, é longo, durando cerca de 64 a 74 dias no homem.",         topic: "Fisiologia - Espermatogênese",       },       {         question: "116. O acrossomo contém enzimas. Qual a principal enzima para perfurar a zona pelúcida?",         options: [           "A) Amilase",           "B) Acrosina/Hialuronidase",           "C) Lipase",           "D) Tripsina",         ],         correctAnswer: "B) Acrosina/Hialuronidase",         comment: "A reação acrossômica libera hialuronidase (para dispersar células do cumulus) e acrosina (uma protease que digere a zona pelúcida), permitindo a penetração do espermatozoide.",         topic: "Fisiologia da Fertilização - Enzimas",       },       {         question: "117. O que são folículos atrésicos?",         options: [           "A) Folículos prontos para ovular",           "B) Folículos que degeneraram (morte celular) antes de ovular",           "C) Folículos primordiais",           "D) Corpos lúteos",         ],         correctAnswer: "B) Folículos que degeneraram (morte celular) antes de ovular",         comment: "A grande maioria dos folículos ovarianos não chega a ovular; eles sofrem atresia (apoptose) em vários estágios de desenvolvimento. Folículos atrésicos são aqueles em processo de degeneração.",         topic: "Histologia do Ovário - Atresia",       },       {         question: "118. A progesterona na gravidez serve para:",         options: [           "A) Contrair o útero",           "B) Manter o útero relaxado (quiescente) e o colo fechado",           "C) Expulsar o feto",           "D) Produzir leite",         ],         correctAnswer: "B) Manter o útero relaxado (quiescente) e o colo fechado",         comment: "A progesterona é o hormônio 'pró-gestação'. Ela inibe as contrações do miométrio (mantendo o útero calmo para o feto) e mantém o colo uterino fechado e com tampão mucoso.",         topic: "Fisiologia da Gestação - Progesterona",       },       {         question: "119. O aumento da pigmentação da aréola na gravidez é devido a:",         options: [           "A) Estrogênio e MSH (Hormônio Estimulante de Melanócitos)",           "B) Progesterona",           "C) Relaxina",           "D) Ocitocina",         ],         correctAnswer: "A) Estrogênio e MSH (Hormônio Estimulante de Melanócitos)",         comment: "Os altos níveis de estrogênio na gravidez estimulam a produção de melanina e a secreção de MSH pela hipófise, causando escurecimento de áreas como mamilos, aréolas e linha alba.",         topic: "Alterações Fisiológicas na Gravidez",       },       {         question: "120. A anemia fisiológica da gravidez ocorre porque:",         options: [           "A) A mãe perde sangue",           "B) O volume de plasma aumenta mais do que o volume de hemácias (hemodiluição)",           "C) O feto come o ferro",           "D) A medula para de funcionar",         ],         correctAnswer: "B) O volume de plasma aumenta mais do que o volume de hemácias (hemodiluição)",         comment: "Na gravidez, o volume de sangue aumenta muito. O plasma aumenta cerca de 50%, mas as hemácias aumentam apenas 20-30%. Isso dilui o sangue, diminuindo a concentração de hemoglobina (anemia dilucional).",         topic: "Fisiologia Materna - Hematologia",       },       {         question: "121. Qual a função da barreira hematotesticular imunológica?",         options: [           "A) Evitar que anticorpos ataquem células germinativas haploides",           "B) Evitar que testosterona saia",           "C) Evitar que glicose entre",           "D) Não tem função imune",         ],         correctAnswer: "A) Evitar que anticorpos ataquem células germinativas haploides",         comment: "Espermatozoides e espermatócitos têm antígenos únicos que não existiam quando o sistema imune se formou. A barreira os 'esconde', impedindo que o corpo produza anticorpos anti-espermatozoide.",         topic: "Imunologia Masculina",       },       {         question: "122. HLA-G no trofoblasto serve para:",         options: [           "A) Ativar células NK",           "B) Inibir células NK maternas (tolerância imunológica)",           "C) Matar o feto",           "D) Atrair bactérias",         ],         correctAnswer: "B) Inibir células NK maternas (tolerância imunológica)",         comment: "O HLA-G é uma molécula de 'identidade' especial que desliga as células NK (Natural Killer) do útero, impedindo que elas ataquem a placenta como um corpo estranho.",         topic: "Imunologia da Gestação - HLA-G",       },       {         question: "123. O desvio Th1 -> Th2 na gravidez significa:",         options: [           "A) A mãe fica mais inflamada",           "B) A mãe favorece uma resposta anti-inflamatória para tolerar o feto",           "C) A mãe rejeita o feto",           "D) A mãe não produz anticorpos",         ],         correctAnswer: "B) A mãe favorece uma resposta anti-inflamatória para tolerar o feto",         comment: "O sistema imune muda seu equilíbrio. Reduz a imunidade celular agressiva (Th1) e aumenta a imunidade humoral/protetora (Th2) para evitar rejeição fetal. Isso pode, curiosamente, melhorar doenças autoimunes Th1 (como artrite reumatoide) na gravidez.",         topic: "Imunologia da Gestação",       },       {         question: "124. A Doença Trofoblástica Gestacional (Mola) é uma proliferação anormal de:",         options: [           "A) Embrioblasto",           "B) Trofoblasto",           "C) Endométrio",           "D) Miométrio",         ],         correctAnswer: "B) Trofoblasto",         comment: "A Mola Hidatiforme é um tumor (geralmente benigno) originado das células do trofoblasto (placenta), que se proliferam descontroladamente formando vesículas, geralmente sem embrião viável.",         topic: "Patologia Obstétrica - Mola",       },       {         question: "125. O que é gravidez ectópica?",         options: [           "A) Gravidez de gêmeos",           "B) Implantação fora da cavidade uterina (ex: tuba)",           "C) Gravidez sem embrião",           "D) Gravidez a termo",         ],         correctAnswer: "B) Implantação fora da cavidade uterina (ex: tuba)",         comment: "Ectópica significa 'fora do lugar'. Acontece quando o blastocisto se implanta fora do endométrio uterino, mais comumente na ampola da tuba uterina.",         topic: "Patologia Obstétrica - Ectópica",       },       {         question: "126. O colo do útero tem criptas que produzem muco. Na fase lútea (progesterona), esse muco é:",         options: [           "A) Fluido e cristalino",           "B) Espesso e hostil aos espermatozoides (tampão)",           "C) Sanguinolento",           "D) Inexistente",         ],         correctAnswer: "B) Espesso e hostil aos espermatozoides (tampão)",         comment: "A progesterona tem efeito oposto ao estrogênio no muco. Ela o torna denso, viscoso e celular, formando um tampão que bloqueia a entrada de espermatozoides e bactérias no útero.",         topic: "Fisiologia do Colo Uterino",       },       {         question: "127. Qual ligamento passa pelo canal inguinal na mulher?",         options: [           "A) Ligamento Largo",           "B) Ligamento Redondo do útero",           "C) Ligamento Suspensor",           "D) Ligamento Uterossacro",         ],         correctAnswer: "B) Ligamento Redondo do útero",         comment: "O ligamento redondo é um remanescente do gubernáculo (guia de descida da gônada). Ele sai do útero, atravessa o canal inguinal e se fixa no tecido subcutâneo dos grandes lábios.",         topic: "Anatomia Pélvica - Ligamentos",       },       {         question: "128. As artérias espiraladas do endométrio estão localizadas na:",         options: [           "A) Camada Basal",           "B) Camada Funcional",           "C) Miométrio",           "D) Perimétrio",         ],         correctAnswer: "B) Camada Funcional",         comment: "As artérias retas ficam na basal. As artérias espiraladas crescem para irrigar a camada funcional. São elas que sofrem espasmo na menstruação.",         topic: "Histologia do Endométrio - Vascularização",       },       {         question: "129. O que é a decídua basal?",         options: [           "A) A parte do endométrio materno que forma a placenta",           "B) A parte que recobre o feto",           "C) A parte oposta ao feto",           "D) O músculo do útero",         ],         correctAnswer: "A) A parte do endométrio materno que forma a placenta",         comment: "A decídua basal é a região do endométrio localizada logo abaixo do local de implantação. Ela interage com o córion frondoso para formar a placenta.",         topic: "Embriologia - Decíduas",       },       {         question: "130. O que são vilosidades coriônicas?",         options: [           "A) Projeções do córion fetal que banham-se no sangue materno para trocas",           "B) Vasos da mãe",           "C) Células do útero",           "D) Glândulas",         ],         correctAnswer: "A) Projeções do córion fetal que banham-se no sangue materno para trocas",         comment: "São as unidades funcionais da placenta. Semelhantes a raízes de uma árvore, elas contêm os vasos fetais e mergulham no sangue materno para absorver oxigênio e nutrientes.",         topic: "Histologia da Placenta",       },       {         question: "131. O cordão umbilical tem inervação?",         options: [           "A) Sim, muita dor ao cortar",           "B) Não, é desprovido de nervos",           "C) Apenas na base",           "D) Sim, simpática",         ],         correctAnswer: "B) Não, é desprovido de nervos",         comment: "O cordão umbilical não possui nervos. Por isso, o corte do cordão no nascimento é indolor tanto para o bebê quanto para a mãe.",         topic: "Anatomia Clínica - Cordão",       },       {         question: "132. O espaço interviloso da placenta contém:",         options: [           "A) Sangue fetal",           "B) Sangue materno",           "C) Líquido amniótico",           "D) Urina",         ],         correctAnswer: "B) Sangue materno",         comment: "O espaço interviloso é o compartimento materno da placenta. Ele é preenchido por sangue da mãe que sai das artérias espiraladas e banha as vilosidades.",         topic: "Fisiologia Placentária",       },       {         question: "133. A membrana amniocoriônica é formada pela fusão de:",         options: [           "A) Âmnio e Córion Liso",           "B) Decídua e Miométrio",           "C) Placenta e Útero",           "D) Saco Vitelino e Alantoide",         ],         correctAnswer: "A) Âmnio e Córion Liso",         comment: "Conforme o feto e a cavidade amniótica crescem, o âmnio se expande até encostar na parede interna do córion, obliterando a cavidade coriônica. As duas membranas se fundem formando a 'bolsa das águas'.",         topic: "Embriologia - Membranas Fetais",       },       {         question: "134. A progesterona é termogênica. Isso significa que na fase lútea a temperatura basal da mulher:",         options: [           "A) Cai",           "B) Sobe ligeiramente (0,3 a 0,5 graus)",           "C) Fica igual",           "D) Oscila muito",         ],         correctAnswer: "B) Sobe ligeiramente (0,3 a 0,5 graus)",         comment: "A progesterona atua no hipotálamo elevando o ponto de ajuste térmico. Um aumento sustentado na temperatura basal é um sinal clínico retrospectivo de que a ovulação ocorreu.",         topic: "Fisiologia do Ciclo - Sinais Clínicos",       },       {         question: "135. O que é a Regra de Naegele?",         options: [           "A) Cálculo da data provável do parto (DUM + 7 dias - 3 meses)",           "B) Cálculo da ovulação",           "C) Medida do útero",           "D) Dose de hormônio",         ],         correctAnswer: "A) Cálculo da data provável do parto (DUM + 7 dias - 3 meses)",         comment: "A Regra de Naegele é o método padrão para estimar a Data Provável do Parto (DPP). Soma-se 7 dias ao primeiro dia da última menstruação (DUM) e subtrai-se 3 meses (ou soma-se 9 meses).",         topic: "Obstetrícia Básica - DPP",       },       {         question: "136. Qual a função do surfactante fetal?",         options: [           "A) Nutrir o pulmão",           "B) Diminuir a tensão superficial nos alvéolos, permitindo que abram ao nascer",           "C) Encher o pulmão de água",           "D) Produzir hormônios",         ],         correctAnswer: "B) Diminuir a tensão superficial nos alvéolos, permitindo que abram ao nascer",         comment: "Produzido pelos pneumócitos tipo II a partir da 24ª semana, o surfactante reduz a tensão superficial. Sem ele, os alvéolos colabariam na expiração, causando desconforto respiratório no prematuro.",         topic: "Fisiologia Fetal - Pulmão",       },       {         question: "137. O ducto mesonéfrico (Wolff) no homem forma:",         options: [           "A) Nada, ele degenera",           "B) Epidídimo, Ducto Deferente, Vesícula Seminal",           "C) Útero",           "D) Bexiga",         ],         correctAnswer: "B) Epidídimo, Ducto Deferente, Vesícula Seminal",         comment: "Sob ação da testosterona, o ducto de Wolff persiste e se diferencia nas vias genitais internas masculinas.",         topic: "Embriologia Masculina",       },       {         question: "138. O ducto paramesonéfrico (Müller) na mulher forma:",         options: [           "A) Nada",           "B) Tubas, Útero e parte superior da Vagina",           "C) Ovário",           "D) Clitóris",         ],         correctAnswer: "B) Tubas, Útero e parte superior da Vagina",         comment: "Na ausência de AMH (mulher), o ducto de Müller se desenvolve, formando as tubas, fundindo-se para formar o útero e o terço superior da vagina.",         topic: "Embriologia Feminina",       },       {         question: "139. Qual a origem da vagina?",         options: [           "A) Apenas do ducto de Müller",           "B) Apenas do seio urogenital",           "C) Dupla: parte superior (Müller) e inferior (Seio Urogenital)",           "D) Do mesoderma",         ],         correctAnswer: "C) Dupla: parte superior (Müller) e inferior (Seio Urogenital)",         comment: "A vagina tem origem embriológica mista: o terço superior vem da fusão dos ductos de Müller (mesoderma), e os dois terços inferiores vêm do seio urogenital (endoderma).",         topic: "Embriologia Feminina - Vagina",       },       {         question: "140. A 'geléia de Wharton' é classificada histologicamente como:",         options: [           "A) Tecido conjuntivo denso",           "B) Tecido conjuntivo mucoso",           "C) Tecido adiposo",           "D) Tecido epitelial",         ],         correctAnswer: "B) Tecido conjuntivo mucoso",         comment: "É o exemplo clássico de tecido conjuntivo mucoso no corpo humano: muita substância fundamental (ácido hialurônico), células estreladas e poucas fibras.",         topic: "Histologia Básica - Tecidos",       },       {         question: "141. O citotrofoblasto é:",         options: [           "A) A camada interna celular, proliferativa do trofoblasto",           "B) A camada externa multinucleada",           "C) O embrião",           "D) O saco vitelino",         ],         correctAnswer: "A) A camada interna celular, proliferativa do trofoblasto",         comment: "O citotrofoblasto é a camada de células mononucleadas 'tronco' da placenta. Elas se dividem e se fundem para formar e regenerar o sinciciotrofoblasto externo.",         topic: "Histologia da Placenta",       },       {         question: "142. O que é a capacitação espermática?",         options: [           "A) A formação da cauda",           "B) Mudanças bioquímicas na cabeça do espermatozoide no trato feminino que permitem a fertilização",           "C) A saída do testículo",           "D) A ejaculação",         ],         correctAnswer: "B) Mudanças bioquímicas na cabeça do espermatozoide no trato feminino que permitem a fertilização",         comment: "A capacitação é um processo de 'ativação' que ocorre no útero/tubas. Envolve a remoção de colesterol e proteínas da membrana do espermatozoide, permitindo que ele sofra a reação acrossômica.",         topic: "Fisiologia da Fertilização",       },       {         question: "143. Qual a função das células mioepiteliais na glândula mamária (estimuladas pela ocitocina)?",         options: [           "A) Produzir leite",           "B) Expulsar/Ejetar o leite",           "C) Absorver gordura",           "D) Proteger o mamilo",         ],         correctAnswer: "B) Expulsar/Ejetar o leite",         comment: "Células mioepiteliais abraçam os alvéolos mamários. Quando a ocitocina se liga, elas contraem, espremendo o leite para os ductos (descida do leite).",         topic: "Fisiologia da Lactação",       },       {         question: "144. O que define a infertilidade conjugal?",         options: [           "A) Não engravidar em 1 mês",           "B) Ausência de gravidez após 12 meses de coito regular sem contraceptivo",           "C) Ter abortos",           "D) Não ter útero",         ],         correctAnswer: "B) Ausência de gravidez após 12 meses de coito regular sem contraceptivo",         comment: "Definição clínica padrão de infertilidade para casais com mulher < 35 anos.",         topic: "Clínica - Infertilidade",       },       {         question: "145. O exame de Beta-hCG qualitativo diz:",         options: [           "A) A quantidade exata de hormônio",           "B) Apenas se é positivo ou negativo (Sim/Não)",           "C) A idade gestacional",           "D) Se são gêmeos",         ],         correctAnswer: "B) Apenas se é positivo ou negativo (Sim/Não)",         comment: "Qualitativo = Qualidade (sim/não). Quantitativo = Quantidade (número, usado para datar e ver viabilidade).",         topic: "Diagnóstico de Gravidez",       },       {         question: "146. O que é a zona de transição da próstata?",         options: [           "A) A parte externa",           "B) A região ao redor da uretra",           "C) A cápsula",           "D) O ápice",         ],         correctAnswer: "B) A região ao redor da uretra",         comment: "É a zona que envolve a uretra prostática. Importante clinicamente pois é onde cresce a HPB, causando sintomas obstrutivos urinários.",         topic: "Anatomia da Próstata",       },       {         question: "147. As células foliculoestelares na hipófise:",         options: [           "A) Secretam hormônios",           "B) Formam redes de sustentação/comunicação (não secretoras)",           "C) São neurônios",           "D) São macrófagos",         ],         correctAnswer: "B) Formam redes de sustentação/comunicação (não secretoras)",         comment: "São células agranulares da adeno-hipófise que formam uma rede de suporte e comunicação parácrina entre as células secretoras.",         topic: "Histologia da Hipófise",       },       {         question: "148. Qual a diferença entre corpo lúteo e corpo lúteo gravídico?",         options: [           "A) O gravídico é menor",           "B) O gravídico é mantido pelo hCG e dura meses; o menstrual degenera em 14 dias",           "C) Não há diferença",           "D) O gravídico não produz progesterona",         ],         correctAnswer: "B) O gravídico é mantido pelo hCG e dura meses; o menstrual degenera em 14 dias",         comment: "O corpo lúteo menstrual dura 14 dias e morre (corpo albicans). Se houver hCG (gravidez), ele cresce, torna-se enorme e funciona por 3-4 meses até a placenta assumir.",         topic: "Fisiologia Ovariana",       },       {         question: "149. A vascularização arterial do pênis (corpos cavernosos) vem principalmente da:",         options: [           "A) Artéria Pudenda Interna",           "B) Artéria Femoral",           "C) Aorta",           "D) Artéria Testicular",         ],         correctAnswer: "A) Artéria Pudenda Interna",         comment: "A artéria pudenda interna (ramo da ilíaca interna) dá origem às artérias dorsal e profunda do pênis, essenciais para a ereção.",         topic: "Anatomia Vascular - Pênis",       },       {         question: "150. O que é o Istmo da tuba uterina?",         options: [           "A) A parte com fímbrias",           "B) A parte mais larga (ampola)",           "C) A parte estreita e muscular próxima ao útero",           "D) O buraco de saída",         ],         correctAnswer: "C) A parte estreita e muscular próxima ao útero",         comment: "O istmo é o segmento medial da tuba, de parede espessa e lúmen estreito, que conecta a ampola à parede do útero.",         topic: "Anatomia da Tuba",       },     ];
+
+    function buildQuiz() {
+      const output = [];
+
+      questions.forEach((currentQuestion, questionNumber) => {
+        const options = [];
+        for (let i = 0; i < currentQuestion.options.length; i++) {
+          options.push(
+            `<label class="option" data-question="${questionNumber}" data-value="${currentQuestion.options[i]}">
+              <img src="tesouras.png" class="scissor-icon" onclick="event.stopPropagation(); this.parentNode.classList.toggle('struck-through');">
+              ${currentQuestion.options[i]}
+            </label>`
+          );
+        }
+
+        output.push(
+          `<div class="card" id="question-${questionNumber}" data-topic="${currentQuestion.topic}">
+            <div class="question">${currentQuestion.question}</div>
+            <div class="options">${options.join("")}</div>
+            <div class="comment" id="comment-${questionNumber}"></div>
+          </div>`
+        );
+      });
+
+      quizContainer.innerHTML = output.join("");
+    }
+
+    function showResults() {
+      wrongQuestionIndices = [];
+      errorCountByTopic = {};
+      totalAnsweredQuestionsByTopic = {};
+      currentWrongQuestionIndex = -1;
+      hasErrors = false;
+      isShowingErrors = false;
+      isShowingDiagnosis = false;
+
+      errorDiagnosisSection.style.display = 'none';
+      topicsToReviewList.innerHTML = '';
+      statusMessage.textContent = '';
+
+      // Busca por todas as perguntas: estáticas e dinâmicas
+      const allQuestionCards = document.querySelectorAll('.quiz-container .card, #newQuestionsContent .card');
+      let correctAnswersCount = 0;
+      let totalQuestionsAnswered = 0;
+
+      console.log('🔍 Verificando', allQuestionCards.length, 'perguntas...');
+
+      allQuestionCards.forEach((card, index) => {
+        const questionEl = card.querySelector('.question') || card.querySelector('p');
+        if (!questionEl) return;
+
+        const questionText = questionEl.textContent.trim();
+        const optionsContainer = card.querySelector('.options') || card;
+        const allOptions = optionsContainer.querySelectorAll('.option, label.option, label');
+        const userAnswerElement = optionsContainer.querySelector('.option.selected, label.selected');
+        const commentDiv = card.querySelector('.comment');
+
+        const questionTopic = card.dataset.topic || "Tópico não informado";
+        
+        console.log(`📝 Pergunta ${index + 1}: Tópico = "${questionTopic}"`);
+        console.log(`🔍 Encontradas ${allOptions.length} alternativas`);
+        
+        // Remove classes anteriores
+        allOptions.forEach(option => {
+          option.classList.remove('correct', 'incorrect', 'selected');
+        });
+        if (commentDiv) commentDiv.classList.remove('show');
+
+        let correctAnswerValue = null;
+        let questionComment = null;
+
+        // Verifica se é pergunta estática ou dinâmica
+        const isStatic = card.id && card.id.startsWith('question-');
+        if (isStatic) {
+          // Pergunta estática - busca nos dados originais
+          const questionData = questions.find(q => q.question.trim() === questionText);
+          if (questionData) {
+            correctAnswerValue = questionData.correctAnswer.trim();
+            questionComment = questionData.comment;
+          }
+        } else {
+          // Pergunta dinâmica - busca pela opção marcada como correta
+          const correctOpt = optionsContainer.querySelector('.option[data-answer="true"], label[data-answer="true"]');
+          if (correctOpt) {
+            correctAnswerValue = correctOpt.dataset.value?.trim() || correctOpt.textContent.trim();
+            console.log(`✅ Resposta correta encontrada: "${correctAnswerValue}"`);
+          } else {
+            console.log('❌ Nenhuma resposta correta encontrada para pergunta dinâmica');
+          }
+          
+          // Busca comentário no próprio card ou no div comment
+          const commentElement = card.querySelector('.comment');
+          if (commentElement && commentElement.textContent.trim()) {
+            questionComment = commentElement.textContent.trim();
+          }
+        }
+
+        // Processa resposta do usuário e aplica coloração
+        let userAnswer = null;
+        if (userAnswerElement) {
+          userAnswerElement.classList.add('selected');
+          userAnswer = userAnswerElement.dataset.value?.trim() || userAnswerElement.textContent.trim();
+          totalQuestionsAnswered++;
+          totalAnsweredQuestionsByTopic[questionTopic] = (totalAnsweredQuestionsByTopic[questionTopic] || 0) + 1;
+
+          console.log(`👤 Resposta do usuário: "${userAnswer}"`);
+          console.log(`🎯 Resposta correta: "${correctAnswerValue}"`);
+
+          // Verifica se a resposta está correta
+          if (userAnswer === correctAnswerValue) {
+            correctAnswersCount++;
+            console.log(`✅ Resposta correta!`);
+          } else {
+            hasErrors = true;
+            errorCountByTopic[questionTopic] = (errorCountByTopic[questionTopic] || 0) + 1;
+            console.log(`❌ Resposta incorreta para tópico: ${questionTopic}`);
+          }
+        }
+
+        // Aplica coloração: SEMPRE marca a correta de verde, e a errada de vermelho se foi marcada
+        allOptions.forEach(option => {
+          const optionValue = option.dataset.value?.trim() || option.textContent.trim();
+          
+          // Marca a resposta correta de verde SEMPRE
+          if (optionValue === correctAnswerValue) {
+            option.classList.add('correct');
+            console.log(`🟢 Marcando como correta: "${optionValue}"`);
+          }
+          
+          // Se o usuário marcou uma resposta E ela está errada, marca de vermelho
+          if (userAnswer && optionValue === userAnswer && userAnswer !== correctAnswerValue) {
+            option.classList.add('incorrect');
+            console.log(`🔴 Marcando como incorreta: "${optionValue}"`);
+          }
+        });
+
+        // Mostra comentário se disponível
+        if (commentDiv && questionComment) {
+          commentDiv.textContent = questionComment;
+          commentDiv.classList.add('show');
+        }
+      });
+
+      // Exibe resultados
+      resultsContainer.textContent = `Você acertou ${correctAnswersCount} de ${totalQuestionsAnswered} questões respondidas.`;
+
+      console.log('📊 Erros por tópico:', errorCountByTopic);
+      console.log('📊 Total por tópico:', totalAnsweredQuestionsByTopic);
+
+      // Gera diagnóstico de erros
+      if (hasErrors) {
+        for (const topic in errorCountByTopic) {
+          const errors = errorCountByTopic[topic];
+          const total = totalAnsweredQuestionsByTopic[topic] || 0;
+          if (total > 0) {
+            const percent = ((errors / total) * 100).toFixed(1);
+            const li = document.createElement('li');
+            li.textContent = `${topic}: ${percent}% de erros (${errors} de ${total} questões respondidas)`;
+            topicsToReviewList.appendChild(li);
+          }
+        }
+      } else {
+        const li = document.createElement('li');
+        li.textContent = "🥳 Parabéns! Você não teve erros nas questões respondidas.";
+        topicsToReviewList.appendChild(li);
+      }
+
+      errorDiagnosisSection.style.display = 'block';
+      generatedQuestionsSection.style.display = 'block';
+      generateNewQuestionsBtn.style.display = 'block';
+      scrollToDiagnosis();
+    }
+
+    function scrollToQuestion(index) {
+      const questionCard = document.getElementById(`question-${index}`);
+      if (questionCard) {
+        questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function scrollToDiagnosis() {
+        errorDiagnosisSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToGeneratedQuestions() {
+        generatedQuestionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Event listener para seleção de opções (funciona para estáticas e dinâmicas)
+    document.addEventListener("click", function (event) {
+      const clickedElement = event.target;
+      const optionElement = clickedElement.closest('.option');
+
+      if (optionElement) {
+          if (clickedElement.classList.contains("scissor-icon")) {
+              event.stopPropagation();
+              optionElement.classList.toggle("struck-through");
+          }
+          else {
+              const parentCard = optionElement.closest('.card');
+              const currentQuestionOptions = parentCard.querySelectorAll('.option');
+
+              currentQuestionOptions.forEach(opt => opt.classList.remove("selected"));
+              optionElement.classList.add("selected");
+          }
+      }
+    });
+
+    generateNewQuestionsBtn.addEventListener("click", async function() {
+        statusMessage.textContent = '⏳ Gerando novas perguntas...';
+        generateNewQuestionsBtn.disabled = true;
+
+        const topics = Object.keys(errorCountByTopic).filter(topic => {
+            const errorsInTopic = errorCountByTopic[topic] || 0;
+            const totalAnsweredInTopic = totalAnsweredQuestionsByTopic[topic] || 0;
+            return errorsInTopic > 0 && totalAnsweredInTopic > 0;
+        });
+
+        const topicsToSend = topics.length > 0 ? topics : ["fisiologia celular", "biologia"];
+
+        try {
+            const response = await fetch('https://www.quizia.xyz/quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topicos: topicsToSend }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            newQuestionsContent.innerHTML = '';
+            if (data && data.html) {
+                console.log('📥 HTML recebido do Flask:', data.html);
+                
+                // Insere o HTML diretamente sem reconstrução complexa
+                newQuestionsContent.innerHTML = data.html.replace(/```html|```/g, '');
+                
+                // Adiciona tesouras e ajusta formatação apenas se necessário
+                newQuestionsContent.querySelectorAll('.card').forEach((card, cardIndex) => {
+                    // Garante que o elemento de pergunta tenha a classe correta
+                    const questionElement = card.querySelector('p');
+                    if (questionElement && !questionElement.classList.contains('question')) {
+                       questionElement.classList.add('question');
+                    }
+
+                    // Remove qualquer input de radio que possa existir e adiciona tesouras
+                    card.querySelectorAll('label').forEach((label) => {
+                        // Remove inputs de radio MAS preserva o atributo data-answer
+                        const radioInput = label.querySelector('input[type="radio"]');
+                        if (radioInput) {
+                            // PRESERVA o atributo data-answer do input no label
+                            if (radioInput.hasAttribute('data-answer')) {
+                                label.setAttribute('data-answer', radioInput.getAttribute('data-answer'));
+                            }
+                            radioInput.remove();
+                        }
+                        
+                        // Garante que tenha a classe option
+                        if (!label.classList.contains('option')) {
+                            label.classList.add('option');
+                        }
+
+                        // Garante que tenha data-value
+                        if (!label.dataset.value) {
+                            label.dataset.value = label.textContent.trim();
+                        }
+
+                        // Adiciona tesoura se não existir
+                        if (!label.querySelector('.scissor-icon')) {
+                            const scissorIcon = document.createElement('img');
+                            scissorIcon.src = 'tesouras.png';
+                            scissorIcon.className = 'scissor-icon';
+                            scissorIcon.onclick = function(e) {
+                                e.stopPropagation();
+                                label.classList.toggle('struck-through');
+                            };
+                            label.insertBefore(scissorIcon, label.firstChild);
+                        }
+                    });
+
+                    console.log(`🏷️ Card ${cardIndex}: data-topic = "${card.dataset.topic}"`);
+                    
+                    // Verifica se há opção correta marcada
+                    const correctOption = card.querySelector('label[data-answer="true"]');
+                    if (correctOption) {
+                        console.log(`✅ Opção correta encontrada: "${correctOption.dataset.value}"`);
+                    } else {
+                        console.log('❌ Nenhuma opção correta encontrada');
+                    }
+                });
+            } else {
+                newQuestionsContent.innerHTML = "<p>Não foi possível gerar novas perguntas para os tópicos selecionados.</p>";
+            }
+            
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '✅ Perguntas geradas com sucesso!';
+            setTimeout(() => { statusMessage.textContent = '' }, 3000);
+
+        } catch (error) {
+            console.error('Erro ao gerar novas perguntas:', error);
+            newQuestionsContent.innerHTML = `<p>Erro ao carregar novas perguntas: ${error.message}. Por favor, tente novamente.</p>`;
+            generatedQuestionsSection.style.display = 'block';
+            scrollToGeneratedQuestions();
+            statusMessage.textContent = '❌ Erro na requisição: ' + error.message;
+            setTimeout(() => { statusMessage.textContent = '' }, 5000);
+        } finally {
+            generateNewQuestionsBtn.disabled = false;
+        }
+    });
+
+    // Inicialização
+    buildQuiz();
+    errorDiagnosisSection.style.display = 'none';
+    generatedQuestionsSection.style.display = 'none';
+    generateNewQuestionsBtn.style.display = 'none';
+
+    // Event listener para o botão de verificar respostas
+    document.getElementById("verifyAnswersBtn").addEventListener("click", showResults);
+  </script>
+</body>
+</html>
