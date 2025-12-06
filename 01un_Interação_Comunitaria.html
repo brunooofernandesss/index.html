@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
@@ -6,63 +6,107 @@
     <title>Quiz sobre o Sistema Único de Saúde (SUS)</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #f0f2f5;
+            color: #333;
         }
         .quiz-container {
             max-width: 800px;
             width: 100%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
         .card {
-            background-color: white;
+            background-color: #fff;
+            border: 1px solid #e1e4e8;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .question {
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            line-height: 1.5;
         }
         .option {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
             margin-bottom: 8px;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option:hover:not(.disabled) {
+            background-color: #f8f9fa;
+            border-color: #d1d5db;
         }
         .option.selected {
-            border-color: blue;
+            border-color: #4f46e5;
+            background-color: #eef2ff;
         }
+        /* Estilos de Resultado */
         .option.correct {
-            background-color: #c6f6d5;
-            color: green;
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46;
             font-weight: bold;
         }
         .option.incorrect {
-            background-color: #f8d7da;
-            color: red;
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
         }
+        /* Desabilitar cliques após envio */
+        .option.disabled {
+            cursor: default;
+            pointer-events: none;
+        }
+        
         .button {
+            display: block;
+            width: 100%;
             background-color: #4f46e5;
             color: white;
-            padding: 10px 15px;
+            padding: 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #4338ca;
+        }
+        .button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
         }
         #results {
             margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
+        .score-good { color: #059669; }
+        .score-bad { color: #dc2626; }
     </style>
 </head>
 <body>
@@ -72,167 +116,168 @@
         <button id="submit" class="button">Verificar Respostas</button>
         <div id="results"></div>
     </div>
+
     <script>
         const questions = [
             {
                 question: "São exemplos de Redes de Atenção à Saúde: I. Rede de Atenção à Saúde Materna e Infantil - Rede Cegonha. II. Rede de Atenção às Urgências e Emergências (RUE). III. Rede de Atenção à Saúde das Pessoas com Doenças Crônicas. IV. Rede de Cuidados à Pessoa com Deficiência. V. Rede de Atenção Psicossocial. Estão corretas as afirmativas:",
                 options: ["I, II e III apenas", "II, III e V apenas", "I, II, III, IV e V", "II, IV e V apenas", "I, IV e V apenas"],
-                answer: 2, // Índice da resposta "C) I, II, III, IV e V"
+                answer: 2, 
             },
             {
-                question: "As Redes de Atenção à Saúde (RAS) visam o cuidado integral e direcionado às necessidades de saúde da população. Nesse sentido, a atenção básica deve cumprir algumas funções para contribuir com o bom funcionamento das RAS. Assinale V (verdadeiro) ou F (falso) nas assertivas a seguir. () Ser base: ser a modalidade de atenção e de serviço de saúde com o mais elevado grau de descentralização e capilaridade, cuja participação no cuidado se faz sempre necessária. () Ser resolutiva: identificar riscos, necessidades e demandas de saúde, utilizando e articulando diferentes tecnologias de cuidado individual e coletivo, por meio de uma clínica ampliada capaz de construir vínculos positivos e intervenções clínica e sanitariamente efetivas. () Coordenar o cuidado: elaborar, acompanhar e gerir projetos terapêuticos singulares, bem como acompanhar e organizar o fluxo dos usuários entre os pontos de atenção das RAS. () Ordenar as redes: reconhecer as necessidades de saúde da população sob sua responsabilidade, organizando-as em relação aos outros pontos de atenção. Preenche CORRETAMENTE os parênteses, de cima para baixo, a alternativa:",
+                question: "As Redes de Atenção à Saúde (RAS) visam o cuidado integral e direcionado às necessidades de saúde da população. Nesse sentido, a atenção básica deve cumprir algumas funções... Preenche CORRETAMENTE os parênteses, de cima para baixo, a alternativa:",
                 options: ["V-F-V-V", "V-V-V-V", "F-V-V-F", "F-F-V-V"],
-                answer: 1, // Índice da resposta "B) V-V-V - V"
+                answer: 1, 
             },
             {
                 question: "Sobre o Sistema Único de Saúde (SUS), qual das seguintes alternativas está correta?",
                 options: ["O SUS foi criado para atender apenas a população de baixa renda.", "O SUS é baseado nos princípios da universalidade, integralidade e equidade.", "O SUS é financiado exclusivamente por recursos privados.", "O SUS não permite a participação da sociedade nas decisões sobre políticas de saúde."],
-                answer: 1, // Índice da resposta "b) O SUS é baseado nos princípios da universalidade, integralidade e equidade."
+                answer: 1, 
             },
             {
                 question: "Qual o principal objetivo da Política Nacional de Atenção Básica (PNAB)?",
                 options: ["Financiar hospitais de alta complexidade.", "Organizar a atenção primária à saúde, garantindo o acesso universal e em tempo oportuno.", "Regulamentar a produção de medicamentos.", "Controlar a vigilância sanitária em portos e aeroportos."],
-                answer: 1, // Índice da resposta "b) Organizar a atenção primária à saúde, garantindo o acesso universal e em tempo oportuno."
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes alternativas descreve corretamente o papel dos Agentes Comunitários de Saúde (ACS) e Agentes de Combate a Endemias (ACE)?",
                 options: ["Realizar cirurgias de alta complexidade em hospitais.", "Coletar e analisar dados epidemiológicos em laboratórios.", "Realizar diagnóstico demográfico, social, cultural, ambiental, epidemiológico e sanitário do território em que atuam.", "Gerenciar os recursos financeiros do SUS em nível nacional."],
-                answer: 2, // Índice da resposta "c) Realizar diagnóstico demográfico, social, cultural, ambiental, epidemiológico e sanitário do território em que atuam."
+                answer: 2, 
             },
             {
                 question: "O que são os Determinantes Sociais da Saúde (DSS)?",
                 options: ["Medicamentos de alto custo utilizados no tratamento de doenças raras.", "Fatores sociais, econômicos, culturais, étnicos/raciais, psicológicos e comportamentais que influenciam a ocorrência de problemas de saúde.", "Equipamentos de alta tecnologia utilizados em hospitais de referência.", "Indicadores utilizados para medir a qualidade dos serviços de saúde."],
-                answer: 1, // Índice da resposta "b) Fatores sociais, econômicos, culturais, étnicos/raciais, psicológicos e comportamentais que influenciam a ocorrência de problemas de saúde."
+                answer: 1, 
             },
             {
                 question: "Qual a importância da integração entre a Vigilância em Saúde (VS) e a Atenção Básica (AB)?",
                 options: ["Reduzir os custos dos serviços de saúde.", "Garantir a integralidade do cuidado e a efetividade das ações de promoção e prevenção.", "Centralizar o poder de decisão nas mãos dos gestores federais.", "Limitar o acesso da população aos serviços de saúde."],
-                answer: 1, // Índice da resposta "b) Garantir a integralidade do cuidado e a efetividade das ações de promoção e prevenção."
+                answer: 1, 
             },
             {
                 question: "Qual é a principal diferença entre as equipes de APS e as equipes de ABS no SUS?",
                 options: ["As equipes de APS são compostas apenas por médicos, enquanto as equipes de ABS são multiprofissionais.", "As equipes de ABS são focadas em ações de prevenção, enquanto as equipes de APS são focadas em tratamento.", "Não há diferença significativa entre as equipes de APS e as equipes de ABS, sendo os termos frequentemente usados como sinônimos.", "As equipes de APS atuam em áreas urbanas, enquanto as equipes de ABS atuam em áreas rurais."],
-                answer: 2, // Índice da resposta "c) Não há diferença significativa entre as equipes de APS e as equipes de ABS, sendo os termos frequentemente usados como sinônimos."
+                answer: 2, 
             },
             {
                 question: "Qual das seguintes alternativas descreve corretamente a composição de uma equipe de APS?",
                 options: ["Médico, enfermeiro, técnico de enfermagem e agente comunitário de saúde.", "Médico, enfermeiro e dentista.", "Médico e enfermeiro.", "Médico, enfermeiro, assistente social e psicólogo."],
-                answer: 0, // Índice da resposta "a) Médico, enfermeiro, técnico de enfermagem e agente comunitário de saúde."
+                answer: 0, 
             },
             {
                 question: "Qual é o principal objetivo das equipes de APS e ABS no SUS?",
                 options: ["Realizar cirurgias de alta complexidade.", "Coordenar o cuidado dos usuários na rede de atenção à saúde.", "Realizar exames de imagem de alta tecnologia.", "Gerenciar hospitais de grande porte."],
-                answer: 1, // Índice da resposta "b) Coordenar o cuidado dos usuários na rede de atenção à saúde."
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes alternativas descreve uma característica da atuação das equipes de APS e ABS?",
                 options: ["Atendimento pontual e focado em doenças específicas.", "Ações de promoção da saúde, prevenção de doenças e tratamento.", "Realização de transplantes de órgãos.", "Atendimento exclusivo a pacientes com doenças crônicas."],
-                answer: 1, // Índice da resposta "b) Ações de promoção da saúde, prevenção de doenças e tratamento."
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes alternativas descreve corretamente a relação entre APS e ABS no contexto do SUS?",
                 options: ["APS e ABS são modelos de atenção à saúde distintos, com objetivos e composições diferentes.", "APS é um modelo de atenção à saúde mais abrangente que o ABS.", "ABS é um modelo de atenção à saúde mais abrangente que o APS.", "APS e ABS são termos utilizados como sinônimos no contexto do SUS, referindo-se à atenção primária à saúde."],
-                answer: 3, // Índice da resposta "d) APS e ABS são termos utilizados como sinônimos no contexto do SUS, referindo-se à atenção primária à saúde."
+                answer: 3, 
             },
             {
                 question: "Qual o principal objetivo da PNAB?",
                 options: ["Financiar hospitais de alta complexidade.", "Fortalecer a atenção primária à saúde como porta de entrada do SUS.", "Regulamentar a produção de medicamentos.", "Controlar epidemias e pandemias."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual o principal objetivo da PNVS?",
                 options: ["Garantir o acesso a planos de saúde privados.", "Monitorar e responder a ameaças à saúde pública.", "Construir hospitais e unidades de saúde.", "Formar profissionais de saúde."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes características é central para a PNAB?",
                 options: ["Ênfase em procedimentos hospitalares complexos.", "Atuação em saúde individual e coletiva, com foco na prevenção.", "Centralização da gestão em nível federal.", "Atendimento exclusivo a casos de emergência."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes características é central para a PNVS?",
                 options: ["Atendimento individualizado em consultórios privados.", "Monitoramento contínuo de riscos e agravos à saúde.", "Foco exclusivo em doenças transmissíveis.", "Gestão descentralizada, com participação da comunidade."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Como a PNAB e a PNVS se relacionam?",
                 options: ["São políticas independentes, sem interação.", "A PNAB financia a PNVS.", "A PNVS define as diretrizes para a PNAB.", "Ambas atuam de forma integrada na promoção, prevenção e proteção da saúde."],
-                answer: 3, // Índice da resposta "d"
+                answer: 3, 
             },
             {
                 question: "Qual a importância da integração entre PNAB e PNVS?",
                 options: ["Reduzir custos com saúde pública.", "Garantir a continuidade do cuidado e a vigilância em saúde.", "Fortalecer a atuação de planos de saúde privados.", "Diminuir a participação da comunidade na gestão da saúde."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes ações faz parte do escopo da PNVS?",
                 options: ["Realização de cirurgias de alta complexidade.", "Vacinação e controle de endemias.", "Prescrição de medicamentos controlados.", "Gestão de planos de saúde privados."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual das seguintes ações faz parte do escopo da PNAB?",
                 options: ["Monitoramento da qualidade da água e do ar.", "Realização de exames laboratoriais de alta complexidade.", "Acompanhamento de doenças crônicas e promoção da saúde.", "Controle de vetores de doenças transmissíveis."],
-                answer: 2, // Índice da resposta "c"
+                answer: 2, 
             },
             {
                 question: "O que significa \"população adscrita\" no contexto do SUS?",
                 options: ["A população que utiliza planos de saúde privados.", "O número total de habitantes de um município.", "O grupo de pessoas sob a responsabilidade de uma equipe de saúde em uma UBS.", "A população que necessita de atendimento hospitalar de alta complexidade."],
-                answer: 2, // Índice da resposta "c"
+                answer: 2, 
             },
             {
                 question: "Qual o principal objetivo da adscrição da população no SUS?",
                 options: ["Reduzir o número de pacientes nas UBSs.", "Criar um vínculo entre a equipe de saúde e a população, promovendo cuidado contínuo.", "Facilitar o acesso a planos de saúde privados.", "Centralizar o atendimento em grandes hospitais."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Como a territorialização se relaciona com a população adscrita?",
                 options: ["A territorialização ignora a localização geográfica dos pacientes.", "A população adscrita é definida por um território geográfico específico.", "A territorialização se aplica apenas a hospitais, não a UBSs.", "A territorialização dificulta o planejamento de ações de saúde."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual a importância da população adscrita para o planejamento e gestão do SUS?",
                 options: ["Não há relação entre a população adscrita e o planejamento do SUS.", "A população adscrita dificulta a organização dos serviços de saúde.", "O conhecimento da população adscrita permite adequar a oferta de serviços às necessidades da demanda.", "A população adscrita só é relevante para hospitais privados."],
-                answer: 2, // Índice da resposta "c"
+                answer: 2, 
             },
             {
                 question: "Qual das seguintes alternativas descreve melhor o benefício da adscrição para o paciente?",
                 options: ["O paciente precisa procurar atendimento em diferentes UBSs a cada consulta.", "O paciente tem um ponto de referência para o cuidado de sua saúde, facilitando o acompanhamento.", "O paciente só tem acesso a atendimentos de emergência.", "O paciente é encaminhado diretamente para hospitais de alta complexidade."],
-                answer: 1, // Índice da resposta "b"
+                answer: 1, 
             },
             {
                 question: "Qual dos seguintes órgãos é responsável por formular políticas nacionais de saúde no Brasil?",
                 options: ["Secretaria Estadual de Saúde", "Ministério da Saúde", "Conselho Municipal de Saúde", "Comissão Intergestores Bipartite (CIB)"],
-                answer: 1, // Índice da resposta "b) Ministério da Saúde"
+                answer: 1, 
             },
             {
                 question: "As Comissões Intergestores Tripartite (CIT) e Bipartite (CIB) têm como principal função:",
                 options: ["Fiscalizar a aplicação de recursos do SUS.", "Negociar e pactuar diretrizes de saúde entre os níveis de governo.", "Coordenar a vigilância sanitária em áreas estratégicas.", "Fornecer a lista municipal de medicamentos."],
-                answer: 1, // Índice da resposta "b) Negociar e pactuar diretrizes de saúde entre os níveis de governo."
+                answer: 1, 
             },
             {
                 question: "Qual nível de governo é responsável por coordenar o sistema de saúde local?",
                 options: ["Governo Federal", "Governo Estadual", "Governo Municipal", "Todos os níveis de governo"],
-                answer: 2, // Índice da resposta "c) Governo Municipal"
+                answer: 2, 
             },
             {
                 question: "Os Conselhos de Saúde, em suas diferentes esferas (nacional, estadual e municipal), representam:",
                 options: ["Apenas os profissionais de saúde.", "Apenas o governo.", "A sociedade civil e fiscalizam a gestão do SUS.", "Apenas os prestadores de serviços privados de saúde."],
-                answer: 2, // Índice da resposta "c) A sociedade civil e fiscalizam a gestão do SUS."
+                answer: 2, 
             },
             {
                 question: "A Câmara de Regulação do Mercado de Medicamentos tem como atribuição:",
                 options: ["Coordenar a vigilância sanitária.", "Definir os preços dos medicamentos.", "Financiar serviços de saúde locais.", "Organizar o sistema de saúde regional."],
-                answer: 1, // Índice da resposta "b) Definir os preços dos medicamentos."
+                answer: 1, 
             },
             {
                 question: "A entrega de programas estratégicos e medicamentos é responsabilidade de qual nível de governo?",
                 options: ["Governo Federal", "Governo Estadual", "Governo Municipal", "Todos os níveis de governo, em conjunto"],
-                answer: 1, // Índice da resposta "b) Governo Estadual"
+                answer: 1, 
             },
             {
                 question: "As Conferências de Saúde são espaços para:",
                 options: ["Apenas profissionais de saúde discutirem questões técnicas.", "Apenas o governo definir as políticas de saúde.", "A sociedade civil debater e formular políticas de saúde."],
-                answer: 2, // Índice da resposta "c) A sociedade civil debater e formular políticas de saúde"
+                answer: 2, 
             },
         ];
 
@@ -255,9 +300,7 @@
 
                 output.push(`
                     <div class="card">
-                        <div class="question">${questionNumber + 1}) ${
-                            currentQuestion.question
-                        }</div>
+                        <div class="question">${questionNumber + 1}) ${currentQuestion.question}</div>
                         <div class="options">${options}</div>
                     </div>
                 `);
@@ -268,25 +311,37 @@
 
         function showResults() {
             let correctAnswers = 0;
+            // Desabilitar o botão para evitar múltiplos envios
+            submitButton.disabled = true;
+            submitButton.textContent = "Respostas Verificadas";
 
             questions.forEach((question, questionIndex) => {
                 const options = quizContainer.querySelectorAll(
                     `.option[data-question="${questionIndex}"]`
                 );
-                const userAnswer = parseInt(
-                    quizContainer.querySelector(
-                        `.option[data-question="${questionIndex}"].selected`
-                    )?.dataset?.option
+                
+                // Encontrar a opção selecionada com segurança
+                const selectedOption = quizContainer.querySelector(
+                    `.option[data-question="${questionIndex}"].selected`
                 );
+                
+                const userAnswer = selectedOption ? parseInt(selectedOption.dataset.option) : null;
                 const correctAnswer = question.answer;
 
                 options.forEach((option) => {
+                    // Desabilitar cliques futuros
+                    option.classList.add("disabled");
+                    
                     const optionIndex = parseInt(option.dataset.option);
                     option.classList.remove("correct", "incorrect");
+
+                    // Marcar a correta (sempre verde)
                     if (optionIndex === correctAnswer) {
                         option.classList.add("correct");
                     }
-                    if (userAnswer !== undefined && optionIndex === userAnswer && userAnswer !== correctAnswer) {
+                    
+                    // Marcar a incorreta se o usuário errou
+                    if (userAnswer !== null && optionIndex === userAnswer && userAnswer !== correctAnswer) {
                         option.classList.add("incorrect");
                     }
                 });
@@ -296,23 +351,47 @@
                 }
             });
 
-            resultsContainer.textContent = `Você acertou ${correctAnswers} de ${questions.length} questões.`;
+            // Exibir pontuação com cor
+            const percentage = (correctAnswers / questions.length) * 100;
+            const feedbackClass = percentage >= 70 ? 'score-good' : 'score-bad';
+            
+            resultsContainer.innerHTML = `
+                <div class="${feedbackClass}">
+                    Você acertou ${correctAnswers} de ${questions.length} questões (${percentage.toFixed(0)}%).
+                </div>
+            `;
+            
+            // Rolar a tela até o resultado
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Lógica de clique corrigida para funcionar em mobile e desktop
         quizContainer.addEventListener("click", function (event) {
-            if (event.target.classList.contains("option")) {
-                const questionNumber = event.target.dataset.question;
-                const selected = quizContainer.querySelector(
-                    `.option[data-question="${questionNumber}"].selected`
-                );
-                if (selected) selected.classList.remove("selected");
-                event.target.classList.add("selected");
+            // Usa .closest() para garantir que pegamos a div .option mesmo se clicar no texto
+            const optionElement = event.target.closest(".option");
+            
+            // Se não clicou numa opção ou se o quiz já acabou (disabled), ignora
+            if (!optionElement || optionElement.classList.contains("disabled")) {
+                return;
             }
+
+            const questionNumber = optionElement.dataset.question;
+            
+            // Remove seleção anterior da mesma questão
+            const previouslySelected = quizContainer.querySelector(
+                `.option[data-question="${questionNumber}"].selected`
+            );
+            if (previouslySelected) {
+                previouslySelected.classList.remove("selected");
+            }
+
+            // Adiciona seleção nova
+            optionElement.classList.add("selected");
         });
 
         submitButton.addEventListener("click", showResults);
 
         buildQuiz();
     </script>
-</body>
-<script src="navegacao.js"></script></html>
+    </body>
+</html>
